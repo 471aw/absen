@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="id"><head>
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://api-absen.skai.my.id; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"><meta charset="utf-8"><base target="_top"><style>
+:root{--bg:#f3f6fb;--card:#fff;--text:#142033;--muted:#68768a;--line:#e3e9f1;--p:#2563eb;--p2:#1d4ed8;--bad:#dc2626;--ok:#16a34a;--amber:#d97706;--shadow:0 12px 34px rgba(15,23,42,.07)}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}.wrap{max-width:1280px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 20px;background:linear-gradient(135deg,#0f4cce,#2d72ef);color:#fff;border-radius:20px;box-shadow:0 14px 36px rgba(37,99,235,.18)}.brand{font-size:22px;font-weight:850}.top .muted{color:rgba(255,255,255,.78)}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;margin:14px 0;box-shadow:var(--shadow)}.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:14px}.kpi{background:#fff;border:1px solid var(--line);border-radius:17px;padding:15px;box-shadow:var(--shadow);position:relative;overflow:hidden}.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--p)}.kpi:nth-child(2):before{background:var(--amber)}.kpi:nth-child(3):before,.kpi:nth-child(5):before{background:var(--ok)}.kpi:nth-child(4):before{background:var(--bad)}.kpi b{font-size:28px;display:block}.muted{color:var(--muted)}input,select,textarea,button{font:inherit;padding:10px 11px;border-radius:11px;border:1px solid #d4dce6;background:#fff;color:var(--text)}button{border:0;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;font-weight:750;cursor:pointer}button.alt{background:#eef4ff;color:#19499d;border:1px solid #d5e1ff}button.bad{background:#dc2626}button.small{padding:7px 9px;font-size:11px}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;padding:7px;background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);position:sticky;top:8px;z-index:100}.nav button{background:transparent;color:var(--muted);border:0}.nav button.active{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff}.row{display:flex;gap:9px;flex-wrap:wrap;align-items:end}.field{display:flex;flex-direction:column;gap:5px;min-width:150px;flex:1}.field label{font-size:11px;font-weight:800;color:var(--muted)}table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}th,td{padding:10px;border-bottom:1px solid #edf1f5;text-align:left;vertical-align:top}th{position:sticky;top:0;background:#f8fafc;z-index:1;color:#506074}.scroll{overflow:auto;max-height:540px;border-radius:12px}.hidden{display:none!important}.msg{padding:11px 13px;border-radius:12px;background:#edf4ff;margin:10px 0}.msg.err{background:#fff0f0;color:#8a1c14}.pill{padding:4px 8px;border-radius:999px;background:#eef4ff;color:#2453a6;display:inline-block;font-size:10px;font-weight:800}.login{max-width:440px;margin:70px auto;padding:24px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:1050px){.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:800px){.wrap{padding:10px}.grid{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.row{align-items:stretch}.field{min-width:100%}.nav{position:static}}@media print{.top,.nav,.no-print,#loginView{display:none!important}.wrap{max-width:none;padding:0}.card{border:0;box-shadow:none}.scroll{max-height:none;overflow:visible}}
+
+.dashboardVisual{display:grid;grid-template-columns:330px 1fr;gap:14px;margin-top:14px}
+.dashPanel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.donutWrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.donut{width:180px;height:180px;border-radius:50%;position:relative;flex:0 0 auto}
+.donut:after{content:"";position:absolute;inset:28px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1px #edf1f5}
+.donutCenter{position:absolute;inset:0;display:grid;place-items:center;z-index:2;text-align:center;pointer-events:none}
+.donutCenter b{font-size:28px;display:block;line-height:1}.donutCenter span{font-size:11px;color:var(--muted)}
+.legend{display:grid;gap:9px;min-width:120px}.legendRow{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:12px}.legendLabel{display:flex;align-items:center;gap:7px}.legendDot{width:10px;height:10px;border-radius:3px}
+.dashNote{padding:12px;border-radius:13px;background:#fff8e8;border:1px solid #fde2a7;color:#805500;font-size:12px;margin-top:12px}
+.faceCell{display:flex;align-items:center;justify-content:center;min-width:58px}.faceThumb,.faceFallback{width:48px;height:48px;border-radius:14px;object-fit:cover;border:2px solid #e6ecf4;background:#eef4ff}.faceFallback{display:grid;place-items:center;color:#2453a6;font-weight:900;font-size:13px}.faceLoading{opacity:.55}
+.permitFilters{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:9px;align-items:end}
+.statusApproved{background:#eaf8ef;color:#13743d}.statusRejected{background:#ffeded;color:#b42318}.statusPending{background:#fff7e6;color:#9a6700}
+@media(max-width:900px){.dashboardVisual{grid-template-columns:1fr}.permitFilters{grid-template-columns:1fr 1fr}}@media(max-width:600px){.permitFilters{grid-template-columns:1fr}.donutWrap{justify-content:center}}
+
+
+.versionBadge{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:850;letter-spacing:.2px}
+.versionBadge.loginVersion{background:#eef4ff;color:#2453a6;border:1px solid #d8e4ff;margin-top:12px}
+.versionBadge.headerVersion{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.28);margin-left:7px;vertical-align:2px}
+
+.adminProcess{position:fixed;inset:0;z-index:2147483600;background:rgba(15,23,42,.18);backdrop-filter:blur(1.5px);display:flex;align-items:flex-start;justify-content:center;padding-top:max(18px,env(safe-area-inset-top));transition:opacity .16s ease}
+.adminProcess.hidden{display:none!important}
+.adminProcessCard{min-width:220px;max-width:calc(100vw - 28px);background:#fff;border:1px solid #e4e9f1;border-radius:15px;padding:11px 15px;box-shadow:0 15px 45px rgba(15,23,42,.22);display:flex;align-items:center;gap:11px}
+.adminProcessSpinner{width:22px;height:22px;border:3px solid #dbe5f4;border-top-color:#2563eb;border-radius:50%;animation:adminSpin .75s linear infinite;flex:0 0 auto}
+.adminProcess.done{background:transparent;pointer-events:none}
+.adminProcess.done .adminProcessCard{border-color:#ccebd7}
+.adminProcess.done .adminProcessSpinner{animation:none;border:0;background:#16a34a;color:#fff;display:grid;place-items:center;font-size:14px}
+.adminProcess.done .adminProcessSpinner:before{content:"✓"}
+.adminProcess.error .adminProcessSpinner{animation:none;border:0;background:#dc2626;color:#fff}
+.adminProcessText b{display:block;font-size:13px}.adminProcessText span{display:block;color:#6b7787;font-size:11px;margin-top:1px}
+@keyframes adminSpin{to{transform:rotate(360deg)}}
+
+</style></head><body>
+<div id="adminProcess" class="adminProcess hidden" aria-live="polite" aria-busy="false">
+  <div class="adminProcessCard">
+    <div class="adminProcessSpinner"></div>
+    <div class="adminProcessText"><b id="adminProcessTitle">Memproses…</b><span id="adminProcessSub">Mohon tunggu</span></div>
+  </div>
+</div><div class="wrap">
+<div id="msg" class="msg hidden"></div>
+<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Administrator</h2><p class="muted">Masuk dengan username dan password admin.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.3.0</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="/" target="_top" style="display:block;text-align:center;margin-top:14px">Kembali ke peserta</a></div>
+<div id="adminView" class="hidden"><div class="top"><div><div class="brand"><span id="adminSystemName">Absensi</span> • Admin <span id="adminVersion" class="versionBadge headerVersion">v1.3.0</span></div><div class="muted" id="adminName"></div></div><button class="alt no-print" onclick="logout()">Keluar</button></div>
+<div class="nav no-print"><button class="active" onclick="tab('dash',this)">Dashboard</button><button onclick="tab('users',this)">Peserta</button><button onclick="tab('masters',this)">Master</button><button onclick="tab('schedule',this)">Jadwal</button><button onclick="tab('permits',this)">Perizinan</button><button onclick="tab('report',this)">Laporan</button><button onclick="tab('settings',this)">Pengaturan</button></div>
+<section id="dash" class="page">
+<div id="kpis" class="grid"></div>
+<div class="dashboardVisual">
+  <div class="dashPanel"><h3>Status Kehadiran Hari Ini</h3><div id="attendanceChart"></div></div>
+  <div class="dashPanel"><h3>Ringkasan Operasional</h3><div id="dashSummary"></div></div>
+</div>
+</section>
+<section id="users" class="page hidden">
+<div class="card"><h3>Ubah Penempatan Peserta</h3><p class="muted">Peserta tidak dapat mengubah penempatan sendiri setelah disetujui. Hanya admin yang dapat memindahkan program, instansi, dan titik lokasi. Riwayat lama tidak ditimpa.</p><div class="row"><div class="field"><label>Peserta</label><select id="assignUser"></select></div><div class="field"><label>Program</label><select id="assignProgram"></select></div><div class="field"><label>Instansi</label><select id="assignInstitution" onchange="filterAssignLocations()"></select></div><div class="field"><label>Lokasi</label><select id="assignLocation"></select></div><div class="field"><label>Berlaku mulai</label><input id="assignEffective" type="date"></div><button onclick="saveAssignment()">Simpan Penempatan</button></div></div>
+<div class="card"><div class="row"><h3 style="flex:1">Peserta</h3><button class="alt no-print" onclick="loadUsers()">Refresh</button></div><div id="usersOut" class="scroll"></div></div></section>
+<section id="masters" class="page hidden"><div class="two"><div class="card"><h3>Program</h3><input id="progId" type="hidden"><div class="field"><label>Nama</label><input id="progName"></div><div class="row"><div class="field"><label>Mulai</label><input id="progStart" type="date"></div><div class="field"><label>Selesai</label><input id="progEnd" type="date"></div></div><div class="row"><button onclick="saveProgram()">Simpan Program</button><button class="alt" onclick="clearProgram()">Baru</button></div></div><div class="card"><h3>Instansi</h3><input id="insId" type="hidden"><div class="field"><label>Nama</label><input id="insName"></div><div class="field"><label>Alamat</label><textarea id="insAddress"></textarea></div><div class="row"><button onclick="saveInstitution()">Simpan Instansi</button><button class="alt" onclick="clearInstitution()">Baru</button></div></div></div>
+<div class="card"><h3>Lokasi Absensi</h3><input id="locId" type="hidden"><div class="row"><div class="field"><label>Instansi</label><select id="locInstitution"></select></div><div class="field"><label>Nama lokasi</label><input id="locName"></div><div class="field"><label>Latitude</label><input id="locLat" inputmode="decimal"></div><div class="field"><label>Longitude</label><input id="locLng" inputmode="decimal"></div><div class="field"><label>Radius (m)</label><input id="locRadius" type="number" value="100"></div><div class="field"><label>Akurasi maks (m)</label><input id="locAccuracy" type="number" value="80"></div></div><div class="row"><button onclick="saveLocation()">Simpan Lokasi</button><button class="alt" onclick="clearLocation()">Baru</button></div></div><div class="card"><h3>Data Master</h3><div id="mastersOut" class="scroll"></div></div></section>
+<section id="schedule" class="page hidden"><div class="card"><h3>Jadwal Absensi</h3><p class="muted">Untuk perubahan jam, buat versi baru dan tentukan tanggal mulai berlaku agar laporan lama tidak berubah.</p><input id="schId" type="hidden"><div class="row"><div class="field"><label>Program</label><select id="schProgram"></select></div><div class="field"><label>Lokasi</label><select id="schLocation"></select></div><div class="field"><label>Hari</label><select id="schDay"><option value="1">Senin</option><option value="2">Selasa</option><option value="3">Rabu</option><option value="4">Kamis</option><option value="5">Jumat</option><option value="6">Sabtu</option><option value="7">Minggu</option></select></div><div class="field"><label>Berlaku mulai</label><input id="schEffective" type="date"></div></div><div class="row"><div class="field"><label>Datang buka</label><input id="aOpen" type="time" value="06:00"></div><div class="field"><label>Terlambat setelah</label><input id="aLate" type="time" value="07:00"></div><div class="field"><label>Datang tutup</label><input id="aClose" type="time" value="10:00"></div><div class="field"><label>Pulang buka</label><input id="dOpen" type="time" value="15:00"></div><div class="field"><label>Pulang normal</label><input id="dNormal" type="time" value="16:00"></div><div class="field"><label>Pulang tutup</label><input id="dClose" type="time" value="21:00"></div><div class="field"><label>Batas pengajuan izin</label><input id="pDeadline" type="time" value="08:00"></div></div><div class="row"><button onclick="saveSchedule()">Simpan Jadwal</button><button class="alt" onclick="clearSchedule()">Baru</button></div></div><div class="card"><div id="scheduleOut" class="scroll"></div></div></section>
+<section id="permits" class="page hidden"><div class="card">
+<div class="row"><div><h3 style="margin-bottom:2px">Perizinan</h3><div class="muted">Filter berdasarkan rentang tanggal dan status pengajuan.</div></div></div>
+<div class="permitFilters no-print">
+  <div class="field"><label>Dari tanggal</label><input id="permitFrom" type="date"></div>
+  <div class="field"><label>Sampai tanggal</label><input id="permitToAdmin" type="date"></div>
+  <div class="field"><label>Status</label><select id="permitStatus"><option value="">Semua Status</option><option value="PENDING">Menunggu</option><option value="APPROVED">Disetujui</option><option value="REJECTED">Ditolak</option></select></div>
+  <button onclick="loadPermits()">Tampilkan</button>
+</div>
+<div id="permitOut" class="scroll" style="margin-top:12px"></div></div></section>
+<section id="report" class="page hidden"><div class="card"><div class="row no-print"><div class="field"><label>Dari</label><input id="repFrom" type="date"></div><div class="field"><label>Sampai</label><input id="repTo" type="date"></div><div class="field"><label>Program</label><select id="repProgram"><option value="">Semua</option></select></div><div class="field"><label>Instansi</label><select id="repInstitution"><option value="">Semua</option></select></div><div class="field"><label>Lokasi</label><select id="repLocation"><option value="">Semua</option></select></div><button onclick="loadReport()">Tampilkan</button><button class="alt" onclick="window.print()">Cetak / PDF</button></div><h3 id="reportTitle">Laporan Absensi</h3><div id="reportOut" class="scroll"></div></div></section>
+<section id="settings" class="page hidden"><div class="card"><h3>Pengaturan Sistem</h3><p class="muted">Perubahan penting langsung memengaruhi semua peserta. Play Integrity diaktifkan setelah APK sudah terhubung ke Play Console.</p><div id="settingsOut"></div></div></section>
+</div></div>
+<script src="/api-client.js"></script>
+<script>
+let TOKEN=sessionStorage.getItem('af_admin_token')||'', ADMIN_NAME=sessionStorage.getItem('af_admin_name')||'', M=null, USERS=[], APP_CONFIG=null;
+const $=id=>document.getElementById(id);let ADMIN_BUSY_COUNT=0,ADMIN_DONE_TIMER=null;
+function adminProcessLabel(name){
+  const labels={
+    apiAdminLogin:'Memeriksa login administrator',
+    apiAdminDashboard:'Memuat dashboard',
+    apiAdminListUsers:'Memuat data peserta',
+    apiAdminMasters:'Memuat master data',
+    apiAdminApproveUser:'Memperbarui status peserta',
+    apiAdminResetFace:'Mereset Face ID',
+    apiAdminResetAttendanceToday:'Mereset absensi hari ini',
+    apiAdminUpsertMaster:'Menyimpan master data',
+    apiAdminUpsertSchedule:'Menyimpan jadwal',
+    apiAdminUpdateUserAssignment:'Menyimpan penempatan',
+    apiAdminPermissions:'Memuat data perizinan',
+    apiAdminDecidePermission:'Memperbarui status perizinan',
+    apiAdminReport:'Menyusun laporan',
+    apiAdminSaveSetting:'Menyimpan pengaturan',
+    apiPublicConfig:'Memuat konfigurasi'
+  };
+  return labels[name]||'Memproses data';
+}
+function adminProcessStart(name){
+  ADMIN_BUSY_COUNT++;
+  clearTimeout(ADMIN_DONE_TIMER);
+  const el=$('adminProcess');if(!el)return;
+  el.className='adminProcess';el.setAttribute('aria-busy','true');
+  $('adminProcessTitle').textContent=adminProcessLabel(name)+'…';
+  $('adminProcessSub').textContent='Proses masih berjalan, mohon tunggu';
+}
+function adminProcessEnd(ok){
+  ADMIN_BUSY_COUNT=Math.max(0,ADMIN_BUSY_COUNT-1);
+  if(ADMIN_BUSY_COUNT>0)return;
+  const el=$('adminProcess');if(!el)return;
+  el.setAttribute('aria-busy','false');
+  if(ok){
+    el.className='adminProcess done';
+    $('adminProcessTitle').textContent='Selesai';
+    $('adminProcessSub').textContent='Proses telah selesai';
+    ADMIN_DONE_TIMER=setTimeout(()=>el.classList.add('hidden'),650);
+  }else{
+    el.className='adminProcess error';
+    $('adminProcessTitle').textContent='Proses gagal';
+    $('adminProcessSub').textContent='Periksa pesan kesalahan';
+    ADMIN_DONE_TIMER=setTimeout(()=>el.classList.add('hidden'),1200);
+  }
+}
+function gas(name,...args){
+  const silent=name==='apiAdminFacePhoto';
+  if(!silent)adminProcessStart(name);
+  return AbsensiAPI.call(name,...args)
+    .then(v=>{if(!silent)adminProcessEnd(true);return v})
+    .catch(e=>{if(!silent)adminProcessEnd(false);throw e});
+}
+function esc(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+function note(t,e=false){$('msg').textContent=t;$('msg').className='msg'+(e?' err':'');$('msg').classList.remove('hidden');setTimeout(()=>$('msg').classList.add('hidden'),5000)}
+async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;document.title=name+' • Admin';if($('loginVersion'))$('loginVersion').textContent='Versi v1.3.0';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
+async function login(){try{const r=await gas('apiAdminLogin',$('username').value,$('password').value);TOKEN=r.token;ADMIN_NAME=r.name;sessionStorage.setItem('af_admin_token',TOKEN);sessionStorage.setItem('af_admin_name',ADMIN_NAME);await start();}catch(e){note(e.message,true)}}function logout(){sessionStorage.clear();location.reload()}
+async function start(){if(!TOKEN)return;$('loginView').classList.add('hidden');$('adminView').classList.remove('hidden');$('adminName').textContent=ADMIN_NAME;try{await loadMasters();await Promise.all([loadDash(),loadUsers()]);setDates();}catch(e){if(/Sesi|akses|Admin/i.test(e.message)){logout();return}note(e.message,true)}}
+function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');if(id==='permits')loadPermits();if(id==='report')loadReport()}
+async function loadDash(){
+  const r=await gas('apiAdminDashboard',TOKEN);
+  const ver=String(r.version||'1.3.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;
+  $('kpis').innerHTML=[
+    ['Peserta aktif',r.totalUsers],['Terjadwal hari ini',r.scheduledToday],
+    ['Hadir hari ini',r.arrived],['Terlambat',r.late],
+    ['Izin/Sakit hari ini',r.permissions],['Izin menunggu',r.pendingPermissions]
+  ].map(x=>`<div class="kpi"><span class="muted">${x[0]}</span><b>${x[1]}</b></div>`).join('');
+
+  const total=Math.max(0,Number(r.scheduledToday)||0);
+  const hadir=Math.max(0,Number(r.arrived)||0);
+  const izin=Math.max(0,Number(r.permissions)||0);
+  const belum=Math.max(0,Number(r.unrecorded)||0);
+  const denom=Math.max(1,total||hadir+izin+belum);
+  const p1=hadir/denom*100,p2=izin/denom*100;
+  $('attendanceChart').innerHTML=`<div class="donutWrap">
+    <div class="donut" style="background:conic-gradient(#16a34a 0 ${p1}%,#d97706 ${p1}% ${p1+p2}%,#cbd5e1 ${p1+p2}% 100%)">
+      <div class="donutCenter"><div><b>${total}</b><span>terjadwal</span></div></div>
+    </div>
+    <div class="legend">
+      <div class="legendRow"><span class="legendLabel"><i class="legendDot" style="background:#16a34a"></i>Hadir</span><b>${hadir}</b></div>
+      <div class="legendRow"><span class="legendLabel"><i class="legendDot" style="background:#d97706"></i>Izin/Sakit</span><b>${izin}</b></div>
+      <div class="legendRow"><span class="legendLabel"><i class="legendDot" style="background:#cbd5e1"></i>Belum tercatat</span><b>${belum}</b></div>
+    </div></div>`;
+
+  const pt=r.permissionTypes||{};
+  $('dashSummary').innerHTML=`
+    <div class="grid" style="grid-template-columns:repeat(2,1fr);margin-top:0">
+      <div class="kpi"><span class="muted">Tepat waktu</span><b>${r.onTime||0}</b></div>
+      <div class="kpi"><span class="muted">Terlambat</span><b>${r.late||0}</b></div>
+      <div class="kpi"><span class="muted">Sakit</span><b>${pt.SAKIT||0}</b></div>
+      <div class="kpi"><span class="muted">Izin</span><b>${pt.IZIN||0}</b></div>
+    </div>
+    ${r.permissionConflicts?`<div class="dashNote"><b>${r.permissionConflicts} data perlu koreksi:</b> peserta memiliki izin yang disetujui tetapi juga melakukan absensi. Dalam laporan, kehadiran yang dihitung.</div>`:''}`;
+}
+async function loadUsers(){
+  const r=await gas('apiAdminListUsers',TOKEN);USERS=r.users||[];
+  let h='<table><thead><tr><th>Foto</th><th>Nama</th><th>Email</th><th>ID</th><th>Status</th><th>Penempatan</th><th>Face</th><th>Aksi</th></tr></thead><tbody>';
+  USERS.forEach(u=>{
+    const pn=M?(M.programs.find(x=>x.id===u.program_id)||{}).name||'-':'-',
+      inm=M?(M.institutions.find(x=>x.id===u.institution_id)||{}).name||'-':'-',
+      ln=M?(M.locations.find(x=>x.id===u.location_id)||{}).name||'-':'-',
+      ini=String(u.name||'PK').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+    h+=`<tr>
+      <td><div class="faceCell"><div id="face_${u.id}" class="faceFallback ${u.face_status==='ENROLLED'?'faceLoading':''}" data-face-user="${u.face_status==='ENROLLED'?esc(u.id):''}">${esc(ini)}</div></div></td>
+      <td><b>${esc(u.name)}</b></td><td>${esc(u.email)}</td><td>${esc(u.identifier||'-')}</td>
+      <td><span class="pill">${esc(u.status)}</span></td>
+      <td>${esc(pn)}<br>${esc(inm)} • ${esc(ln)}${u.assignment_effective_from?`<br><span class="muted">sejak ${esc(u.assignment_effective_from)}</span>`:''}</td>
+      <td>${esc(u.face_status)}</td>
+      <td>${u.status==='PENDING'?`<button class="small" onclick="approve('${u.id}',true)">Setujui</button> <button class="small bad" onclick="approve('${u.id}',false)">Tolak</button>`:''}
+      <button class="small alt" onclick="selectAssignment('${u.id}')">Penempatan</button>
+      ${u.face_status==='ENROLLED'?`<button class="small alt" onclick="resetFace('${u.id}')">Reset Face</button>`:''} <button class="small bad" onclick="resetAttendanceToday('${u.id}','${esc(u.name)}')">Reset Absen Hari Ini</button></td></tr>`;
+  });
+  h+='</tbody></table>';$('usersOut').innerHTML=h;fillAssignmentUsers();observeFacePhotos();
+}
+
+function observeFacePhotos(){
+  const els=[...document.querySelectorAll('[data-face-user]')].filter(x=>x.dataset.faceUser);
+  if(!('IntersectionObserver' in window)){els.slice(0,20).forEach(loadFacePhoto);return;}
+  const io=new IntersectionObserver(entries=>entries.forEach(en=>{
+    if(en.isIntersecting){io.unobserve(en.target);loadFacePhoto(en.target);}
+  }),{root:$('usersOut'),rootMargin:'120px'});
+  els.forEach(el=>io.observe(el));
+}
+async function loadFacePhoto(el){
+  if(!el||el.dataset.loaded==='1')return;
+  el.dataset.loaded='1';
+  try{
+    const r=await gas('apiAdminFacePhoto',TOKEN,el.dataset.faceUser);
+    if(r&&r.dataUrl){
+      const img=document.createElement('img');img.className='faceThumb';img.alt='Foto wajah peserta';img.src=r.dataUrl;
+      el.replaceWith(img);
+    }else el.classList.remove('faceLoading');
+  }catch(e){el.classList.remove('faceLoading');}
+}
+async function approve(id,yes){try{await gas('apiAdminApproveUser',TOKEN,id,yes);note('Status peserta diperbarui.');await Promise.all([loadUsers(),loadDash()])}catch(e){note(e.message,true)}}async function resetFace(id){if(!confirm('Reset Face ID peserta ini? Peserta harus daftar wajah ulang.'))return;try{await gas('apiAdminResetFace',TOKEN,id);note('Face ID direset.');loadUsers()}catch(e){note(e.message,true)}}async function resetAttendanceToday(id,name){if(!confirm('Reset absensi HARI INI untuk '+name+'?\n\nJam datang/pulang hari ini akan dihapus agar peserta dapat mencoba absensi dari awal. Face ID tidak dihapus.'))return;try{const r=await gas('apiAdminResetAttendanceToday',TOKEN,id);note(r.message||'Absensi hari ini direset.');await Promise.all([loadDash(),loadUsers()])}catch(e){note(e.message,true)}}
+async function loadMasters(){const r=await gas('apiAdminMasters',TOKEN);if(!r||typeof r!=='object')throw new Error('Data master tidak dapat dibaca dari server. Muat ulang halaman setelah memperbarui deployment.');M={ok:r.ok!==false,serverDate:r.serverDate||'',programs:Array.isArray(r.programs)?r.programs:[],institutions:Array.isArray(r.institutions)?r.institutions:[],locations:Array.isArray(r.locations)?r.locations:[],schedules:Array.isArray(r.schedules)?r.schedules:[],settings:Array.isArray(r.settings)?r.settings:[]};fillSelects();renderMasters();renderSchedules();renderSettings();fillAssignmentUsers();$('assignEffective').min=M.serverDate||'';$('schEffective').min=M.serverDate||'';if(!$('assignEffective').value)$('assignEffective').value=M.serverDate||'';if(!$('schEffective').value)$('schEffective').value=M.serverDate||'';if(USERS.length)renderUserRefreshNoFetch()}
+function opts(rows,all=false){rows=Array.isArray(rows)?rows:[];return (all?'<option value="">Semua</option>':'')+rows.filter(x=>x&&x.status==='ACTIVE').map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('')}
+function fillSelects(){$('locInstitution').innerHTML=opts(M.institutions);$('schProgram').innerHTML=opts(M.programs);$('schLocation').innerHTML=opts(M.locations);$('repProgram').innerHTML=opts(M.programs,true);$('repInstitution').innerHTML=opts(M.institutions,true);$('repLocation').innerHTML=opts(M.locations,true);$('assignProgram').innerHTML=opts(M.programs);$('assignInstitution').innerHTML=opts(M.institutions);filterAssignLocations()}
+function statusBtn(type,x){const next=x.status==='ACTIVE'?'INACTIVE':'ACTIVE';return `<button class="small alt" onclick="toggleMaster('${type}','${x.id}','${next}')">${next==='ACTIVE'?'Aktifkan':'Nonaktifkan'}</button>`}
+function renderMasters(){let h='<b>Program</b><table><tr><th>Nama</th><th>Mulai</th><th>Selesai</th><th>Status</th><th>Aksi</th></tr>'+M.programs.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.start_date)}</td><td>${esc(x.end_date)}</td><td>${esc(x.status)}</td><td><button class="small alt" onclick="editProgram('${x.id}')">Edit</button> ${statusBtn('PROGRAM',x)}</td></tr>`).join('')+'</table><br><b>Instansi</b><table><tr><th>Nama</th><th>Alamat</th><th>Status</th><th>Aksi</th></tr>'+M.institutions.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.address)}</td><td>${esc(x.status)}</td><td><button class="small alt" onclick="editInstitution('${x.id}')">Edit</button> ${statusBtn('INSTITUTION',x)}</td></tr>`).join('')+'</table><br><b>Lokasi</b><table><tr><th>Nama</th><th>Instansi</th><th>Lat</th><th>Lng</th><th>Radius</th><th>Akurasi</th><th>Status</th><th>Aksi</th></tr>'+M.locations.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc((M.institutions.find(i=>i.id===x.institution_id)||{}).name||'-')}</td><td>${esc(x.lat)}</td><td>${esc(x.lng)}</td><td>${esc(x.radius_m)} m</td><td>${esc(x.max_accuracy_m)} m</td><td>${esc(x.status)}</td><td><button class="small alt" onclick="editLocation('${x.id}')">Edit</button> ${statusBtn('LOCATION',x)}</td></tr>`).join('')+'</table>';$('mastersOut').innerHTML=h}
+function clearProgram(){$('progId').value='';$('progName').value='';$('progStart').value='';$('progEnd').value=''}
+function clearInstitution(){$('insId').value='';$('insName').value='';$('insAddress').value=''}
+function clearLocation(){$('locId').value='';$('locName').value='';$('locLat').value='';$('locLng').value='';$('locRadius').value='100';$('locAccuracy').value='80'}
+function editProgram(id){const x=M.programs.find(v=>v.id===id);if(!x)return;$('progId').value=x.id;$('progName').value=x.name||'';$('progStart').value=x.start_date||'';$('progEnd').value=x.end_date||'';window.scrollTo({top:0,behavior:'smooth'})}
+function editInstitution(id){const x=M.institutions.find(v=>v.id===id);if(!x)return;$('insId').value=x.id;$('insName').value=x.name||'';$('insAddress').value=x.address||'';window.scrollTo({top:0,behavior:'smooth'})}
+function editLocation(id){const x=M.locations.find(v=>v.id===id);if(!x)return;$('locId').value=x.id;$('locInstitution').value=x.institution_id||'';$('locName').value=x.name||'';$('locLat').value=x.lat||'';$('locLng').value=x.lng||'';$('locRadius').value=x.radius_m||100;$('locAccuracy').value=x.max_accuracy_m||80;window.scrollTo({top:0,behavior:'smooth'})}
+async function saveProgram(){try{await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM',{id:$('progId').value||undefined,name:$('progName').value,start_date:$('progStart').value,end_date:$('progEnd').value,status:'ACTIVE'});clearProgram();note('Program disimpan.');await loadMasters()}catch(e){note(e.message,true)}}
+async function saveInstitution(){try{await gas('apiAdminUpsertMaster',TOKEN,'INSTITUTION',{id:$('insId').value||undefined,name:$('insName').value,address:$('insAddress').value,status:'ACTIVE'});clearInstitution();note('Instansi disimpan.');await loadMasters()}catch(e){note(e.message,true)}}
+async function saveLocation(){try{await gas('apiAdminUpsertMaster',TOKEN,'LOCATION',{id:$('locId').value||undefined,institution_id:$('locInstitution').value,name:$('locName').value,lat:$('locLat').value,lng:$('locLng').value,radius_m:$('locRadius').value,max_accuracy_m:$('locAccuracy').value,status:'ACTIVE'});clearLocation();note('Lokasi disimpan.');await loadMasters()}catch(e){note(e.message,true)}}
+async function toggleMaster(type,id,status){const rows=type==='PROGRAM'?M.programs:type==='INSTITUTION'?M.institutions:M.locations,x=rows.find(v=>v.id===id);if(!x)return;try{const payload={...x,status};delete payload._row;await gas('apiAdminUpsertMaster',TOKEN,type,payload);note('Status master diperbarui.');await loadMasters()}catch(e){note(e.message,true)}}
+function clearSchedule(){$('schId').value='';$('schDay').value='1';$('schEffective').value=(M&&M.serverDate)||'';$('aOpen').value='06:00';$('aLate').value='07:00';$('aClose').value='10:00';$('dOpen').value='15:00';$('dNormal').value='16:00';$('dClose').value='21:00';$('pDeadline').value='08:00'}
+function editSchedule(id){const x=M.schedules.find(v=>v.id===id);if(!x)return;$('schId').value=x.id;$('schProgram').value=x.program_id;$('schLocation').value=x.location_id;$('schDay').value=String(x.day_of_week);$('schEffective').value=x.effective_from||M.serverDate||'';$('aOpen').value=x.arrival_open;$('aLate').value=x.arrival_late_after;$('aClose').value=x.arrival_close;$('dOpen').value=x.departure_open;$('dNormal').value=x.departure_normal;$('dClose').value=x.departure_close;$('pDeadline').value=x.permission_deadline||'';window.scrollTo({top:0,behavior:'smooth'})}
+async function saveSchedule(){try{await gas('apiAdminUpsertSchedule',TOKEN,{id:$('schId').value||undefined,program_id:$('schProgram').value,location_id:$('schLocation').value,day_of_week:$('schDay').value,effective_from:$('schEffective').value,arrival_open:$('aOpen').value,arrival_late_after:$('aLate').value,arrival_close:$('aClose').value,departure_open:$('dOpen').value,departure_normal:$('dNormal').value,departure_close:$('dClose').value,permission_deadline:$('pDeadline').value,status:'ACTIVE'});clearSchedule();note('Jadwal disimpan.');await loadMasters()}catch(e){note(e.message,true)}}
+function renderSchedules(){const days=['','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'],pn=id=>(M.programs.find(x=>x.id===id)||{}).name||id,ln=id=>(M.locations.find(x=>x.id===id)||{}).name||id;let h='<table><thead><tr><th>Program</th><th>Lokasi</th><th>Hari</th><th>Datang</th><th>Terlambat</th><th>Pulang</th><th>Normal</th><th>Batas Izin</th><th>Berlaku</th><th>Status</th><th>Aksi</th></tr></thead><tbody>'+M.schedules.map(s=>`<tr><td>${esc(pn(s.program_id))}</td><td>${esc(ln(s.location_id))}</td><td>${days[Number(s.day_of_week)]}</td><td>${esc(s.arrival_open)}–${esc(s.arrival_close)}</td><td>&gt; ${esc(s.arrival_late_after)}</td><td>${esc(s.departure_open)}–${esc(s.departure_close)}</td><td>${esc(s.departure_normal)}</td><td>${esc(s.permission_deadline||'-')}</td><td>${esc(s.effective_from||'-')} s.d. ${esc(s.effective_to||'seterusnya')}</td><td>${esc(s.status)}</td><td><button class="small alt" onclick="editSchedule('${s.id}')">Koreksi</button></td></tr>`).join('')+'</tbody></table>';$('scheduleOut').innerHTML=h}
+function fillAssignmentUsers(){if(!$('assignUser'))return;$('assignUser').innerHTML=USERS.filter(u=>u.status==='APPROVED'||u.status==='PENDING').map(u=>`<option value="${esc(u.id)}">${esc(u.name)} • ${esc(u.identifier||u.email)}</option>`).join('');if($('assignUser').value)selectAssignment($('assignUser').value,false)}
+function filterAssignLocations(){if(!M)return;const iid=$('assignInstitution').value,cur=$('assignLocation').value;const rows=M.locations.filter(x=>x.status==='ACTIVE'&&x.institution_id===iid);$('assignLocation').innerHTML=opts(rows);if(rows.some(x=>x.id===cur))$('assignLocation').value=cur}
+function selectAssignment(id,scroll=true){const u=USERS.find(x=>x.id===id);if(!u||!M)return;$('assignUser').value=u.id;$('assignProgram').value=u.program_id||'';$('assignInstitution').value=u.institution_id||'';filterAssignLocations();$('assignLocation').value=u.location_id||'';$('assignEffective').value=M.serverDate||'';if(scroll)$('users').scrollIntoView({behavior:'smooth',block:'start'})}
+async function saveAssignment(){try{const uid=$('assignUser').value;if(!uid)throw new Error('Pilih peserta.');const effective=$('assignEffective').value;if(!effective)throw new Error('Tanggal mulai penempatan wajib diisi.');await gas('apiAdminUpdateUserAssignment',TOKEN,uid,{program_id:$('assignProgram').value,institution_id:$('assignInstitution').value,location_id:$('assignLocation').value,effective_from:effective});note('Penempatan peserta diperbarui mulai '+effective+'. Riwayat lama tetap tersimpan.');await loadUsers()}catch(e){note(e.message,true)}}
+function renderUserRefreshNoFetch(){if(!$('usersOut')||!USERS.length)return;/* nama penempatan akan diperbarui saat tabel diambil kembali */}
+async function loadPermits(){
+  try{
+    const r=await gas('apiAdminPermissions',TOKEN,{
+      from:$('permitFrom').value,to:$('permitToAdmin').value,status:$('permitStatus').value
+    });
+    let h='<table><thead><tr><th>Periode</th><th>Nama</th><th>Jenis</th><th>Keterangan</th><th>Bukti</th><th>Status</th><th>Aksi/Koreksi</th></tr></thead><tbody>';
+    r.items.forEach(p=>{
+      const range=p.date_to&&p.date_to!==p.date?`${esc(p.date)}<br><span class="muted">s.d. ${esc(p.date_to)} • ${Number(p.day_count)||1} hari</span>`:esc(p.date);
+      const sc=p.status==='APPROVED'?'statusApproved':(p.status==='REJECTED'?'statusRejected':'statusPending');
+      let actions='';
+      if(p.status==='PENDING'){
+        actions=`<button class="small" onclick="decide('${p.id}','APPROVED')">Setujui</button> <button class="small bad" onclick="decide('${p.id}','REJECTED')">Tolak</button>`;
+      }else if(p.status==='APPROVED'){
+        actions=`<button class="small bad" onclick="decide('${p.id}','REJECTED',true)">Koreksi → Tolak</button> <button class="small alt" onclick="decide('${p.id}','PENDING',true)">Reset → Menunggu</button>`;
+      }else if(p.status==='REJECTED'){
+        actions=`<button class="small" onclick="decide('${p.id}','APPROVED',true)">Koreksi → Setujui</button> <button class="small alt" onclick="decide('${p.id}','PENDING',true)">Reset → Menunggu</button>`;
+      }
+      h+=`<tr><td>${range}</td><td><b>${esc(p.user_name)}</b></td><td><span class="pill">${esc(p.type)}</span></td><td>${esc(p.note)}</td><td>${p.attachment_url?`<a href="${esc(p.attachment_url)}" target="_blank">Buka lampiran</a>`:'-'}</td><td><span class="pill ${sc}">${esc(p.status)}</span></td><td>${actions}</td></tr>`;
+    });
+    h+='</tbody></table>';
+    if(!r.items.length)h='<div class="msg">Tidak ada data perizinan pada filter tersebut.</div>';
+    $('permitOut').innerHTML=h;
+  }catch(e){note(e.message,true)}
+}
+async function decide(id,d,correction=false){
+  if(correction && !confirm('Koreksi status perizinan ini? Perubahan akan berlaku untuk seluruh rentang tanggal pengajuan.'))return;
+  try{
+    await gas('apiAdminDecidePermission',TOKEN,id,d);
+    note(d==='PENDING'?'Status dikembalikan ke Menunggu.':'Status perizinan berhasil dikoreksi.');
+    await Promise.all([loadPermits(),loadDash()]);
+  }catch(e){note(e.message,true)}
+}
+function setDates(){
+  const now=new Date(),first=new Date(now.getFullYear(),now.getMonth(),1),last=new Date(now.getFullYear(),now.getMonth()+1,0);
+  const iso=x=>{const y=x.getFullYear(),m=String(x.getMonth()+1).padStart(2,'0'),d=String(x.getDate()).padStart(2,'0');return `${y}-${m}-${d}`};
+  $('repFrom').value=iso(first);$('repTo').value=iso(now);
+  if($('permitFrom'))$('permitFrom').value=iso(first);
+  if($('permitToAdmin'))$('permitToAdmin').value=iso(last);
+}
+async function loadReport(){if(!TOKEN)return;try{const r=await gas('apiAdminReport',TOKEN,{from:$('repFrom').value,to:$('repTo').value,programId:$('repProgram').value,institutionId:$('repInstitution').value,locationId:$('repLocation').value});$('reportTitle').textContent=`Laporan Absensi ${r.from} s.d. ${r.to}`;let h='<h4>Rekap Peserta</h4><table><thead><tr><th>Nama</th><th>ID</th><th>Instansi</th><th>Terjadwal</th><th>Hadir</th><th>Terlambat</th><th>Pulang Cepat</th><th>Tidak Lengkap</th><th>Izin</th><th>Sakit</th><th>Dinas</th><th>Izin + Absen</th><th>Tidak Hadir</th></tr></thead><tbody>';r.summary.forEach(x=>h+=`<tr><td><b>${esc(x.user_name)}</b></td><td>${esc(x.identifier||'-')}</td><td>${esc(x.institution_name)}</td><td>${x.scheduled}</td><td>${x.present}</td><td>${x.late}</td><td>${x.early_leave}</td><td>${x.incomplete}</td><td>${x.izin}</td><td>${x.sakit}</td><td>${x.dinas}</td><td>${x.permission_conflict||0}</td><td>${x.absent}</td></tr>`);h+='</tbody></table><h4 style="margin-top:22px">Detail Harian</h4><table><thead><tr><th>Tanggal</th><th>Nama</th><th>Lokasi</th><th>Status</th><th>Datang</th><th>Status Datang</th><th>Jarak</th><th>Pulang</th><th>Status Pulang</th><th>Catatan Izin</th><th>Risiko</th></tr></thead><tbody>';r.details.forEach(a=>h+=`<tr><td>${esc(a.date)}</td><td>${esc(a.user_name)}</td><td>${esc(a.location_name)}</td><td>${esc(a.status)}</td><td>${esc(a.arrival_time||'-')}</td><td>${esc(a.arrival_status||'-')}</td><td>${a.arrival_distance!==''?Math.round(Number(a.arrival_distance))+' m':'-'}</td><td>${esc(a.departure_time||'-')}</td><td>${esc(a.departure_status||'-')}</td><td>${a.permission_conflict?`<span class="pill statusPending">Ada ${esc(a.permission_type)} disetujui • dihitung HADIR</span>`:(a.permission_type?esc(a.permission_type):'-')}</td><td>${esc(a.arrival_risk||a.departure_risk||'-')}</td></tr>`);h+='</tbody></table>';if(!r.summary.length)h='<p class="muted">Tidak ada peserta sesuai filter.</p>';$('reportOut').innerHTML=h}catch(e){note(e.message,true)}}
+function renderSettings(){const allowed=['SYSTEM_NAME','CAMERA_HELPER_URL','FACE_MATCH_THRESHOLD','FACE_DUPLICATE_THRESHOLD','GLOBAL_MAX_ACCURACY_M','LOCATION_ACCURACY_BUFFER_M','MAX_PLAUSIBLE_SPEED_KMH','ALLOW_WEB_IOS','ALLOW_RETROACTIVE_PERMISSION','REQUIRE_PLAY_INTEGRITY','REGISTRATION_CODE'];$('settingsOut').innerHTML=M.settings.filter(s=>allowed.includes(s.key)).map(s=>`<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="field"><label>${esc(s.key)}</label><input ${s.key==='REGISTRATION_CODE'?'type="password"':''} id="set_${esc(s.key)}" value="${esc(s.value)}"><span class="muted">${esc(s.description||'')}</span></div><button onclick="saveSetting('${esc(s.key)}')">Simpan</button></div>`).join('')}
+async function saveSetting(k){try{await gas('apiAdminSaveSetting',TOKEN,k,$('set_'+k).value);note('Pengaturan disimpan.');await loadMasters();if(k==='SYSTEM_NAME')await loadAppIdentity();}catch(e){note(e.message,true)}}
+loadAppIdentity();if(TOKEN)start();
+</script></body></html>
