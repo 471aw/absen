@@ -43,8 +43,8 @@
   </div>
 </div><div class="wrap">
 <div id="msg" class="msg hidden"></div>
-<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Administrator</h2><p class="muted">Masuk dengan username dan password admin.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.2.4</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="/" target="_top" style="display:block;text-align:center;margin-top:14px">Kembali ke peserta</a></div>
-<div id="adminView" class="hidden"><div class="top"><div><div class="brand"><span id="adminSystemName">Absensi</span> • Admin <span id="adminVersion" class="versionBadge headerVersion">v1.2.4</span></div><div class="muted" id="adminName"></div></div><button class="alt no-print" onclick="logout()">Keluar</button></div>
+<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Administrator</h2><p class="muted">Masuk dengan username dan password admin.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.3.0</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="/" target="_top" style="display:block;text-align:center;margin-top:14px">Kembali ke peserta</a></div>
+<div id="adminView" class="hidden"><div class="top"><div><div class="brand"><span id="adminSystemName">Absensi</span> • Admin <span id="adminVersion" class="versionBadge headerVersion">v1.3.0</span></div><div class="muted" id="adminName"></div></div><button class="alt no-print" onclick="logout()">Keluar</button></div>
 <div class="nav no-print"><button class="active" onclick="tab('dash',this)">Dashboard</button><button onclick="tab('users',this)">Peserta</button><button onclick="tab('masters',this)">Master</button><button onclick="tab('schedule',this)">Jadwal</button><button onclick="tab('permits',this)">Perizinan</button><button onclick="tab('report',this)">Laporan</button><button onclick="tab('settings',this)">Pengaturan</button></div>
 <section id="dash" class="page">
 <div id="kpis" class="grid"></div>
@@ -127,14 +127,19 @@ function gas(name,...args){
     .then(v=>{if(!silent)adminProcessEnd(true);return v})
     .catch(e=>{if(!silent)adminProcessEnd(false);throw e});
 }
+function esc(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
 function note(t,e=false){$('msg').textContent=t;$('msg').className='msg'+(e?' err':'');$('msg').classList.remove('hidden');setTimeout(()=>$('msg').classList.add('hidden'),5000)}
-async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;document.title=name+' • Admin';if($('loginVersion'))$('loginVersion').textContent='Versi v1.2.4';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
+async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;document.title=name+' • Admin';if($('loginVersion'))$('loginVersion').textContent='Versi v1.3.0';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
 async function login(){try{const r=await gas('apiAdminLogin',$('username').value,$('password').value);TOKEN=r.token;ADMIN_NAME=r.name;sessionStorage.setItem('af_admin_token',TOKEN);sessionStorage.setItem('af_admin_name',ADMIN_NAME);await start();}catch(e){note(e.message,true)}}function logout(){sessionStorage.clear();location.reload()}
 async function start(){if(!TOKEN)return;$('loginView').classList.add('hidden');$('adminView').classList.remove('hidden');$('adminName').textContent=ADMIN_NAME;try{await loadMasters();await Promise.all([loadDash(),loadUsers()]);setDates();}catch(e){if(/Sesi|akses|Admin/i.test(e.message)){logout();return}note(e.message,true)}}
 function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');if(id==='permits')loadPermits();if(id==='report')loadReport()}
 async function loadDash(){
   const r=await gas('apiAdminDashboard',TOKEN);
-  const ver=String(r.version||'1.2.4');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;
+  const ver=String(r.version||'1.3.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;
   $('kpis').innerHTML=[
     ['Peserta aktif',r.totalUsers],['Terjadwal hari ini',r.scheduledToday],
     ['Hadir hari ini',r.arrived],['Terlambat',r.late],
