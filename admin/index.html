@@ -64,6 +64,76 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 @media(max-width:520px){.grid{grid-template-columns:1fr}.topLogout{padding:8px!important}.pageHero{min-height:72px}.pageHeroIcon{width:42px;height:42px}.pageHeroText h1{font-size:18px}}
 @media print{.top,.sidebar,.pageHero,.no-print{display:none!important}.contentArea{padding:0}.appShell{display:block}.card,.dashPanel{border:0!important;box-shadow:none!important}}
 
+
+/* UI PATCH - sticky top header + hide/show sidebar. Frontend only. */
+.contentArea .top{
+  position:sticky!important;
+  top:0!important;
+  z-index:900!important;
+}
+.appShell{
+  transition:grid-template-columns .22s ease;
+}
+.appShell.sidebarCollapsed{
+  grid-template-columns:0 minmax(0,1fr)!important;
+}
+.appShell.sidebarCollapsed .sidebar{
+  transform:translateX(-110%)!important;
+  opacity:0;
+  pointer-events:none;
+}
+.sidebar{
+  transition:transform .22s ease,opacity .18s ease;
+}
+.sidebarHead{
+  position:relative;
+  padding-right:42px!important;
+}
+.sidebarHideBtn{
+  position:absolute;
+  right:8px;
+  top:20px;
+  width:30px;
+  height:30px;
+  padding:0!important;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.20)!important;
+  border-radius:7px!important;
+  background:rgba(255,255,255,.10)!important;
+  color:#fff!important;
+  font-size:16px!important;
+  line-height:1!important;
+  cursor:pointer;
+}
+.sidebarHideBtn:hover{
+  background:rgba(255,255,255,.18)!important;
+}
+.mobileMenu{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  min-width:34px;
+  height:34px;
+  border:1px solid rgba(255,255,255,.20)!important;
+  border-radius:7px!important;
+  background:rgba(255,255,255,.10)!important;
+}
+@media(max-width:900px){
+  .appShell.sidebarCollapsed{display:block!important}
+  .appShell.sidebarCollapsed .sidebar{
+    opacity:1;
+    pointer-events:auto;
+    transform:translateX(-100%)!important;
+  }
+  .appShell.sidebarCollapsed .sidebar.open{
+    transform:translateX(0)!important;
+  }
+  .contentArea .top{
+    top:0!important;
+  }
+}
+
 </style></head><body>
 <div id="adminProcess" class="adminProcess hidden" aria-live="polite" aria-busy="false">
   <div class="adminProcessCard">
@@ -78,6 +148,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   <div class="sidebarHead">
     <div class="sideLogo">✓</div>
     <div><div id="sideSystemName" class="sideBrand">Absen Murid PKL</div><div id="sideSchoolName" class="sideSub">Sekolah</div><div id="sideVersion" class="sideVersion">v1.5.0</div></div>
+    <button class="sidebarHideBtn" type="button" onclick="hideSidebar()" title="Sembunyikan menu" aria-label="Sembunyikan menu">«</button>
   </div>
   <div class="sideSectionLabel">MENU UTAMA</div>
   <div class="nav">
@@ -96,7 +167,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 </aside>
 <main class="contentArea">
 <div class="top no-print">
-  <div class="topLeft"><button class="mobileMenu" onclick="toggleSidebar()">☰</button><div><div class="topAppName"><span id="adminSystemName">Absen Murid PKL</span></div><div class="topAppSub"><span class="schoolNameText">Sekolah</span> • Sistem Absensi PKL</div></div></div>
+  <div class="topLeft"><button class="mobileMenu" onclick="toggleSidebar()" title="Tampilkan / sembunyikan menu" aria-label="Tampilkan atau sembunyikan menu">☰</button><div><div class="topAppName"><span id="adminSystemName">Absen Murid PKL</span></div><div class="topAppSub"><span class="schoolNameText">Sekolah</span> • Sistem Absensi PKL</div></div></div>
   <div class="topRight">
     <div class="topClock"><span id="topDate">-</span><b id="topTime">--:--:--</b></div>
     <div class="userAvatar" id="topAvatar">AD</div>
@@ -244,7 +315,45 @@ function logout(){
   location.reload();
 }
 function applyRoleUi(){const canWrite=ADMIN_ROLE==='ADMIN';document.querySelectorAll('.adminOnly').forEach(x=>x.classList.toggle('hidden',!canWrite));document.querySelectorAll('.writeOnly').forEach(x=>x.classList.toggle('hidden',!canWrite));if($('sideAdminRole'))$('sideAdminRole').textContent=ADMIN_ROLE||'ADMIN';if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Administrator';const schoolName=ADMIN_SCHOOL&&ADMIN_SCHOOL.name?ADMIN_SCHOOL.name:'Sekolah';document.querySelectorAll('.schoolNameText').forEach(x=>x.textContent=schoolName);if($('sideSchoolName'))$('sideSchoolName').textContent=schoolName;}
-function toggleSidebar(force){const el=$('sidebar');if(!el)return;if(force===false)el.classList.remove('open');else el.classList.toggle('open');}
+function sidebarShell(){return document.querySelector('.appShell')}
+function sidebarIsMobile(){return window.innerWidth<=900}
+function hideSidebar(){
+  const el=$('sidebar'),shell=sidebarShell();if(!el||!shell)return;
+  if(sidebarIsMobile()){el.classList.remove('open');return}
+  shell.classList.add('sidebarCollapsed');
+  try{localStorage.setItem('af_sidebar_hidden','1')}catch(e){}
+}
+function showSidebar(){
+  const el=$('sidebar'),shell=sidebarShell();if(!el||!shell)return;
+  if(sidebarIsMobile()){el.classList.add('open');return}
+  shell.classList.remove('sidebarCollapsed');
+  try{localStorage.setItem('af_sidebar_hidden','0')}catch(e){}
+}
+function toggleSidebar(force){
+  const el=$('sidebar'),shell=sidebarShell();if(!el||!shell)return;
+  if(sidebarIsMobile()){
+    if(force===false)el.classList.remove('open');
+    else if(force===true)el.classList.add('open');
+    else el.classList.toggle('open');
+    return;
+  }
+  if(force===false){hideSidebar();return}
+  if(force===true){showSidebar();return}
+  if(shell.classList.contains('sidebarCollapsed'))showSidebar();else hideSidebar();
+}
+function restoreSidebarState(){
+  const el=$('sidebar'),shell=sidebarShell();if(!el||!shell)return;
+  if(sidebarIsMobile()){
+    shell.classList.remove('sidebarCollapsed');
+    el.classList.remove('open');
+    return;
+  }
+  let hidden=false;
+  try{hidden=localStorage.getItem('af_sidebar_hidden')==='1'}catch(e){}
+  shell.classList.toggle('sidebarCollapsed',hidden);
+}
+window.addEventListener('resize',restoreSidebarState);
+document.addEventListener('DOMContentLoaded',restoreSidebarState);
 async function start(){
   if(!TOKEN)return;
   try{
