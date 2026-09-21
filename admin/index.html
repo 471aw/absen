@@ -53,6 +53,17 @@
 @media(max-width:600px){.reportPeopleList{grid-template-columns:1fr}.contentArea .top{border-radius:16px}.top .brand{font-size:18px}}
 @media print{.sidebar,.mobileMenu,.reportPeopleBox,.superOnly{display:none!important}.appShell{display:block}.contentArea{width:100%}}
 
+
+
+/* v1.4.2 UI ONLY - gaya Cash Pickup Control. Tidak mengubah database/data lama. */
+:root{--cp-navy:#06355f;--cp-navy2:#084a80;--cp-blue:#087ddd;--cp-cyan:#19c4ff;--cp-soft:#eef6fd;--cp-border:#cfe0ef;--cp-ink:#0a2e55;--cp-muted:#56708c;--cp-shadow:0 5px 18px rgba(25,72,111,.08)}
+html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Arial,"Segoe UI",sans-serif}.wrap{max-width:none;margin:0;padding:0}.appShell{display:grid;grid-template-columns:255px minmax(0,1fr);gap:0;min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;border-radius:0;padding:0 12px 16px;background:linear-gradient(180deg,#073a68 0%,#062f56 60%,#062b4e 100%);box-shadow:5px 0 18px rgba(4,42,76,.14);overflow:auto}.sidebarHead{min-height:75px;padding:13px 10px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:11px;margin-bottom:8px}.sideLogo{width:44px;height:44px;border-radius:8px;background:linear-gradient(145deg,#1cc7ff,#0787db);display:grid;place-items:center;font-size:24px;font-weight:900;color:#fff;box-shadow:0 5px 14px rgba(0,153,255,.25)}.sideBrand{font-size:17px;font-weight:800;color:#fff;white-space:nowrap}.sideSub{font-size:11px;color:#b9d5ea;margin-top:2px}.sideVersion{display:inline-block;margin:5px 0 0;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);font-size:10px;color:#fff}.sideSectionLabel{font-size:10px;font-weight:800;letter-spacing:1.3px;color:#77a9ce;padding:14px 13px 7px}.sideGap{margin-top:4px}.sidebar .nav{position:static!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;display:flex!important;flex-direction:column!important;gap:4px!important}.sidebar .nav button{position:relative;width:100%;min-height:43px;border-radius:8px!important;padding:9px 12px!important;text-align:left;background:transparent!important;color:#dceaf6!important;border:1px solid transparent!important;display:flex!important;align-items:center;gap:11px;font-weight:650}.sidebar .nav button .mi{width:25px;display:inline-grid;place-items:center;font-size:18px}.sidebar .nav button:hover{background:rgba(16,122,199,.22)!important}.sidebar .nav button.active{background:linear-gradient(90deg,#0b79c4,#0a5b99)!important;color:#fff!important;border-color:#188dcc!important;box-shadow:inset 3px 0 0 #20d0ff,0 5px 12px rgba(0,0,0,.12)!important}.sidebarStatus{margin-top:auto;border-top:1px solid rgba(255,255,255,.10);padding:15px 13px 2px;color:#b9d5ea;font-size:11px;display:flex;align-items:center;gap:8px}.statusDot{width:9px;height:9px;border-radius:50%;background:#26db87;box-shadow:0 0 0 4px rgba(38,219,135,.08)}
+.contentArea{min-width:0;background:linear-gradient(180deg,#f1f7fc,#eaf3fb);padding:0 16px 18px}.top{height:75px;margin:0 -16px 12px!important;border-radius:0!important;padding:0 22px!important;background:linear-gradient(125deg,#074684 0%,#0a6fb3 55%,#084c8b 100%)!important;box-shadow:0 4px 14px rgba(14,71,118,.18)!important;display:flex;align-items:center;justify-content:space-between;color:#fff}.topLeft,.topRight{display:flex;align-items:center}.topLeft{gap:12px}.topAppName{font-size:18px;font-weight:800}.topAppSub{font-size:11px;color:#c9dff0;margin-top:2px}.topRight{gap:13px}.topClock{padding-right:13px;border-right:1px solid rgba(255,255,255,.20);text-align:right;font-size:10px;color:#d6e7f4;line-height:1.25}.topClock b{display:block;color:#fff;font-size:12px;margin-top:2px}.userAvatar{width:39px;height:39px;border-radius:50%;display:grid;place-items:center;border:1px solid #3aa7ef;background:#0a5f9f;color:#fff;font-weight:800}.topUser{display:flex;flex-direction:column;min-width:140px}.topUser b{font-size:12px;color:#fff}.topUser span{font-size:10px;color:#c7e0f2;margin-top:2px}.topLogout{background:transparent!important;color:#fff!important;border:1px solid rgba(255,255,255,.24)!important;border-radius:7px!important;padding:9px 12px!important;font-size:11px}.mobileMenu{display:none;background:transparent!important;border:0!important;color:#fff!important;font-size:21px;padding:6px!important}.pageHero{min-height:88px;background:rgba(255,255,255,.92);border:1px solid var(--cp-border);border-radius:10px;box-shadow:var(--cp-shadow);display:flex;align-items:center;gap:13px;padding:14px 17px;margin:0 0 12px}.pageHeroIcon{width:50px;height:50px;border-radius:10px;background:linear-gradient(145deg,#e5f2ff,#d3e9ff);display:grid;place-items:center;color:#0787db;font-size:25px}.pageHeroText{flex:1}.pageHeroText h1{font-size:22px;margin:0;color:#0c3768}.pageHeroText p{margin:3px 0 0;color:#607c98;font-size:12px}.pageBread{font-size:11px;color:#68829a;white-space:nowrap}.card,.dashPanel{background:rgba(255,255,255,.96)!important;border:1px solid var(--cp-border)!important;border-radius:10px!important;box-shadow:var(--cp-shadow)!important;padding:14px!important;margin:11px 0!important}.card h3,.dashPanel h3{color:#0a3768;font-size:17px}.grid{gap:10px;margin-top:10px}.kpi{border:1px solid #d8e6f2!important;border-radius:9px!important;box-shadow:0 3px 12px rgba(34,84,124,.05)!important;padding:13px 13px 13px 16px!important}.kpi:before{width:3px}.kpi span{font-size:11px}.kpi b{font-size:26px;color:#082d56}.dashboardVisual{grid-template-columns:310px 1fr;gap:10px;margin-top:10px}.dashPanel{margin:0!important}.row{gap:9px}.field label{font-size:11px;color:#193f67}.field input,.field select,.field textarea,input,select,textarea{border:1px solid #bfd3e5!important;border-radius:7px!important;box-shadow:inset 0 1px 2px rgba(15,64,104,.03);padding:9px 10px!important}button{border-radius:7px!important;background:linear-gradient(180deg,#0c83d7,#066cb8)!important;box-shadow:0 3px 8px rgba(6,108,184,.16);font-size:12px}button.alt{background:#edf3f8!important;color:#174a75!important;border:1px solid #d7e3ed!important;box-shadow:none}.bad,button.bad{background:linear-gradient(180deg,#e34949,#c92d2d)!important;color:#fff!important}.scroll{border:1px solid #d9e6f0;border-radius:8px!important;max-height:560px;background:#fff}table{font-size:11px}th{background:#dfeefa!important;color:#16436d!important;font-weight:800;padding:9px!important}td{padding:9px!important}.pill{border-radius:5px;padding:3px 6px}.permitFilters{gap:8px}.reportPeopleBox{border:1px solid #cfe0ef!important;background:#f3f9fe!important;border-radius:8px!important}.reportPeopleList{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.reportPerson{border-radius:6px!important;border-color:#d6e4ef!important}.superGrid{gap:10px}.adminProcessCard{border-radius:8px!important}.login{margin:70px auto!important;max-width:420px;border-radius:10px!important}.login .brand{color:#0b3768}.msg{border-radius:7px}.faceThumb,.faceFallback{border-radius:8px}.donut{width:170px;height:170px}.donut:after{inset:27px}.dangerNote{border-radius:7px}
+@media(max-width:1100px){.reportPeopleList{grid-template-columns:repeat(2,minmax(0,1fr))}.topUser{min-width:110px}}
+@media(max-width:900px){.appShell{display:block}.sidebar{position:fixed;left:0;top:0;bottom:0;width:255px;height:100vh;z-index:1000;transform:translateX(-100%);transition:transform .22s ease}.sidebar.open{transform:translateX(0)}.contentArea{padding:0 10px 14px}.top{margin:0 -10px 10px!important;padding:0 12px!important}.mobileMenu{display:inline-flex!important}.topClock{display:none}.topUser{display:none}.pageBread{display:none}.dashboardVisual{grid-template-columns:1fr}.reportPeopleList{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.grid{grid-template-columns:1fr}.topLogout{padding:8px!important}.pageHero{min-height:72px}.pageHeroIcon{width:42px;height:42px}.pageHeroText h1{font-size:18px}}
+@media print{.top,.sidebar,.pageHero,.no-print{display:none!important}.contentArea{padding:0}.appShell{display:block}.card,.dashPanel{border:0!important;box-shadow:none!important}}
+
 </style></head><body>
 <div id="adminProcess" class="adminProcess hidden" aria-live="polite" aria-busy="false">
   <div class="adminProcessCard">
@@ -61,15 +72,45 @@
   </div>
 </div><div class="wrap">
 <div id="msg" class="msg hidden"></div>
-<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Administrator</h2><p class="muted">Masuk dengan username dan password admin.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.4.1</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="<?= webAppUrl ?>" target="_top" style="display:block;text-align:center;margin-top:14px">Kembali ke peserta</a></div>
+<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Administrator</h2><p class="muted">Masuk dengan username dan password admin.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.4.1</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="/" target="_top" style="display:block;text-align:center;margin-top:14px">Kembali ke peserta</a></div>
 <div id="adminView" class="hidden"><div class="appShell">
 <aside id="sidebar" class="sidebar no-print">
-  <div class="sidebarHead"><div id="sideSystemName" class="sideBrand">Absensi</div><div id="sideVersion" class="sideVersion">v1.4.1</div></div>
-  <div class="nav"><button class="active" onclick="tab('dash',this)">▣ <span>Dashboard</span></button><button onclick="tab('users',this)">👤 <span>Peserta</span></button><button onclick="tab('masters',this)">▤ <span>Master</span></button><button onclick="tab('schedule',this)">◷ <span>Jadwal</span></button><button onclick="tab('permits',this)">✓ <span>Perizinan</span></button><button onclick="tab('report',this)">▦ <span>Laporan</span></button><button onclick="tab('settings',this)">⚙ <span>Pengaturan</span></button><button id="superAdminNav" class="superOnly hidden" onclick="tab('superadmin',this)">★ <span>Super Admin</span></button></div>
-  <div class="sidebarFooter"><div id="sideAdminName" class="sidebarUser">Administrator</div><div id="sideAdminRole" class="sidebarRole">ADMIN</div><button class="logoutBtn" onclick="logout()">Keluar</button></div>
+  <div class="sidebarHead">
+    <div class="sideLogo">✓</div>
+    <div><div id="sideSystemName" class="sideBrand">Absen Murid PKL</div><div class="sideSub">Sistem Absensi PKL</div><div id="sideVersion" class="sideVersion">v1.4.1</div></div>
+  </div>
+  <div class="sideSectionLabel">MENU UTAMA</div>
+  <div class="nav">
+    <button class="active" onclick="tab('dash',this)"><span class="mi">⌂</span><span>Dashboard</span></button>
+    <button onclick="tab('users',this)"><span class="mi">👤</span><span>Peserta</span></button>
+    <button onclick="tab('masters',this)"><span class="mi">▦</span><span>Master</span></button>
+    <button onclick="tab('schedule',this)"><span class="mi">◷</span><span>Jadwal</span></button>
+    <button onclick="tab('permits',this)"><span class="mi">✓</span><span>Perizinan</span></button>
+    <button onclick="tab('report',this)"><span class="mi">▥</span><span>Laporan</span></button>
+  </div>
+  <div class="sideSectionLabel sideGap">ADMINISTRASI</div>
+  <div class="nav">
+    <button onclick="tab('settings',this)"><span class="mi">⚙</span><span>Pengaturan</span></button>
+    <button id="superAdminNav" class="superOnly hidden" onclick="tab('superadmin',this)"><span class="mi">★</span><span>Super Admin</span></button>
+  </div>
+  <div class="sidebarStatus"><span class="statusDot"></span><span>Sistem Aktif</span></div>
 </aside>
 <main class="contentArea">
-<div class="top"><div><div class="brand"><span id="adminSystemName">Absensi</span> • Admin <span id="adminVersion" class="versionBadge headerVersion">v1.4.1</span></div><div class="muted" id="adminName"></div></div><button class="mobileMenu no-print" onclick="toggleSidebar()">☰ Menu</button></div>
+<div class="top no-print">
+  <div class="topLeft"><button class="mobileMenu" onclick="toggleSidebar()">☰</button><div><div class="topAppName"><span id="adminSystemName">Absen Murid PKL</span></div><div class="topAppSub">Sistem Absensi PKL</div></div></div>
+  <div class="topRight">
+    <div class="topClock"><span id="topDate">-</span><b id="topTime">--:--:--</b></div>
+    <div class="userAvatar" id="topAvatar">AD</div>
+    <div class="topUser"><b id="sideAdminName">Administrator</b><span id="sideAdminRole">ADMIN</span></div>
+    <button class="topLogout" onclick="logout()">↪ KELUAR</button>
+  </div>
+</div>
+<div class="pageHero">
+  <div id="pageHeroIcon" class="pageHeroIcon">⌂</div>
+  <div class="pageHeroText"><h1 id="pageHeroTitle">Dashboard</h1><p id="pageHeroSub">Ringkasan operasional absensi peserta PKL.</p></div>
+  <div id="pageBread" class="pageBread">Dashboard</div>
+  <span id="adminName" class="hidden"></span>
+</div>
 <section id="dash" class="page">
 <div id="kpis" class="grid"></div>
 <div class="dashboardVisual">
@@ -108,7 +149,7 @@
 </main></div></div></div>
 <script src="/api-client.js"></script>
 <script>
-let TOKEN=sessionStorage.getItem('af_admin_token')||'', ADMIN_NAME=sessionStorage.getItem('af_admin_name')||'', ADMIN_ROLE=sessionStorage.getItem('af_admin_role')||'', M=null, USERS=[], APP_CONFIG=null, SUPER_DATA=null, REPORT_SELECTION_INIT=false;
+let TOKEN=sessionStorage.getItem('af_admin_token')||'', ADMIN_NAME=sessionStorage.getItem('af_admin_name')||'', ADMIN_ROLE=sessionStorage.getItem('af_admin_role')||'', M=null, USERS=[], REPORT_USERS=[], APP_CONFIG=null, SUPER_DATA=null, REPORT_SELECTION_INIT=false;
 const $=id=>document.getElementById(id);let ADMIN_BUSY_COUNT=0,ADMIN_DONE_TIMER=null;
 function adminProcessLabel(name){
   const labels={
@@ -177,11 +218,22 @@ async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');con
 async function login(){try{const r=await gas('apiAdminLogin',$('username').value,$('password').value);TOKEN=r.token;ADMIN_NAME=r.name;ADMIN_ROLE=r.role||'ADMIN';sessionStorage.setItem('af_admin_token',TOKEN);sessionStorage.setItem('af_admin_name',ADMIN_NAME);sessionStorage.setItem('af_admin_role',ADMIN_ROLE);await start();}catch(e){note(e.message,true)}}function logout(){sessionStorage.clear();location.reload()}
 function applyRoleUi(){const isSuper=ADMIN_ROLE==='SUPER_ADMIN';document.querySelectorAll('.superOnly').forEach(x=>x.classList.toggle('hidden',!isSuper));if($('sideAdminRole'))$('sideAdminRole').textContent=ADMIN_ROLE||'ADMIN';if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Administrator';}
 function toggleSidebar(force){const el=$('sidebar');if(!el)return;if(force===false)el.classList.remove('open');else el.classList.toggle('open');}
-async function start(){if(!TOKEN)return;$('loginView').classList.add('hidden');$('adminView').classList.remove('hidden');try{const me=await gas('apiAdminMe',TOKEN);ADMIN_NAME=me.name||ADMIN_NAME;ADMIN_ROLE=me.role||'ADMIN';sessionStorage.setItem('af_admin_name',ADMIN_NAME);sessionStorage.setItem('af_admin_role',ADMIN_ROLE);$('adminName').textContent=ADMIN_NAME;if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME;applyRoleUi();await loadMasters();await Promise.all([loadDash(),loadUsers()]);setDates();}catch(e){if(/Sesi|akses|Admin/i.test(e.message)){logout();return}note(e.message,true)}}
-function tab(id,b){if(id==='superadmin'&&ADMIN_ROLE!=='SUPER_ADMIN'){note('Menu ini hanya untuk Super Admin.',true);return;}document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');if(id==='permits')loadPermits();if(id==='report')loadReport();if(id==='superadmin')loadSuperAdmin();if(window.innerWidth<=980)toggleSidebar(false)}
+async function start(){if(!TOKEN)return;$('loginView').classList.add('hidden');$('adminView').classList.remove('hidden');try{ADMIN_NAME=ADMIN_NAME||'Administrator';ADMIN_ROLE=ADMIN_ROLE||'ADMIN';$('adminName').textContent=ADMIN_NAME;if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME;applyRoleUi();await loadMasters();await Promise.all([loadDash(),loadUsers()]);setDates();startHeaderClock();}catch(e){if(/Sesi|akses|Admin/i.test(e.message)){logout();return}note(e.message,true)}}
+function pageMeta(id){return({
+  dash:['⌂','Dashboard','Ringkasan operasional absensi peserta PKL.'],
+  users:['👤','Peserta','Kelola peserta, penempatan, Face ID, dan akses absensi.'],
+  masters:['▦','Master Data','Kelola program, instansi, dan lokasi absensi.'],
+  schedule:['◷','Jadwal','Atur jadwal datang, pulang, dan batas perizinan.'],
+  permits:['✓','Perizinan','Tinjau dan koreksi pengajuan izin peserta.'],
+  report:['▥','Laporan Absensi','Filter, pantau, dan cetak laporan peserta yang dipilih.'],
+  settings:['⚙','Pengaturan','Pengaturan sistem absensi.'],
+  superadmin:['★','Super Admin','Kelola administrator, peserta nonaktif, dan audit aktivitas.']
+})[id]||['•','Menu',''];}
+function tab(id,b){if(id==='superadmin'&&ADMIN_ROLE!=='SUPER_ADMIN'){note('Menu ini hanya untuk Super Admin.',true);return;}document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');const meta=pageMeta(id);if($('pageHeroIcon'))$('pageHeroIcon').textContent=meta[0];if($('pageHeroTitle'))$('pageHeroTitle').textContent=meta[1];if($('pageHeroSub'))$('pageHeroSub').textContent=meta[2];if($('pageBread'))$('pageBread').textContent='Dashboard  ›  '+meta[1];if(id==='permits')loadPermits();if(id==='report')loadReport();if(id==='superadmin')loadSuperAdmin();if(window.innerWidth<=900)toggleSidebar(false)}
+function startHeaderClock(){if(window.__afClockTimer)return;const tick=()=>{const d=new Date(),days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];if($('topDate'))$('topDate').textContent=days[d.getDay()]+', '+String(d.getDate()).padStart(2,'0')+' '+months[d.getMonth()]+' '+d.getFullYear();if($('topTime'))$('topTime').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');const nm=ADMIN_NAME||'Administrator',ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();if($('topAvatar'))$('topAvatar').textContent=ini||'AD';};tick();window.__afClockTimer=setInterval(tick,1000)}
 async function loadDash(){
   const r=await gas('apiAdminDashboard',TOKEN);
-  const ver=String(r.version||'1.4.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
+  const ver=String(r.version||'1.4.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
   $('kpis').innerHTML=[
     ['Peserta aktif',r.totalUsers],['Terjadwal hari ini',r.scheduledToday],
     ['Hadir hari ini',r.arrived],['Terlambat',r.late],
@@ -215,7 +267,7 @@ async function loadDash(){
     ${r.permissionConflicts?`<div class="dashNote"><b>${r.permissionConflicts} data perlu koreksi:</b> peserta memiliki izin yang disetujui tetapi juga melakukan absensi. Dalam laporan, kehadiran yang dihitung.</div>`:''}`;
 }
 async function loadUsers(){
-  const r=await gas('apiAdminListUsers',TOKEN);USERS=r.users||[];
+  const r=await gas('apiAdminListUsers',TOKEN);USERS=r.users||[];REPORT_USERS=r.reportUsers||r.users||[];
   let h='<table><thead><tr><th>Foto</th><th>Nama</th><th>Email</th><th>ID</th><th>Status</th><th>Penempatan</th><th>Face</th><th>Aksi</th></tr></thead><tbody>';
   USERS.forEach(u=>{
     const pn=M?(M.programs.find(x=>x.id===u.program_id)||{}).name||'-':'-',
