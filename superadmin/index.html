@@ -65,7 +65,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 @media print{.top,.sidebar,.pageHero,.no-print{display:none!important}.contentArea{padding:0}.appShell{display:block}.card,.dashPanel{border:0!important;box-shadow:none!important}}
 
 
-/* UI PATCH - sticky top header + hide/show sidebar. Frontend only. */
+/* UI PATCH - sticky top header + sidebar toggle via tombol ☰ di header. */
 .contentArea .top{
   position:sticky!important;
   top:0!important;
@@ -85,30 +85,6 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 .sidebar{
   transition:transform .22s ease,opacity .18s ease;
 }
-.sidebarHead{
-  position:relative;
-  padding-right:42px!important;
-}
-.sidebarHideBtn{
-  position:absolute;
-  right:8px;
-  top:20px;
-  width:30px;
-  height:30px;
-  padding:0!important;
-  display:grid;
-  place-items:center;
-  border:1px solid rgba(255,255,255,.20)!important;
-  border-radius:7px!important;
-  background:rgba(255,255,255,.10)!important;
-  color:#fff!important;
-  font-size:16px!important;
-  line-height:1!important;
-  cursor:pointer;
-}
-.sidebarHideBtn:hover{
-  background:rgba(255,255,255,.18)!important;
-}
 .mobileMenu{
   display:inline-flex!important;
   align-items:center;
@@ -118,6 +94,12 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   border:1px solid rgba(255,255,255,.20)!important;
   border-radius:7px!important;
   background:rgba(255,255,255,.10)!important;
+  color:#fff!important;
+  font-size:21px!important;
+  padding:6px!important;
+}
+.mobileMenu:hover{
+  background:rgba(255,255,255,.18)!important;
 }
 @media(max-width:900px){
   .appShell.sidebarCollapsed{display:block!important}
@@ -129,9 +111,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   .appShell.sidebarCollapsed .sidebar.open{
     transform:translateX(0)!important;
   }
-  .contentArea .top{
-    top:0!important;
-  }
+  .contentArea .top{top:0!important}
 }
 
 </style></head><body>
@@ -148,7 +128,6 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   <div class="sidebarHead">
     <div class="sideLogo">✓</div>
     <div><div id="sideSystemName" class="sideBrand">Absen Murid PKL</div><div class="sideSub">Super Admin Control</div><div id="sideVersion" class="sideVersion">v1.5.0</div></div>
-    <button class="sidebarHideBtn" type="button" onclick="hideSidebar()" title="Sembunyikan menu" aria-label="Sembunyikan menu">«</button>
   </div>
   <div class="sideSectionLabel">MENU UTAMA</div>
   <div class="nav">
