@@ -72,12 +72,12 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   </div>
 </div><div class="wrap">
 <div id="msg" class="msg hidden"></div>
-<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Administrator</h2><p class="muted">Masuk dengan username dan password admin.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.4.1</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="/" target="_top" style="display:block;text-align:center;margin-top:14px">Kembali ke peserta</a></div>
+<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Super Admin</h2><p class="muted">Masuk dengan akun khusus ber-role SUPER_ADMIN.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.4.1</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="/admin/" target="_top" style="display:block;text-align:center;margin-top:14px">Portal Administrator</a><a href="/" target="_top" style="display:block;text-align:center;margin-top:8px">Kembali ke peserta</a></div>
 <div id="adminView" class="hidden"><div class="appShell">
 <aside id="sidebar" class="sidebar no-print">
   <div class="sidebarHead">
     <div class="sideLogo">✓</div>
-    <div><div id="sideSystemName" class="sideBrand">Absen Murid PKL</div><div class="sideSub">Sistem Absensi PKL</div><div id="sideVersion" class="sideVersion">v1.4.1</div></div>
+    <div><div id="sideSystemName" class="sideBrand">Absen Murid PKL</div><div class="sideSub">Super Admin Control</div><div id="sideVersion" class="sideVersion">v1.4.1</div></div>
   </div>
   <div class="sideSectionLabel">MENU UTAMA</div>
   <div class="nav">
@@ -92,15 +92,21 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   <div class="nav">
     <button onclick="tab('settings',this)"><span class="mi">⚙</span><span>Pengaturan</span></button>
   </div>
+  <div class="sideSectionLabel sideGap">KONTROL SISTEM</div>
+  <div class="nav">
+    <button onclick="tab('admins',this)"><span class="mi">♛</span><span>Administrator</span></button>
+    <button onclick="tab('deleted',this)"><span class="mi">♻</span><span>Peserta Nonaktif</span></button>
+    <button onclick="tab('audit',this)"><span class="mi">☷</span><span>Audit Aktivitas</span></button>
+  </div>
   <div class="sidebarStatus"><span class="statusDot"></span><span>Sistem Aktif</span></div>
 </aside>
 <main class="contentArea">
 <div class="top no-print">
-  <div class="topLeft"><button class="mobileMenu" onclick="toggleSidebar()">☰</button><div><div class="topAppName"><span id="adminSystemName">Absen Murid PKL</span></div><div class="topAppSub">Sistem Absensi PKL</div></div></div>
+  <div class="topLeft"><button class="mobileMenu" onclick="toggleSidebar()">☰</button><div><div class="topAppName"><span id="adminSystemName">Absen Murid PKL • Super Admin</span></div><div class="topAppSub">Kontrol Penuh Sistem Absensi PKL</div></div></div>
   <div class="topRight">
     <div class="topClock"><span id="topDate">-</span><b id="topTime">--:--:--</b></div>
     <div class="userAvatar" id="topAvatar">AD</div>
-    <div class="topUser"><b id="sideAdminName">Administrator</b><span id="sideAdminRole">ADMIN</span></div>
+    <div class="topUser"><b id="sideAdminName">Super Admin</b><span id="sideAdminRole">SUPER_ADMIN</span></div>
     <button class="topLogout" onclick="logout()">↪ KELUAR</button>
   </div>
 </div>
@@ -136,10 +142,25 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 <div class="reportPeopleBox no-print"><div class="reportPeopleHead"><label style="font-weight:800"><input id="repAllUsers" type="checkbox" onchange="toggleReportAllUsers(this.checked)"> Pilih semua peserta</label><span id="repUserCount" class="muted">0 peserta dipilih</span></div><div id="repUsers" class="reportPeopleList"></div></div>
 <h3 id="reportTitle">Laporan Absensi</h3><div id="reportOut" class="scroll"></div></div></section>
 <section id="settings" class="page hidden"><div class="card"><h3>Pengaturan Sistem</h3><p class="muted">Perubahan penting langsung memengaruhi semua peserta. Play Integrity diaktifkan setelah APK sudah terhubung ke Play Console.</p><div id="settingsOut"></div></div></section>
+<section id="admins" class="page hidden">
+  <div class="card"><div class="superCardTitle"><div><h3 style="margin-bottom:2px">Kelola Administrator</h3><div class="muted">Tambah, ubah role/status, dan reset password administrator.</div></div><button class="alt" onclick="loadSuperAdmin()">Refresh</button></div></div>
+  <div class="superGrid">
+    <div class="card"><h3>Tambah Administrator</h3><div class="field"><label>Username</label><input id="saUsername" placeholder="contoh: admin2"></div><div class="field"><label>Nama</label><input id="saDisplayName" placeholder="Nama administrator"></div><div class="field"><label>Password awal (min. 10 karakter)</label><input id="saPassword" type="password"></div><div class="field"><label>Role</label><select id="saRole"><option value="ADMIN">ADMIN</option><option value="SUPER_ADMIN">SUPER_ADMIN</option></select></div><button style="margin-top:10px" onclick="createAdminFromUi()">Tambah Admin</button></div>
+    <div class="card"><h3>Daftar Administrator</h3><div id="superAdminsOut" class="scroll"></div></div>
+  </div>
+</section>
+<section id="deleted" class="page hidden">
+  <div class="card"><div class="superCardTitle"><div><h3 style="margin-bottom:2px">Peserta Nonaktif / Dihapus</h3><div class="muted">Pulihkan akun tanpa menghapus histori absensi, izin, dan penempatan lama.</div></div><button class="alt" onclick="loadSuperAdmin()">Refresh</button></div></div>
+  <div class="card"><div class="dangerNote">Data absensi dan perizinan lama tetap disimpan. Pulihkan peserta bila akun perlu digunakan kembali.</div><div id="superDeletedOut" class="scroll" style="margin-top:12px"></div></div>
+</section>
+<section id="audit" class="page hidden">
+  <div class="card"><div class="superCardTitle"><div><h3 style="margin-bottom:2px">Audit Aktivitas</h3><div class="muted">Riwayat tindakan penting administrator dan Super Admin.</div></div><button class="alt" onclick="loadSuperAdmin()">Refresh</button></div></div>
+  <div class="card"><div id="superAuditOut" class="scroll"></div></div>
+</section>
 </main></div></div></div>
 <script src="/api-client.js"></script>
 <script>
-let TOKEN=sessionStorage.getItem('af_admin_token')||'', ADMIN_NAME=sessionStorage.getItem('af_admin_name')||'', ADMIN_ROLE=sessionStorage.getItem('af_admin_role')||'', M=null, USERS=[], REPORT_USERS=[], APP_CONFIG=null, SUPER_DATA=null, REPORT_SELECTION_INIT=false;
+let TOKEN=sessionStorage.getItem('af_super_token')||'', ADMIN_NAME=sessionStorage.getItem('af_super_name')||'', ADMIN_ROLE='SUPER_ADMIN', M=null, USERS=[], REPORT_USERS=[], APP_CONFIG=null, SUPER_DATA=null, REPORT_SELECTION_INIT=false;
 const $=id=>document.getElementById(id);let ADMIN_BUSY_COUNT=0,ADMIN_DONE_TIMER=null;
 function adminProcessLabel(name){
   const labels={
@@ -207,59 +228,41 @@ function gas(name,...args){
 async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.4.0');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
 async function login(){try{
   const r=await gas('apiAdminLogin',$('username').value,$('password').value);
-  if(String(r.role||'ADMIN')==='SUPER_ADMIN'){
-    sessionStorage.setItem('af_super_token',r.token);
-    sessionStorage.setItem('af_super_name',r.name||'Super Admin');
-    sessionStorage.setItem('af_super_role','SUPER_ADMIN');
-    sessionStorage.removeItem('af_admin_token');
-    sessionStorage.removeItem('af_admin_name');
-    sessionStorage.removeItem('af_admin_role');
-    location.replace('/superadmin/');
-    return;
-  }
-  TOKEN=r.token;ADMIN_NAME=r.name;ADMIN_ROLE='ADMIN';
-  sessionStorage.setItem('af_admin_token',TOKEN);
-  sessionStorage.setItem('af_admin_name',ADMIN_NAME);
-  sessionStorage.setItem('af_admin_role','ADMIN');
+  if(String(r.role||'ADMIN')!=='SUPER_ADMIN') throw new Error('Akun ini bukan SUPER_ADMIN. Gunakan portal Administrator.');
+  TOKEN=r.token;ADMIN_NAME=r.name;ADMIN_ROLE='SUPER_ADMIN';
+  sessionStorage.setItem('af_super_token',TOKEN);
+  sessionStorage.setItem('af_super_name',ADMIN_NAME);
+  sessionStorage.setItem('af_super_role','SUPER_ADMIN');
   await start();
 }catch(e){note(e.message,true)}}
 function logout(){
-  sessionStorage.removeItem('af_admin_token');
-  sessionStorage.removeItem('af_admin_name');
-  sessionStorage.removeItem('af_admin_role');
+  sessionStorage.removeItem('af_super_token');
+  sessionStorage.removeItem('af_super_name');
+  sessionStorage.removeItem('af_super_role');
   location.reload();
 }
-function applyRoleUi(){const isSuper=ADMIN_ROLE==='SUPER_ADMIN';document.querySelectorAll('.superOnly').forEach(x=>x.classList.toggle('hidden',!isSuper));if($('sideAdminRole'))$('sideAdminRole').textContent=ADMIN_ROLE||'ADMIN';if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Administrator';}
+function applyRoleUi(){document.querySelectorAll('.superOnly').forEach(x=>x.classList.remove('hidden'));if($('sideAdminRole'))$('sideAdminRole').textContent='SUPER_ADMIN';if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Super Admin';}
 function toggleSidebar(force){const el=$('sidebar');if(!el)return;if(force===false)el.classList.remove('open');else el.classList.toggle('open');}
 async function start(){
   if(!TOKEN)return;
   try{
     const me=await gas('apiAdminMe',TOKEN);
-    if(String(me.role||'ADMIN')==='SUPER_ADMIN'){
-      sessionStorage.setItem('af_super_token',TOKEN);
-      sessionStorage.setItem('af_super_name',me.name||ADMIN_NAME||'Super Admin');
-      sessionStorage.setItem('af_super_role','SUPER_ADMIN');
-      sessionStorage.removeItem('af_admin_token');
-      sessionStorage.removeItem('af_admin_name');
-      sessionStorage.removeItem('af_admin_role');
-      location.replace('/superadmin/');
-      return;
-    }
-    ADMIN_NAME=me.name||ADMIN_NAME||'Administrator';
-    ADMIN_ROLE='ADMIN';
-    sessionStorage.setItem('af_admin_name',ADMIN_NAME);
-    sessionStorage.setItem('af_admin_role','ADMIN');
+    if(String(me.role||'ADMIN')!=='SUPER_ADMIN') throw new Error('Akun ini tidak memiliki hak SUPER_ADMIN.');
+    ADMIN_NAME=me.name||ADMIN_NAME||'Super Admin';
+    ADMIN_ROLE='SUPER_ADMIN';
+    sessionStorage.setItem('af_super_name',ADMIN_NAME);
     $('loginView').classList.add('hidden');
     $('adminView').classList.remove('hidden');
     $('adminName').textContent=ADMIN_NAME;
     if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME;
+    if($('sideAdminRole'))$('sideAdminRole').textContent='SUPER_ADMIN';
     applyRoleUi();
     await loadMasters();
-    await Promise.all([loadDash(),loadUsers()]);
+    await Promise.all([loadDash(),loadUsers(),loadSuperAdmin()]);
     setDates();
     startHeaderClock();
   }catch(e){
-    if(/Sesi|akses|Admin/i.test(e.message)){logout();return}
+    if(/Sesi|akses|Admin|SUPER_ADMIN/i.test(e.message)){note(e.message,true);logout();return}
     note(e.message,true)
   }
 }
@@ -271,8 +274,11 @@ function pageMeta(id){return({
   permits:['✓','Perizinan','Tinjau dan koreksi pengajuan izin peserta.'],
   report:['▥','Laporan Absensi','Filter, pantau, dan cetak laporan peserta yang dipilih.'],
   settings:['⚙','Pengaturan','Pengaturan sistem absensi.'],
+  admins:['♛','Administrator','Tambah, ubah, nonaktifkan, dan reset password administrator.'],
+  deleted:['♻','Peserta Nonaktif','Pulihkan akun peserta tanpa mengubah histori lama.'],
+  audit:['☷','Audit Aktivitas','Pantau perubahan dan tindakan penting di seluruh sistem.']
 })[id]||['•','Menu',''];}
-function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');const meta=pageMeta(id);if($('pageHeroIcon'))$('pageHeroIcon').textContent=meta[0];if($('pageHeroTitle'))$('pageHeroTitle').textContent=meta[1];if($('pageHeroSub'))$('pageHeroSub').textContent=meta[2];if($('pageBread'))$('pageBread').textContent='Dashboard  ›  '+meta[1];if(id==='permits')loadPermits();if(id==='report')loadReport();if(window.innerWidth<=900)toggleSidebar(false)}
+function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');const meta=pageMeta(id);if($('pageHeroIcon'))$('pageHeroIcon').textContent=meta[0];if($('pageHeroTitle'))$('pageHeroTitle').textContent=meta[1];if($('pageHeroSub'))$('pageHeroSub').textContent=meta[2];if($('pageBread'))$('pageBread').textContent='Dashboard  ›  '+meta[1];if(id==='permits')loadPermits();if(id==='report')loadReport();if(['admins','deleted','audit'].includes(id))loadSuperAdmin();if(window.innerWidth<=900)toggleSidebar(false)}
 function startHeaderClock(){if(window.__afClockTimer)return;const tick=()=>{const d=new Date(),days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];if($('topDate'))$('topDate').textContent=days[d.getDay()]+', '+String(d.getDate()).padStart(2,'0')+' '+months[d.getMonth()]+' '+d.getFullYear();if($('topTime'))$('topTime').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');const nm=ADMIN_NAME||'Administrator',ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();if($('topAvatar'))$('topAvatar').textContent=ini||'AD';};tick();window.__afClockTimer=setInterval(tick,1000)}
 async function loadDash(){
   const r=await gas('apiAdminDashboard',TOKEN);
@@ -467,7 +473,7 @@ function renderSuperAdmin(){
   log+='</tbody></table>';$('superAuditOut').innerHTML=log;
 }
 async function createAdminFromUi(){try{const payload={username:$('saUsername').value,display_name:$('saDisplayName').value,password:$('saPassword').value,role:$('saRole').value};await gas('apiSuperAdminCreateAdmin',TOKEN,payload);$('saUsername').value='';$('saDisplayName').value='';$('saPassword').value='';$('saRole').value='ADMIN';note('Administrator berhasil ditambahkan.');await loadSuperAdmin();}catch(e){note(e.message,true)}}
-async function editAdminUi(id){const x=(SUPER_DATA&&SUPER_DATA.admins||[]).find(a=>a.id===id);if(!x)return;const name=prompt('Nama administrator:',x.display_name);if(name===null)return;const role=prompt('Role (ADMIN atau SUPER_ADMIN):',x.role);if(role===null)return;const status=prompt('Status (ACTIVE atau INACTIVE):',x.status);if(status===null)return;try{await gas('apiSuperAdminUpdateAdmin',TOKEN,id,{display_name:name,role:role.trim().toUpperCase(),status:status.trim().toUpperCase()});note('Administrator diperbarui.');const me=await gas('apiAdminMe',TOKEN);ADMIN_NAME=me.name;ADMIN_ROLE=me.role;sessionStorage.setItem('af_admin_name',ADMIN_NAME);sessionStorage.setItem('af_admin_role',ADMIN_ROLE);$('adminName').textContent=ADMIN_NAME;applyRoleUi();if(ADMIN_ROLE==='SUPER_ADMIN')await loadSuperAdmin();else tab('dash',document.querySelector('.nav button'));}catch(e){note(e.message,true)}}
+async function editAdminUi(id){const x=(SUPER_DATA&&SUPER_DATA.admins||[]).find(a=>a.id===id);if(!x)return;const name=prompt('Nama administrator:',x.display_name);if(name===null)return;const role=prompt('Role (ADMIN atau SUPER_ADMIN):',x.role);if(role===null)return;const status=prompt('Status (ACTIVE atau INACTIVE):',x.status);if(status===null)return;try{await gas('apiSuperAdminUpdateAdmin',TOKEN,id,{display_name:name,role:role.trim().toUpperCase(),status:status.trim().toUpperCase()});note('Administrator diperbarui.');const me=await gas('apiAdminMe',TOKEN);if(String(me.role)!=='SUPER_ADMIN'){sessionStorage.removeItem('af_super_token');sessionStorage.removeItem('af_super_name');sessionStorage.removeItem('af_super_role');location.replace('/admin/');return;}ADMIN_NAME=me.name;ADMIN_ROLE='SUPER_ADMIN';sessionStorage.setItem('af_super_name',ADMIN_NAME);$('adminName').textContent=ADMIN_NAME;applyRoleUi();await loadSuperAdmin();}catch(e){note(e.message,true)}}
 async function resetAdminPasswordUi(id,username){const p=prompt('Password baru untuk '+username+' (minimal 10 karakter):');if(!p)return;try{const r=await gas('apiSuperAdminResetAdminPassword',TOKEN,id,p);note(r.message||'Password direset.');}catch(e){note(e.message,true)}}
 async function restoreUserUi(id,name){if(!confirm('Pulihkan peserta '+name+'?\n\nStatus menjadi PENDING dan perlu disetujui ulang oleh admin.'))return;try{const r=await gas('apiSuperAdminRestoreUser',TOKEN,id);note(r.message||'Peserta dipulihkan.');await Promise.all([loadSuperAdmin(),loadUsers(),loadDash()]);}catch(e){note(e.message,true)}}
 
