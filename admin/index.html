@@ -37,7 +37,7 @@
 @keyframes adminSpin{to{transform:rotate(360deg)}}
 
 
-/* v1.4.1 - Sidebar kiri + filter peserta laporan + Super Admin */
+/* v1.5.0 - Sidebar kiri + filter peserta laporan + Super Admin */
 #adminView{min-height:calc(100vh - 36px)}
 .appShell{display:grid;grid-template-columns:245px minmax(0,1fr);gap:16px;align-items:start}
 .sidebar{position:sticky;top:18px;height:calc(100vh - 36px);background:linear-gradient(180deg,#0f4cce,#1749a7);color:#fff;border-radius:20px;padding:16px 12px;box-shadow:0 16px 38px rgba(15,76,206,.22);display:flex;flex-direction:column;overflow:auto}
@@ -72,31 +72,31 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   </div>
 </div><div class="wrap">
 <div id="msg" class="msg hidden"></div>
-<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Administrator</h2><p class="muted">Masuk dengan username dan password admin.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.4.1</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="/" target="_top" style="display:block;text-align:center;margin-top:14px">Kembali ke peserta</a></div>
+<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Administrator</h2><p class="muted">Masuk dengan username dan password admin.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.5.0</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="/" target="_top" style="display:block;text-align:center;margin-top:14px">Kembali ke peserta</a></div>
 <div id="adminView" class="hidden"><div class="appShell">
 <aside id="sidebar" class="sidebar no-print">
   <div class="sidebarHead">
     <div class="sideLogo">✓</div>
-    <div><div id="sideSystemName" class="sideBrand">Absen Murid PKL</div><div class="sideSub">Sistem Absensi PKL</div><div id="sideVersion" class="sideVersion">v1.4.1</div></div>
+    <div><div id="sideSystemName" class="sideBrand">Absen Murid PKL</div><div id="sideSchoolName" class="sideSub">Sekolah</div><div id="sideVersion" class="sideVersion">v1.5.0</div></div>
   </div>
   <div class="sideSectionLabel">MENU UTAMA</div>
   <div class="nav">
     <button class="active" onclick="tab('dash',this)"><span class="mi">⌂</span><span>Dashboard</span></button>
     <button onclick="tab('users',this)"><span class="mi">👤</span><span>Peserta</span></button>
-    <button onclick="tab('masters',this)"><span class="mi">▦</span><span>Master</span></button>
-    <button onclick="tab('schedule',this)"><span class="mi">◷</span><span>Jadwal</span></button>
+    <button class="adminOnly" onclick="tab('masters',this)"><span class="mi">▦</span><span>Master</span></button>
+    <button class="adminOnly" onclick="tab('schedule',this)"><span class="mi">◷</span><span>Jadwal</span></button>
     <button onclick="tab('permits',this)"><span class="mi">✓</span><span>Perizinan</span></button>
     <button onclick="tab('report',this)"><span class="mi">▥</span><span>Laporan</span></button>
   </div>
-  <div class="sideSectionLabel sideGap">ADMINISTRASI</div>
-  <div class="nav">
-    <button onclick="tab('settings',this)"><span class="mi">⚙</span><span>Pengaturan</span></button>
+  <div class="sideSectionLabel sideGap adminOnly">ADMINISTRASI SEKOLAH</div>
+  <div class="nav adminOnly">
+    <button onclick="tab('staff',this)"><span class="mi">♙</span><span>Guru</span></button>
   </div>
   <div class="sidebarStatus"><span class="statusDot"></span><span>Sistem Aktif</span></div>
 </aside>
 <main class="contentArea">
 <div class="top no-print">
-  <div class="topLeft"><button class="mobileMenu" onclick="toggleSidebar()">☰</button><div><div class="topAppName"><span id="adminSystemName">Absen Murid PKL</span></div><div class="topAppSub">Sistem Absensi PKL</div></div></div>
+  <div class="topLeft"><button class="mobileMenu" onclick="toggleSidebar()">☰</button><div><div class="topAppName"><span id="adminSystemName">Absen Murid PKL</span></div><div class="topAppSub"><span class="schoolNameText">Sekolah</span> • Sistem Absensi PKL</div></div></div>
   <div class="topRight">
     <div class="topClock"><span id="topDate">-</span><b id="topTime">--:--:--</b></div>
     <div class="userAvatar" id="topAvatar">AD</div>
@@ -118,7 +118,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 </div>
 </section>
 <section id="users" class="page hidden">
-<div class="card"><h3>Ubah Penempatan Peserta</h3><p class="muted">Peserta tidak dapat mengubah penempatan sendiri setelah disetujui. Hanya admin yang dapat memindahkan program, instansi, dan titik lokasi. Riwayat lama tidak ditimpa.</p><div class="row"><div class="field"><label>Peserta</label><select id="assignUser"></select></div><div class="field"><label>Program</label><select id="assignProgram"></select></div><div class="field"><label>Instansi</label><select id="assignInstitution" onchange="filterAssignLocations()"></select></div><div class="field"><label>Lokasi</label><select id="assignLocation"></select></div><div class="field"><label>Berlaku mulai</label><input id="assignEffective" type="date"></div><button onclick="saveAssignment()">Simpan Penempatan</button></div></div>
+<div class="card writeOnly"><h3>Ubah Penempatan Peserta</h3><p class="muted">Peserta tidak dapat mengubah penempatan sendiri setelah disetujui. Hanya admin yang dapat memindahkan program, instansi, dan titik lokasi. Riwayat lama tidak ditimpa.</p><div class="row"><div class="field"><label>Peserta</label><select id="assignUser"></select></div><div class="field"><label>Program</label><select id="assignProgram"></select></div><div class="field"><label>Instansi</label><select id="assignInstitution" onchange="filterAssignLocations()"></select></div><div class="field"><label>Lokasi</label><select id="assignLocation"></select></div><div class="field"><label>Berlaku mulai</label><input id="assignEffective" type="date"></div><button onclick="saveAssignment()">Simpan Penempatan</button></div></div>
 <div class="card"><div class="row"><h3 style="flex:1">Peserta</h3><button class="alt no-print" onclick="loadUsers()">Refresh</button></div><div id="usersOut" class="scroll"></div></div></section>
 <section id="masters" class="page hidden"><div class="two"><div class="card"><h3>Program</h3><input id="progId" type="hidden"><div class="field"><label>Nama</label><input id="progName"></div><div class="row"><div class="field"><label>Mulai</label><input id="progStart" type="date"></div><div class="field"><label>Selesai</label><input id="progEnd" type="date"></div></div><div class="row"><button onclick="saveProgram()">Simpan Program</button><button class="alt" onclick="clearProgram()">Baru</button></div></div><div class="card"><h3>Instansi</h3><input id="insId" type="hidden"><div class="field"><label>Nama</label><input id="insName"></div><div class="field"><label>Alamat</label><textarea id="insAddress"></textarea></div><div class="row"><button onclick="saveInstitution()">Simpan Instansi</button><button class="alt" onclick="clearInstitution()">Baru</button></div></div></div>
 <div class="card"><h3>Lokasi Absensi</h3><input id="locId" type="hidden"><div class="row"><div class="field"><label>Instansi</label><select id="locInstitution"></select></div><div class="field"><label>Nama lokasi</label><input id="locName"></div><div class="field"><label>Latitude</label><input id="locLat" inputmode="decimal"></div><div class="field"><label>Longitude</label><input id="locLng" inputmode="decimal"></div><div class="field"><label>Radius (m)</label><input id="locRadius" type="number" value="100"></div><div class="field"><label>Akurasi maks (m)</label><input id="locAccuracy" type="number" value="80"></div></div><div class="row"><button onclick="saveLocation()">Simpan Lokasi</button><button class="alt" onclick="clearLocation()">Baru</button></div></div><div class="card"><h3>Data Master</h3><div id="mastersOut" class="scroll"></div></div></section>
@@ -135,11 +135,25 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 <section id="report" class="page hidden"><div class="card"><div class="row no-print"><div class="field"><label>Dari</label><input id="repFrom" type="date"></div><div class="field"><label>Sampai</label><input id="repTo" type="date"></div><div class="field"><label>Program</label><select id="repProgram"><option value="">Semua</option></select></div><div class="field"><label>Instansi</label><select id="repInstitution"><option value="">Semua</option></select></div><div class="field"><label>Lokasi</label><select id="repLocation"><option value="">Semua</option></select></div><button onclick="loadReport()">Tampilkan</button><button class="alt" onclick="window.print()">Cetak / PDF</button></div>
 <div class="reportPeopleBox no-print"><div class="reportPeopleHead"><label style="font-weight:800"><input id="repAllUsers" type="checkbox" onchange="toggleReportAllUsers(this.checked)"> Pilih semua peserta</label><span id="repUserCount" class="muted">0 peserta dipilih</span></div><div id="repUsers" class="reportPeopleList"></div></div>
 <h3 id="reportTitle">Laporan Absensi</h3><div id="reportOut" class="scroll"></div></div></section>
+
+<section id="staff" class="page hidden adminOnly">
+  <div class="two">
+    <div class="card">
+      <h3>Tambah Guru</h3>
+      <p class="muted">Guru hanya dapat melihat dashboard, peserta, perizinan, dan laporan sekolah.</p>
+      <div class="field"><label>Username</label><input id="guruUsername" placeholder="contoh: guru01"></div>
+      <div class="field"><label>Nama Guru</label><input id="guruName"></div>
+      <div class="field"><label>Password awal (min. 10 karakter)</label><input id="guruPassword" type="password"></div>
+      <button onclick="createGuru()">Tambah Guru</button>
+    </div>
+    <div class="card"><div class="row"><h3 style="flex:1">Daftar Guru</h3><button class="alt" onclick="loadStaff()">Refresh</button></div><div id="staffOut" class="scroll"></div></div>
+  </div>
+</section>
 <section id="settings" class="page hidden"><div class="card"><h3>Pengaturan Sistem</h3><p class="muted">Perubahan penting langsung memengaruhi semua peserta. Play Integrity diaktifkan setelah APK sudah terhubung ke Play Console.</p><div id="settingsOut"></div></div></section>
 </main></div></div></div>
 <script src="/api-client.js"></script>
 <script>
-let TOKEN=sessionStorage.getItem('af_admin_token')||'', ADMIN_NAME=sessionStorage.getItem('af_admin_name')||'', ADMIN_ROLE=sessionStorage.getItem('af_admin_role')||'', M=null, USERS=[], REPORT_USERS=[], APP_CONFIG=null, SUPER_DATA=null, REPORT_SELECTION_INIT=false;
+let TOKEN=sessionStorage.getItem('af_admin_token')||'', ADMIN_NAME=sessionStorage.getItem('af_admin_name')||'', ADMIN_ROLE=sessionStorage.getItem('af_admin_role')||'', ADMIN_SCHOOL=null, M=null, USERS=[], REPORT_USERS=[], APP_CONFIG=null, SUPER_DATA=null, REPORT_SELECTION_INIT=false;
 const $=id=>document.getElementById(id);let ADMIN_BUSY_COUNT=0,ADMIN_DONE_TIMER=null;
 function adminProcessLabel(name){
   const labels={
@@ -204,7 +218,7 @@ function gas(name,...args){
     .then(v=>{if(!silent)adminProcessEnd(true);return v})
     .catch(e=>{if(!silent)adminProcessEnd(false);throw e});
 }function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}function note(t,e=false){$('msg').textContent=t;$('msg').className='msg'+(e?' err':'');$('msg').classList.remove('hidden');setTimeout(()=>$('msg').classList.add('hidden'),5000)}
-async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.4.0');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
+async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.5.0');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
 async function login(){try{
   const r=await gas('apiAdminLogin',$('username').value,$('password').value);
   if(String(r.role||'ADMIN')==='SUPER_ADMIN'){
@@ -217,10 +231,10 @@ async function login(){try{
     location.replace('/superadmin/');
     return;
   }
-  TOKEN=r.token;ADMIN_NAME=r.name;ADMIN_ROLE='ADMIN';
+  TOKEN=r.token;ADMIN_NAME=r.name;ADMIN_ROLE=String(r.role||'ADMIN');ADMIN_SCHOOL=r.school||null;
   sessionStorage.setItem('af_admin_token',TOKEN);
   sessionStorage.setItem('af_admin_name',ADMIN_NAME);
-  sessionStorage.setItem('af_admin_role','ADMIN');
+  sessionStorage.setItem('af_admin_role',ADMIN_ROLE);
   await start();
 }catch(e){note(e.message,true)}}
 function logout(){
@@ -229,7 +243,7 @@ function logout(){
   sessionStorage.removeItem('af_admin_role');
   location.reload();
 }
-function applyRoleUi(){const isSuper=ADMIN_ROLE==='SUPER_ADMIN';document.querySelectorAll('.superOnly').forEach(x=>x.classList.toggle('hidden',!isSuper));if($('sideAdminRole'))$('sideAdminRole').textContent=ADMIN_ROLE||'ADMIN';if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Administrator';}
+function applyRoleUi(){const canWrite=ADMIN_ROLE==='ADMIN';document.querySelectorAll('.adminOnly').forEach(x=>x.classList.toggle('hidden',!canWrite));document.querySelectorAll('.writeOnly').forEach(x=>x.classList.toggle('hidden',!canWrite));if($('sideAdminRole'))$('sideAdminRole').textContent=ADMIN_ROLE||'ADMIN';if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Administrator';const schoolName=ADMIN_SCHOOL&&ADMIN_SCHOOL.name?ADMIN_SCHOOL.name:'Sekolah';document.querySelectorAll('.schoolNameText').forEach(x=>x.textContent=schoolName);if($('sideSchoolName'))$('sideSchoolName').textContent=schoolName;}
 function toggleSidebar(force){const el=$('sidebar');if(!el)return;if(force===false)el.classList.remove('open');else el.classList.toggle('open');}
 async function start(){
   if(!TOKEN)return;
@@ -246,9 +260,10 @@ async function start(){
       return;
     }
     ADMIN_NAME=me.name||ADMIN_NAME||'Administrator';
-    ADMIN_ROLE='ADMIN';
+    ADMIN_ROLE=String(me.role||'ADMIN');
+    ADMIN_SCHOOL=me.school||null;
     sessionStorage.setItem('af_admin_name',ADMIN_NAME);
-    sessionStorage.setItem('af_admin_role','ADMIN');
+    sessionStorage.setItem('af_admin_role',ADMIN_ROLE);
     $('loginView').classList.add('hidden');
     $('adminView').classList.remove('hidden');
     $('adminName').textContent=ADMIN_NAME;
@@ -256,6 +271,7 @@ async function start(){
     applyRoleUi();
     await loadMasters();
     await Promise.all([loadDash(),loadUsers()]);
+    if(ADMIN_ROLE==='ADMIN') await loadStaff();
     setDates();
     startHeaderClock();
   }catch(e){
@@ -270,13 +286,14 @@ function pageMeta(id){return({
   schedule:['◷','Jadwal','Atur jadwal datang, pulang, dan batas perizinan.'],
   permits:['✓','Perizinan','Tinjau dan koreksi pengajuan izin peserta.'],
   report:['▥','Laporan Absensi','Filter, pantau, dan cetak laporan peserta yang dipilih.'],
+  staff:['♙','Guru','Tambah dan kelola akun Guru yang hanya dapat melihat data sekolah.'],
   settings:['⚙','Pengaturan','Pengaturan sistem absensi.'],
 })[id]||['•','Menu',''];}
-function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');const meta=pageMeta(id);if($('pageHeroIcon'))$('pageHeroIcon').textContent=meta[0];if($('pageHeroTitle'))$('pageHeroTitle').textContent=meta[1];if($('pageHeroSub'))$('pageHeroSub').textContent=meta[2];if($('pageBread'))$('pageBread').textContent='Dashboard  ›  '+meta[1];if(id==='permits')loadPermits();if(id==='report')loadReport();if(window.innerWidth<=900)toggleSidebar(false)}
+function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');const meta=pageMeta(id);if($('pageHeroIcon'))$('pageHeroIcon').textContent=meta[0];if($('pageHeroTitle'))$('pageHeroTitle').textContent=meta[1];if($('pageHeroSub'))$('pageHeroSub').textContent=meta[2];if($('pageBread'))$('pageBread').textContent='Dashboard  ›  '+meta[1];if(id==='permits')loadPermits();if(id==='report')loadReport();if(id==='staff'&&ADMIN_ROLE==='ADMIN')loadStaff();if(window.innerWidth<=900)toggleSidebar(false)}
 function startHeaderClock(){if(window.__afClockTimer)return;const tick=()=>{const d=new Date(),days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];if($('topDate'))$('topDate').textContent=days[d.getDay()]+', '+String(d.getDate()).padStart(2,'0')+' '+months[d.getMonth()]+' '+d.getFullYear();if($('topTime'))$('topTime').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');const nm=ADMIN_NAME||'Administrator',ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();if($('topAvatar'))$('topAvatar').textContent=ini||'AD';};tick();window.__afClockTimer=setInterval(tick,1000)}
 async function loadDash(){
   const r=await gas('apiAdminDashboard',TOKEN);
-  const ver=String(r.version||'1.4.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
+  const ver=String(r.version||'1.5.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
   $('kpis').innerHTML=[
     ['Peserta aktif',r.totalUsers],['Terjadwal hari ini',r.scheduledToday],
     ['Hadir hari ini',r.arrived],['Terlambat',r.late],
@@ -311,21 +328,26 @@ async function loadDash(){
 }
 async function loadUsers(){
   const r=await gas('apiAdminListUsers',TOKEN);USERS=r.users||[];REPORT_USERS=r.reportUsers||r.users||[];
-  let h='<table><thead><tr><th>Foto</th><th>Nama</th><th>Email</th><th>ID</th><th>Status</th><th>Penempatan</th><th>Face</th><th>Aksi</th></tr></thead><tbody>';
+  const canWrite=ADMIN_ROLE==='ADMIN';
+  let h='<table><thead><tr><th>Foto</th><th>Nama</th><th>Email</th><th>NIS</th><th>Status</th><th>Penempatan</th><th>Face</th><th>Aksi</th></tr></thead><tbody>';
   USERS.forEach(u=>{
     const pn=M?(M.programs.find(x=>x.id===u.program_id)||{}).name||'-':'-',
       inm=M?(M.institutions.find(x=>x.id===u.institution_id)||{}).name||'-':'-',
       ln=M?(M.locations.find(x=>x.id===u.location_id)||{}).name||'-':'-',
       ini=String(u.name||'PK').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+    let actions='<span class="muted">Lihat saja</span>';
+    if(canWrite){
+      actions=(u.status==='PENDING'?`<button class="small" onclick="approve('${u.id}',true)">Setujui</button> <button class="small bad" onclick="approve('${u.id}',false)">Tolak</button> `:'')+
+      `<button class="small alt" onclick="selectAssignment('${u.id}')">Penempatan</button> `+
+      (u.face_status==='ENROLLED'?`<button class="small alt" onclick="resetFace('${u.id}')">Reset Face</button> `:'')+
+      `<button class="small bad" onclick="resetAttendanceToday('${u.id}','${esc(u.name)}')">Reset Absen Hari Ini</button> <button class="small bad" onclick="deleteUser('${u.id}','${esc(u.name)}')">Hapus</button>`;
+    }
     h+=`<tr>
       <td><div class="faceCell"><div id="face_${u.id}" class="faceFallback ${u.face_status==='ENROLLED'?'faceLoading':''}" data-face-user="${u.face_status==='ENROLLED'?esc(u.id):''}">${esc(ini)}</div></div></td>
       <td><b>${esc(u.name)}</b></td><td>${esc(u.email)}</td><td>${esc(u.identifier||'-')}</td>
       <td><span class="pill">${esc(u.status)}</span></td>
       <td>${esc(pn)}<br>${esc(inm)} • ${esc(ln)}${u.assignment_effective_from?`<br><span class="muted">sejak ${esc(u.assignment_effective_from)}</span>`:''}</td>
-      <td>${esc(u.face_status)}</td>
-      <td>${u.status==='PENDING'?`<button class="small" onclick="approve('${u.id}',true)">Setujui</button> <button class="small bad" onclick="approve('${u.id}',false)">Tolak</button>`:''}
-      <button class="small alt" onclick="selectAssignment('${u.id}')">Penempatan</button>
-      ${u.face_status==='ENROLLED'?`<button class="small alt" onclick="resetFace('${u.id}')">Reset Face</button>`:''} <button class="small bad" onclick="resetAttendanceToday('${u.id}','${esc(u.name)}')">Reset Absen Hari Ini</button> <button class="small bad" onclick="deleteUser('${u.id}','${esc(u.name)}')">Hapus</button></td></tr>`;
+      <td>${esc(u.face_status)}</td><td>${actions}</td></tr>`;
   });
   h+='</tbody></table>';$('usersOut').innerHTML=h;fillAssignmentUsers();observeFacePhotos();renderReportUserPicker();
 }
@@ -384,12 +406,12 @@ async function loadPermits(){
     r.items.forEach(p=>{
       const range=p.date_to&&p.date_to!==p.date?`${esc(p.date)}<br><span class="muted">s.d. ${esc(p.date_to)} • ${Number(p.day_count)||1} hari</span>`:esc(p.date);
       const sc=p.status==='APPROVED'?'statusApproved':(p.status==='REJECTED'?'statusRejected':'statusPending');
-      let actions='';
-      if(p.status==='PENDING'){
+      let actions=r.canDecide?'':'<span class="muted">Lihat saja</span>';
+      if(r.canDecide&&p.status==='PENDING'){
         actions=`<button class="small" onclick="decide('${p.id}','APPROVED')">Setujui</button> <button class="small bad" onclick="decide('${p.id}','REJECTED')">Tolak</button>`;
-      }else if(p.status==='APPROVED'){
+      }else if(r.canDecide&&p.status==='APPROVED'){
         actions=`<button class="small bad" onclick="decide('${p.id}','REJECTED',true)">Koreksi → Tolak</button> <button class="small alt" onclick="decide('${p.id}','PENDING',true)">Reset → Menunggu</button>`;
-      }else if(p.status==='REJECTED'){
+      }else if(r.canDecide&&p.status==='REJECTED'){
         actions=`<button class="small" onclick="decide('${p.id}','APPROVED',true)">Koreksi → Setujui</button> <button class="small alt" onclick="decide('${p.id}','PENDING',true)">Reset → Menunggu</button>`;
       }
       h+=`<tr><td>${range}</td><td><b>${esc(p.user_name)}</b></td><td><span class="pill">${esc(p.type)}</span></td><td>${esc(p.note)}</td><td>${p.attachment_url?`<a href="${esc(p.attachment_url)}" target="_blank">Buka lampiran</a>`:'-'}</td><td><span class="pill ${sc}">${esc(p.status)}</span></td><td>${actions}</td></tr>`;
@@ -448,6 +470,37 @@ async function loadReport(){
     if(!r.summary.length)h='<p class="muted">Tidak ada peserta sesuai filter.</p>';
     $('reportOut').innerHTML=h;
   }catch(e){note(e.message,true)}
+}
+
+
+async function loadStaff(){
+  if(ADMIN_ROLE!=='ADMIN')return;
+  try{
+    const r=await gas('apiAdminStaffOverview',TOKEN);
+    let h='<table><thead><tr><th>Username</th><th>Nama</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead><tbody>';
+    (r.staff||[]).filter(x=>x.role==='GURU').forEach(x=>{
+      h+=`<tr><td><b>${esc(x.username)}</b></td><td>${esc(x.display_name)}</td><td>${esc(x.role)}</td><td>${esc(x.status)}</td><td><button class="small alt" onclick="editGuru('${x.id}','${esc(x.display_name)}','${esc(x.status)}')">Edit</button> <button class="small alt" onclick="resetGuruPassword('${x.id}','${esc(x.username)}')">Reset Password</button></td></tr>`;
+    });
+    h+='</tbody></table>';
+    if(!(r.staff||[]).some(x=>x.role==='GURU'))h='<div class="msg">Belum ada akun Guru.</div>';
+    $('staffOut').innerHTML=h;
+  }catch(e){note(e.message,true)}
+}
+async function createGuru(){
+  try{
+    await gas('apiAdminCreateGuru',TOKEN,{username:$('guruUsername').value,display_name:$('guruName').value,password:$('guruPassword').value});
+    $('guruUsername').value='';$('guruName').value='';$('guruPassword').value='';
+    note('Akun Guru berhasil dibuat.');await loadStaff();
+  }catch(e){note(e.message,true)}
+}
+async function editGuru(id,name,status){
+  const n=prompt('Nama Guru:',name);if(n===null)return;
+  const s=prompt('Status (ACTIVE atau INACTIVE):',status);if(s===null)return;
+  try{await gas('apiAdminUpdateGuru',TOKEN,id,{display_name:n,status:s.trim().toUpperCase()});note('Akun Guru diperbarui.');await loadStaff();}catch(e){note(e.message,true)}
+}
+async function resetGuruPassword(id,username){
+  const p=prompt('Password baru untuk '+username+' (minimal 10 karakter):');if(!p)return;
+  try{const r=await gas('apiAdminResetGuruPassword',TOKEN,id,p);note(r.message||'Password Guru direset.');}catch(e){note(e.message,true)}
 }
 
 async function loadSuperAdmin(){

@@ -37,7 +37,7 @@
 @keyframes adminSpin{to{transform:rotate(360deg)}}
 
 
-/* v1.4.1 - Sidebar kiri + filter peserta laporan + Super Admin */
+/* v1.5.0 - Sidebar kiri + filter peserta laporan + Super Admin */
 #adminView{min-height:calc(100vh - 36px)}
 .appShell{display:grid;grid-template-columns:245px minmax(0,1fr);gap:16px;align-items:start}
 .sidebar{position:sticky;top:18px;height:calc(100vh - 36px);background:linear-gradient(180deg,#0f4cce,#1749a7);color:#fff;border-radius:20px;padding:16px 12px;box-shadow:0 16px 38px rgba(15,76,206,.22);display:flex;flex-direction:column;overflow:auto}
@@ -72,12 +72,12 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   </div>
 </div><div class="wrap">
 <div id="msg" class="msg hidden"></div>
-<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Super Admin</h2><p class="muted">Masuk dengan akun khusus ber-role SUPER_ADMIN.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.4.1</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="/admin/" target="_top" style="display:block;text-align:center;margin-top:14px">Portal Administrator</a><a href="/" target="_top" style="display:block;text-align:center;margin-top:8px">Kembali ke peserta</a></div>
+<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Super Admin</h2><p class="muted">Masuk dengan akun khusus ber-role SUPER_ADMIN.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.5.0</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="/admin/" target="_top" style="display:block;text-align:center;margin-top:14px">Portal Administrator</a><a href="/" target="_top" style="display:block;text-align:center;margin-top:8px">Kembali ke peserta</a></div>
 <div id="adminView" class="hidden"><div class="appShell">
 <aside id="sidebar" class="sidebar no-print">
   <div class="sidebarHead">
     <div class="sideLogo">✓</div>
-    <div><div id="sideSystemName" class="sideBrand">Absen Murid PKL</div><div class="sideSub">Super Admin Control</div><div id="sideVersion" class="sideVersion">v1.4.1</div></div>
+    <div><div id="sideSystemName" class="sideBrand">Absen Murid PKL</div><div class="sideSub">Super Admin Control</div><div id="sideVersion" class="sideVersion">v1.5.0</div></div>
   </div>
   <div class="sideSectionLabel">MENU UTAMA</div>
   <div class="nav">
@@ -94,7 +94,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   </div>
   <div class="sideSectionLabel sideGap">KONTROL SISTEM</div>
   <div class="nav">
-    <button onclick="tab('admins',this)"><span class="mi">♛</span><span>Administrator</span></button>
+    <button onclick="tab('admins',this)"><span class="mi">♛</span><span>Sekolah & Admin</span></button>
     <button onclick="tab('deleted',this)"><span class="mi">♻</span><span>Peserta Nonaktif</span></button>
     <button onclick="tab('audit',this)"><span class="mi">☷</span><span>Audit Aktivitas</span></button>
   </div>
@@ -143,11 +143,21 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 <h3 id="reportTitle">Laporan Absensi</h3><div id="reportOut" class="scroll"></div></div></section>
 <section id="settings" class="page hidden"><div class="card"><h3>Pengaturan Sistem</h3><p class="muted">Perubahan penting langsung memengaruhi semua peserta. Play Integrity diaktifkan setelah APK sudah terhubung ke Play Console.</p><div id="settingsOut"></div></div></section>
 <section id="admins" class="page hidden">
-  <div class="card"><div class="superCardTitle"><div><h3 style="margin-bottom:2px">Kelola Administrator</h3><div class="muted">Tambah, ubah role/status, dan reset password administrator.</div></div><button class="alt" onclick="loadSuperAdmin()">Refresh</button></div></div>
+  <div class="card"><div class="superCardTitle"><div><h3 style="margin-bottom:2px">Sekolah & Admin</h3><div class="muted">Super Admin membuat sekolah sekaligus akun Admin Sekolah. Folder sekolah dibuat otomatis di dalam folder AbsenFlex PKL yang sudah ada.</div></div><button class="alt" onclick="loadSuperAdmin()">Refresh</button></div></div>
   <div class="superGrid">
-    <div class="card"><h3>Tambah Administrator</h3><div class="field"><label>Username</label><input id="saUsername" placeholder="contoh: admin2"></div><div class="field"><label>Nama</label><input id="saDisplayName" placeholder="Nama administrator"></div><div class="field"><label>Password awal (min. 10 karakter)</label><input id="saPassword" type="password"></div><div class="field"><label>Role</label><select id="saRole"><option value="ADMIN">ADMIN</option><option value="SUPER_ADMIN">SUPER_ADMIN</option></select></div><button style="margin-top:10px" onclick="createAdminFromUi()">Tambah Admin</button></div>
-    <div class="card"><h3>Daftar Administrator</h3><div id="superAdminsOut" class="scroll"></div></div>
+    <div class="card">
+      <h3>Tambah Sekolah + Admin</h3>
+      <div class="field"><label>Kode Sekolah (opsional)</label><input id="saSchoolCode" placeholder="otomatis: SCH001"></div>
+      <div class="field"><label>Nama Sekolah</label><input id="saSchoolName" placeholder="contoh: SMKN 1 Jenangan"></div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+      <div class="field"><label>Username Admin</label><input id="saUsername" placeholder="contoh: adminjenangan"></div>
+      <div class="field"><label>Nama Admin</label><input id="saDisplayName" placeholder="Nama administrator sekolah"></div>
+      <div class="field"><label>Password awal (min. 10 karakter)</label><input id="saPassword" type="password"></div>
+      <button style="margin-top:10px" onclick="createSchoolAdminFromUi()">Buat Sekolah & Admin</button>
+    </div>
+    <div class="card"><h3>Daftar Sekolah</h3><div id="schoolsOut" class="scroll"></div></div>
   </div>
+  <div class="card"><h3>Daftar Administrator / Guru</h3><div id="superAdminsOut" class="scroll"></div></div>
 </section>
 <section id="deleted" class="page hidden">
   <div class="card"><div class="superCardTitle"><div><h3 style="margin-bottom:2px">Peserta Nonaktif / Dihapus</h3><div class="muted">Pulihkan akun tanpa menghapus histori absensi, izin, dan penempatan lama.</div></div><button class="alt" onclick="loadSuperAdmin()">Refresh</button></div></div>
@@ -181,6 +191,12 @@ function adminProcessLabel(name){
     apiAdminReport:'Menyusun laporan',
     apiAdminSaveSetting:'Menyimpan pengaturan',
     apiSuperAdminOverview:'Memuat menu Super Admin',
+    apiSuperAdminCreateSchoolAdmin:'Membuat sekolah dan Admin Sekolah',
+    apiSuperAdminUpdateSchool:'Memperbarui sekolah',
+    apiAdminStaffOverview:'Memuat data Guru',
+    apiAdminCreateGuru:'Membuat akun Guru',
+    apiAdminUpdateGuru:'Memperbarui akun Guru',
+    apiAdminResetGuruPassword:'Mereset password Guru',
     apiSuperAdminCreateAdmin:'Membuat administrator',
     apiSuperAdminUpdateAdmin:'Memperbarui administrator',
     apiSuperAdminResetAdminPassword:'Mereset password administrator',
@@ -225,7 +241,7 @@ function gas(name,...args){
     .then(v=>{if(!silent)adminProcessEnd(true);return v})
     .catch(e=>{if(!silent)adminProcessEnd(false);throw e});
 }function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}function note(t,e=false){$('msg').textContent=t;$('msg').className='msg'+(e?' err':'');$('msg').classList.remove('hidden');setTimeout(()=>$('msg').classList.add('hidden'),5000)}
-async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.4.0');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
+async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.5.0');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
 async function login(){try{
   const r=await gas('apiAdminLogin',$('username').value,$('password').value);
   if(String(r.role||'ADMIN')!=='SUPER_ADMIN') throw new Error('Akun ini bukan SUPER_ADMIN. Gunakan portal Administrator.');
@@ -274,7 +290,7 @@ function pageMeta(id){return({
   permits:['✓','Perizinan','Tinjau dan koreksi pengajuan izin peserta.'],
   report:['▥','Laporan Absensi','Filter, pantau, dan cetak laporan peserta yang dipilih.'],
   settings:['⚙','Pengaturan','Pengaturan sistem absensi.'],
-  admins:['♛','Administrator','Tambah, ubah, nonaktifkan, dan reset password administrator.'],
+  admins:['♛','Sekolah & Admin','Buat sekolah beserta Admin Sekolah dan kelola seluruh akun.'],
   deleted:['♻','Peserta Nonaktif','Pulihkan akun peserta tanpa mengubah histori lama.'],
   audit:['☷','Audit Aktivitas','Pantau perubahan dan tindakan penting di seluruh sistem.']
 })[id]||['•','Menu',''];}
@@ -282,7 +298,7 @@ function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add
 function startHeaderClock(){if(window.__afClockTimer)return;const tick=()=>{const d=new Date(),days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];if($('topDate'))$('topDate').textContent=days[d.getDay()]+', '+String(d.getDate()).padStart(2,'0')+' '+months[d.getMonth()]+' '+d.getFullYear();if($('topTime'))$('topTime').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');const nm=ADMIN_NAME||'Administrator',ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();if($('topAvatar'))$('topAvatar').textContent=ini||'AD';};tick();window.__afClockTimer=setInterval(tick,1000)}
 async function loadDash(){
   const r=await gas('apiAdminDashboard',TOKEN);
-  const ver=String(r.version||'1.4.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
+  const ver=String(r.version||'1.5.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
   $('kpis').innerHTML=[
     ['Peserta aktif',r.totalUsers],['Terjadwal hari ini',r.scheduledToday],
     ['Hadir hari ini',r.arrived],['Terlambat',r.late],
@@ -462,18 +478,51 @@ async function loadSuperAdmin(){
 }
 function renderSuperAdmin(){
   if(!SUPER_DATA)return;
-  let a='<table><thead><tr><th>Username</th><th>Nama</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead><tbody>';
-  (SUPER_DATA.admins||[]).forEach(x=>{a+=`<tr><td><b>${esc(x.username)}</b>${x.is_current?' <span class="pill">Anda</span>':''}</td><td>${esc(x.display_name)}</td><td>${esc(x.role)}</td><td>${esc(x.status)}</td><td><button class="small alt" onclick="editAdminUi('${x.id}')">Edit</button> <button class="small alt" onclick="resetAdminPasswordUi('${x.id}','${esc(x.username)}')">Reset Password</button></td></tr>`});
+
+  let s='<table><thead><tr><th>Kode</th><th>Sekolah</th><th>Status</th><th>Siswa</th><th>Admin</th><th>Guru</th><th>Folder</th><th>Aksi</th></tr></thead><tbody>';
+  (SUPER_DATA.schools||[]).forEach(x=>{
+    const st=x.stats||{};
+    s+=`<tr><td><b>${esc(x.code)}</b></td><td>${esc(x.name)}</td><td>${esc(x.status)}</td><td>${st.users||0}</td><td>${st.admins||0}</td><td>${st.gurus||0}</td><td>${x.folder_id?`<a href="https://drive.google.com/drive/folders/${esc(x.folder_id)}" target="_blank">Buka Folder</a>`:'-'}</td><td><button class="small alt" onclick="editSchoolUi('${x.id}','${esc(x.name)}','${esc(x.status)}')">Edit</button></td></tr>`;
+  });
+  s+='</tbody></table>';
+  if(!(SUPER_DATA.schools||[]).length)s='<div class="msg">Belum ada sekolah.</div>';
+  $('schoolsOut').innerHTML=s;
+
+  let a='<table><thead><tr><th>Username</th><th>Nama</th><th>Role</th><th>Sekolah</th><th>Status</th><th>Aksi</th></tr></thead><tbody>';
+  (SUPER_DATA.admins||[]).forEach(x=>{
+    a+=`<tr><td><b>${esc(x.username)}</b>${x.is_current?' <span class="pill">Anda</span>':''}</td><td>${esc(x.display_name)}</td><td>${esc(x.role)}</td><td>${esc(x.school_name||'-')}</td><td>${esc(x.status)}</td><td><button class="small alt" onclick="editAdminUi('${x.id}')">Edit</button> <button class="small alt" onclick="resetAdminPasswordUi('${x.id}','${esc(x.username)}')">Reset Password</button></td></tr>`;
+  });
   a+='</tbody></table>';$('superAdminsOut').innerHTML=a;
-  let d='<table><thead><tr><th>Nama</th><th>Email</th><th>ID</th><th>Aksi</th></tr></thead><tbody>';
-  (SUPER_DATA.deletedUsers||[]).forEach(u=>{d+=`<tr><td><b>${esc(u.name)}</b></td><td>${esc(u.email)}</td><td>${esc(u.identifier||'-')}</td><td><button class="small" onclick="restoreUserUi('${u.id}','${esc(u.name)}')">Pulihkan</button></td></tr>`});
+
+  let d='<table><thead><tr><th>Nama</th><th>NIS</th><th>Email</th><th>Sekolah</th><th>Aksi</th></tr></thead><tbody>';
+  (SUPER_DATA.deletedUsers||[]).forEach(u=>{d+=`<tr><td><b>${esc(u.name)}</b></td><td>${esc(u.identifier||'-')}</td><td>${esc(u.email)}</td><td>${esc(u.school_name||'-')}</td><td><button class="small" onclick="restoreUserUi('${u.id}','${esc(u.name)}')">Pulihkan</button></td></tr>`});
   d+='</tbody></table>';if(!(SUPER_DATA.deletedUsers||[]).length)d='<div class="msg">Tidak ada peserta yang dihapus.</div>';$('superDeletedOut').innerHTML=d;
+
   let log='<table><thead><tr><th>Waktu</th><th>Aktor</th><th>Aksi</th><th>Detail</th></tr></thead><tbody>';
   (SUPER_DATA.audit||[]).forEach(x=>{let det=String(x.details||'');try{det=JSON.stringify(JSON.parse(det),null,2)}catch(e){}log+=`<tr><td>${esc(x.ts)}</td><td>${esc(x.actor_type)}<br><span class="muted">${esc(x.actor_id)}</span></td><td><b>${esc(x.action)}</b></td><td class="auditDetails">${esc(det)}</td></tr>`});
   log+='</tbody></table>';$('superAuditOut').innerHTML=log;
 }
-async function createAdminFromUi(){try{const payload={username:$('saUsername').value,display_name:$('saDisplayName').value,password:$('saPassword').value,role:$('saRole').value};await gas('apiSuperAdminCreateAdmin',TOKEN,payload);$('saUsername').value='';$('saDisplayName').value='';$('saPassword').value='';$('saRole').value='ADMIN';note('Administrator berhasil ditambahkan.');await loadSuperAdmin();}catch(e){note(e.message,true)}}
-async function editAdminUi(id){const x=(SUPER_DATA&&SUPER_DATA.admins||[]).find(a=>a.id===id);if(!x)return;const name=prompt('Nama administrator:',x.display_name);if(name===null)return;const role=prompt('Role (ADMIN atau SUPER_ADMIN):',x.role);if(role===null)return;const status=prompt('Status (ACTIVE atau INACTIVE):',x.status);if(status===null)return;try{await gas('apiSuperAdminUpdateAdmin',TOKEN,id,{display_name:name,role:role.trim().toUpperCase(),status:status.trim().toUpperCase()});note('Administrator diperbarui.');const me=await gas('apiAdminMe',TOKEN);if(String(me.role)!=='SUPER_ADMIN'){sessionStorage.removeItem('af_super_token');sessionStorage.removeItem('af_super_name');sessionStorage.removeItem('af_super_role');location.replace('/admin/');return;}ADMIN_NAME=me.name;ADMIN_ROLE='SUPER_ADMIN';sessionStorage.setItem('af_super_name',ADMIN_NAME);$('adminName').textContent=ADMIN_NAME;applyRoleUi();await loadSuperAdmin();}catch(e){note(e.message,true)}}
+async function createSchoolAdminFromUi(){
+  try{
+    const payload={
+      school_code:$('saSchoolCode').value,
+      school_name:$('saSchoolName').value,
+      username:$('saUsername').value,
+      display_name:$('saDisplayName').value,
+      password:$('saPassword').value
+    };
+    const r=await gas('apiSuperAdminCreateSchoolAdmin',TOKEN,payload);
+    $('saSchoolCode').value='';$('saSchoolName').value='';$('saUsername').value='';$('saDisplayName').value='';$('saPassword').value='';
+    note(r.message||'Sekolah dan Admin berhasil dibuat.');
+    await Promise.all([loadSuperAdmin(),loadMasters(),loadUsers(),loadDash()]);
+  }catch(e){note(e.message,true)}
+}
+async function editSchoolUi(id,name,status){
+  const n=prompt('Nama sekolah:',name);if(n===null)return;
+  const s=prompt('Status (ACTIVE atau INACTIVE):',status);if(s===null)return;
+  try{await gas('apiSuperAdminUpdateSchool',TOKEN,id,{name:n,status:s.trim().toUpperCase()});note('Sekolah diperbarui.');await loadSuperAdmin();}catch(e){note(e.message,true)}
+}
+async function editAdminUi(id){const x=(SUPER_DATA&&SUPER_DATA.admins||[]).find(a=>a.id===id);if(!x)return;const name=prompt('Nama administrator:',x.display_name);if(name===null)return;const role=prompt('Role (ADMIN, GURU, atau SUPER_ADMIN):',x.role);if(role===null)return;const status=prompt('Status (ACTIVE atau INACTIVE):',x.status);if(status===null)return;let schoolId=x.school_id||'';if(role.trim().toUpperCase()!=='SUPER_ADMIN'){const schools=(SUPER_DATA&&SUPER_DATA.schools)||[];const hint=schools.map(s=>s.code+' = '+s.name+' ['+s.id+']').join('\n');const schoolInput=prompt('School ID untuk akun ini:\n\n'+hint,schoolId);if(schoolInput===null)return;schoolId=schoolInput.trim();}try{await gas('apiSuperAdminUpdateAdmin',TOKEN,id,{display_name:name,role:role.trim().toUpperCase(),status:status.trim().toUpperCase(),school_id:schoolId});note('Administrator diperbarui.');const me=await gas('apiAdminMe',TOKEN);if(String(me.role)!=='SUPER_ADMIN'){sessionStorage.removeItem('af_super_token');sessionStorage.removeItem('af_super_name');sessionStorage.removeItem('af_super_role');location.replace('/admin/');return;}ADMIN_NAME=me.name;ADMIN_ROLE='SUPER_ADMIN';sessionStorage.setItem('af_super_name',ADMIN_NAME);$('adminName').textContent=ADMIN_NAME;applyRoleUi();await loadSuperAdmin();}catch(e){note(e.message,true)}}
 async function resetAdminPasswordUi(id,username){const p=prompt('Password baru untuk '+username+' (minimal 10 karakter):');if(!p)return;try{const r=await gas('apiSuperAdminResetAdminPassword',TOKEN,id,p);note(r.message||'Password direset.');}catch(e){note(e.message,true)}}
 async function restoreUserUi(id,name){if(!confirm('Pulihkan peserta '+name+'?\n\nStatus menjadi PENDING dan perlu disetujui ulang oleh admin.'))return;try{const r=await gas('apiSuperAdminRestoreUser',TOKEN,id);note(r.message||'Peserta dipulihkan.');await Promise.all([loadSuperAdmin(),loadUsers(),loadDash()]);}catch(e){note(e.message,true)}}
 
