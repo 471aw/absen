@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="id"><head>
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://api-absen.skai.my.id; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"><meta charset="utf-8"><base target="_top"><style>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://api-absen.skai.my.id; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_top"><style>
 :root{--bg:#f3f6fb;--card:#fff;--text:#142033;--muted:#68768a;--line:#e3e9f1;--p:#2563eb;--p2:#1d4ed8;--bad:#dc2626;--ok:#16a34a;--amber:#d97706;--shadow:0 12px 34px rgba(15,23,42,.07)}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}.wrap{max-width:1280px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 20px;background:linear-gradient(135deg,#0f4cce,#2d72ef);color:#fff;border-radius:20px;box-shadow:0 14px 36px rgba(37,99,235,.18)}.brand{font-size:22px;font-weight:850}.top .muted{color:rgba(255,255,255,.78)}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;margin:14px 0;box-shadow:var(--shadow)}.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:14px}.kpi{background:#fff;border:1px solid var(--line);border-radius:17px;padding:15px;box-shadow:var(--shadow);position:relative;overflow:hidden}.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--p)}.kpi:nth-child(2):before{background:var(--amber)}.kpi:nth-child(3):before,.kpi:nth-child(5):before{background:var(--ok)}.kpi:nth-child(4):before{background:var(--bad)}.kpi b{font-size:28px;display:block}.muted{color:var(--muted)}input,select,textarea,button{font:inherit;padding:10px 11px;border-radius:11px;border:1px solid #d4dce6;background:#fff;color:var(--text)}button{border:0;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;font-weight:750;cursor:pointer}button.alt{background:#eef4ff;color:#19499d;border:1px solid #d5e1ff}button.bad{background:#dc2626}button.small{padding:7px 9px;font-size:11px}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;padding:7px;background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);position:sticky;top:8px;z-index:100}.nav button{background:transparent;color:var(--muted);border:0}.nav button.active{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff}.row{display:flex;gap:9px;flex-wrap:wrap;align-items:end}.field{display:flex;flex-direction:column;gap:5px;min-width:150px;flex:1}.field label{font-size:11px;font-weight:800;color:var(--muted)}table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}th,td{padding:10px;border-bottom:1px solid #edf1f5;text-align:left;vertical-align:top}th{position:sticky;top:0;background:#f8fafc;z-index:1;color:#506074}.scroll{overflow:auto;max-height:540px;border-radius:12px}.hidden{display:none!important}.msg{padding:11px 13px;border-radius:12px;background:#edf4ff;margin:10px 0}.msg.err{background:#fff0f0;color:#8a1c14}.pill{padding:4px 8px;border-radius:999px;background:#eef4ff;color:#2453a6;display:inline-block;font-size:10px;font-weight:800}.login{max-width:440px;margin:70px auto;padding:24px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:1050px){.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:800px){.wrap{padding:10px}.grid{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.row{align-items:stretch}.field{min-width:100%}.nav{position:static}}@media print{.top,.nav,.no-print,#loginView{display:none!important}.wrap{max-width:none;padding:0}.card{border:0;box-shadow:none}.scroll{max-height:none;overflow:visible}}
 
 .dashboardVisual{display:grid;grid-template-columns:330px 1fr;gap:14px;margin-top:14px}
@@ -35,6 +36,23 @@
 .adminProcessText b{display:block;font-size:13px}.adminProcessText span{display:block;color:#6b7787;font-size:11px;margin-top:1px}
 @keyframes adminSpin{to{transform:rotate(360deg)}}
 
+
+/* v1.4.1 - Sidebar kiri + filter peserta laporan + Super Admin */
+#adminView{min-height:calc(100vh - 36px)}
+.appShell{display:grid;grid-template-columns:245px minmax(0,1fr);gap:16px;align-items:start}
+.sidebar{position:sticky;top:18px;height:calc(100vh - 36px);background:linear-gradient(180deg,#0f4cce,#1749a7);color:#fff;border-radius:20px;padding:16px 12px;box-shadow:0 16px 38px rgba(15,76,206,.22);display:flex;flex-direction:column;overflow:auto}
+.sidebarHead{padding:4px 8px 14px;border-bottom:1px solid rgba(255,255,255,.16);margin-bottom:10px}.sideBrand{font-size:17px;font-weight:850;line-height:1.2}.sideVersion{display:inline-block;margin-top:6px;padding:3px 7px;border:1px solid rgba(255,255,255,.22);border-radius:999px;font-size:10px;color:rgba(255,255,255,.88)}
+.sidebar .nav{position:static;display:flex;flex-direction:column;gap:5px;flex-wrap:nowrap;margin:0;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;z-index:auto}
+.sidebar .nav button{width:100%;text-align:left;color:rgba(255,255,255,.82);background:transparent;border:0;padding:11px 12px;border-radius:11px;display:flex;align-items:center;gap:9px}
+.sidebar .nav button:hover{background:rgba(255,255,255,.10);color:#fff}.sidebar .nav button.active{background:#fff;color:#1749a7;box-shadow:0 8px 20px rgba(7,33,85,.18)}
+.sidebarFooter{margin-top:auto;padding:12px 8px 4px;border-top:1px solid rgba(255,255,255,.16)}.sidebarUser{font-weight:800}.sidebarRole{font-size:11px;color:rgba(255,255,255,.72);margin:2px 0 10px}.sidebar .logoutBtn{width:100%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#fff}
+.contentArea{min-width:0}.contentArea .top{margin:0 0 14px}.mobileMenu{display:none;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.26);color:#fff;padding:8px 10px}
+.reportPeopleBox{margin-top:12px;border:1px solid var(--line);background:#f8fafc;border-radius:14px;padding:12px}.reportPeopleHead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.reportPeopleList{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px;max-height:180px;overflow:auto;padding-right:4px}.reportPerson{display:flex;align-items:center;gap:7px;padding:8px 9px;background:#fff;border:1px solid #e5ebf3;border-radius:10px;cursor:pointer}.reportPerson input{margin:0;accent-color:var(--p)}
+.superGrid{display:grid;grid-template-columns:1fr 1.2fr;gap:14px}.superCardTitle{display:flex;justify-content:space-between;align-items:center;gap:10px}.dangerNote{background:#fff4f4;border:1px solid #fecaca;color:#991b1b;padding:10px 12px;border-radius:12px}.auditDetails{max-width:420px;white-space:pre-wrap;word-break:break-word;color:#5f6c7d}
+@media(max-width:980px){.appShell{grid-template-columns:1fr}.sidebar{position:fixed;left:10px;top:10px;bottom:10px;height:auto;width:min(280px,calc(100vw - 42px));z-index:500;transform:translateX(calc(-100% - 24px));transition:transform .22s ease}.sidebar.open{transform:translateX(0)}.mobileMenu{display:inline-flex}.reportPeopleList{grid-template-columns:repeat(2,minmax(0,1fr))}.superGrid{grid-template-columns:1fr}}
+@media(max-width:600px){.reportPeopleList{grid-template-columns:1fr}.contentArea .top{border-radius:16px}.top .brand{font-size:18px}}
+@media print{.sidebar,.mobileMenu,.reportPeopleBox,.superOnly{display:none!important}.appShell{display:block}.contentArea{width:100%}}
+
 </style></head><body>
 <div id="adminProcess" class="adminProcess hidden" aria-live="polite" aria-busy="false">
   <div class="adminProcessCard">
@@ -43,9 +61,15 @@
   </div>
 </div><div class="wrap">
 <div id="msg" class="msg hidden"></div>
-<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Administrator</h2><p class="muted">Masuk dengan username dan password admin.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.3.0</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="/" target="_top" style="display:block;text-align:center;margin-top:14px">Kembali ke peserta</a></div>
-<div id="adminView" class="hidden"><div class="top"><div><div class="brand"><span id="adminSystemName">Absensi</span> • Admin <span id="adminVersion" class="versionBadge headerVersion">v1.3.0</span></div><div class="muted" id="adminName"></div></div><button class="alt no-print" onclick="logout()">Keluar</button></div>
-<div class="nav no-print"><button class="active" onclick="tab('dash',this)">Dashboard</button><button onclick="tab('users',this)">Peserta</button><button onclick="tab('masters',this)">Master</button><button onclick="tab('schedule',this)">Jadwal</button><button onclick="tab('permits',this)">Perizinan</button><button onclick="tab('report',this)">Laporan</button><button onclick="tab('settings',this)">Pengaturan</button></div>
+<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Administrator</h2><p class="muted">Masuk dengan username dan password admin.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.4.1</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="<?= webAppUrl ?>" target="_top" style="display:block;text-align:center;margin-top:14px">Kembali ke peserta</a></div>
+<div id="adminView" class="hidden"><div class="appShell">
+<aside id="sidebar" class="sidebar no-print">
+  <div class="sidebarHead"><div id="sideSystemName" class="sideBrand">Absensi</div><div id="sideVersion" class="sideVersion">v1.4.1</div></div>
+  <div class="nav"><button class="active" onclick="tab('dash',this)">▣ <span>Dashboard</span></button><button onclick="tab('users',this)">👤 <span>Peserta</span></button><button onclick="tab('masters',this)">▤ <span>Master</span></button><button onclick="tab('schedule',this)">◷ <span>Jadwal</span></button><button onclick="tab('permits',this)">✓ <span>Perizinan</span></button><button onclick="tab('report',this)">▦ <span>Laporan</span></button><button onclick="tab('settings',this)">⚙ <span>Pengaturan</span></button><button id="superAdminNav" class="superOnly hidden" onclick="tab('superadmin',this)">★ <span>Super Admin</span></button></div>
+  <div class="sidebarFooter"><div id="sideAdminName" class="sidebarUser">Administrator</div><div id="sideAdminRole" class="sidebarRole">ADMIN</div><button class="logoutBtn" onclick="logout()">Keluar</button></div>
+</aside>
+<main class="contentArea">
+<div class="top"><div><div class="brand"><span id="adminSystemName">Absensi</span> • Admin <span id="adminVersion" class="versionBadge headerVersion">v1.4.1</span></div><div class="muted" id="adminName"></div></div><button class="mobileMenu no-print" onclick="toggleSidebar()">☰ Menu</button></div>
 <section id="dash" class="page">
 <div id="kpis" class="grid"></div>
 <div class="dashboardVisual">
@@ -68,22 +92,35 @@
   <button onclick="loadPermits()">Tampilkan</button>
 </div>
 <div id="permitOut" class="scroll" style="margin-top:12px"></div></div></section>
-<section id="report" class="page hidden"><div class="card"><div class="row no-print"><div class="field"><label>Dari</label><input id="repFrom" type="date"></div><div class="field"><label>Sampai</label><input id="repTo" type="date"></div><div class="field"><label>Program</label><select id="repProgram"><option value="">Semua</option></select></div><div class="field"><label>Instansi</label><select id="repInstitution"><option value="">Semua</option></select></div><div class="field"><label>Lokasi</label><select id="repLocation"><option value="">Semua</option></select></div><button onclick="loadReport()">Tampilkan</button><button class="alt" onclick="window.print()">Cetak / PDF</button></div><h3 id="reportTitle">Laporan Absensi</h3><div id="reportOut" class="scroll"></div></div></section>
+<section id="report" class="page hidden"><div class="card"><div class="row no-print"><div class="field"><label>Dari</label><input id="repFrom" type="date"></div><div class="field"><label>Sampai</label><input id="repTo" type="date"></div><div class="field"><label>Program</label><select id="repProgram"><option value="">Semua</option></select></div><div class="field"><label>Instansi</label><select id="repInstitution"><option value="">Semua</option></select></div><div class="field"><label>Lokasi</label><select id="repLocation"><option value="">Semua</option></select></div><button onclick="loadReport()">Tampilkan</button><button class="alt" onclick="window.print()">Cetak / PDF</button></div>
+<div class="reportPeopleBox no-print"><div class="reportPeopleHead"><label style="font-weight:800"><input id="repAllUsers" type="checkbox" onchange="toggleReportAllUsers(this.checked)"> Pilih semua peserta</label><span id="repUserCount" class="muted">0 peserta dipilih</span></div><div id="repUsers" class="reportPeopleList"></div></div>
+<h3 id="reportTitle">Laporan Absensi</h3><div id="reportOut" class="scroll"></div></div></section>
 <section id="settings" class="page hidden"><div class="card"><h3>Pengaturan Sistem</h3><p class="muted">Perubahan penting langsung memengaruhi semua peserta. Play Integrity diaktifkan setelah APK sudah terhubung ke Play Console.</p><div id="settingsOut"></div></div></section>
-</div></div>
+<section id="superadmin" class="page hidden">
+  <div class="card"><div class="superCardTitle"><div><h3 style="margin-bottom:2px">Super Admin</h3><div class="muted">Kelola administrator, peserta yang dihapus, dan audit aktivitas.</div></div><button class="alt" onclick="loadSuperAdmin()">Refresh</button></div></div>
+  <div class="superGrid">
+    <div class="card"><h3>Tambah Administrator</h3><div class="field"><label>Username</label><input id="saUsername" placeholder="contoh: admin2"></div><div class="field"><label>Nama</label><input id="saDisplayName" placeholder="Nama administrator"></div><div class="field"><label>Password awal (min. 10 karakter)</label><input id="saPassword" type="password"></div><div class="field"><label>Role</label><select id="saRole"><option value="ADMIN">ADMIN</option><option value="SUPER_ADMIN">SUPER_ADMIN</option></select></div><button style="margin-top:10px" onclick="createAdminFromUi()">Tambah Admin</button></div>
+    <div class="card"><h3>Daftar Administrator</h3><div id="superAdminsOut" class="scroll"></div></div>
+  </div>
+  <div class="card"><h3>Peserta Dihapus / Dinonaktifkan</h3><div class="dangerNote">Data absensi dan perizinan lama tetap disimpan. Pulihkan peserta bila akun perlu digunakan kembali.</div><div id="superDeletedOut" class="scroll" style="margin-top:12px"></div></div>
+  <div class="card"><h3>Audit Aktivitas Terbaru</h3><div id="superAuditOut" class="scroll"></div></div>
+</section>
+</main></div></div></div>
 <script src="/api-client.js"></script>
 <script>
-let TOKEN=sessionStorage.getItem('af_admin_token')||'', ADMIN_NAME=sessionStorage.getItem('af_admin_name')||'', M=null, USERS=[], APP_CONFIG=null;
+let TOKEN=sessionStorage.getItem('af_admin_token')||'', ADMIN_NAME=sessionStorage.getItem('af_admin_name')||'', ADMIN_ROLE=sessionStorage.getItem('af_admin_role')||'', M=null, USERS=[], APP_CONFIG=null, SUPER_DATA=null, REPORT_SELECTION_INIT=false;
 const $=id=>document.getElementById(id);let ADMIN_BUSY_COUNT=0,ADMIN_DONE_TIMER=null;
 function adminProcessLabel(name){
   const labels={
     apiAdminLogin:'Memeriksa login administrator',
+    apiAdminMe:'Memuat hak akses administrator',
     apiAdminDashboard:'Memuat dashboard',
     apiAdminListUsers:'Memuat data peserta',
     apiAdminMasters:'Memuat master data',
     apiAdminApproveUser:'Memperbarui status peserta',
     apiAdminResetFace:'Mereset Face ID',
     apiAdminResetAttendanceToday:'Mereset absensi hari ini',
+    apiAdminDeleteUser:'Menghapus peserta',
     apiAdminUpsertMaster:'Menyimpan master data',
     apiAdminUpsertSchedule:'Menyimpan jadwal',
     apiAdminUpdateUserAssignment:'Menyimpan penempatan',
@@ -91,6 +128,11 @@ function adminProcessLabel(name){
     apiAdminDecidePermission:'Memperbarui status perizinan',
     apiAdminReport:'Menyusun laporan',
     apiAdminSaveSetting:'Menyimpan pengaturan',
+    apiSuperAdminOverview:'Memuat menu Super Admin',
+    apiSuperAdminCreateAdmin:'Membuat administrator',
+    apiSuperAdminUpdateAdmin:'Memperbarui administrator',
+    apiSuperAdminResetAdminPassword:'Mereset password administrator',
+    apiSuperAdminRestoreUser:'Memulihkan peserta',
     apiPublicConfig:'Memuat konfigurasi'
   };
   return labels[name]||'Memproses data';
@@ -123,23 +165,23 @@ function adminProcessEnd(ok){
 function gas(name,...args){
   const silent=name==='apiAdminFacePhoto';
   if(!silent)adminProcessStart(name);
+  if(!window.AbsensiAPI||typeof AbsensiAPI.call!=='function'){
+    if(!silent)adminProcessEnd(false);
+    return Promise.reject(new Error('API client tidak tersedia. Muat ulang halaman.'));
+  }
   return AbsensiAPI.call(name,...args)
     .then(v=>{if(!silent)adminProcessEnd(true);return v})
     .catch(e=>{if(!silent)adminProcessEnd(false);throw e});
-}
-function esc(s){
-  return String(s??'').replace(/[&<>"']/g,c=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[c]));
-}
-function note(t,e=false){$('msg').textContent=t;$('msg').className='msg'+(e?' err':'');$('msg').classList.remove('hidden');setTimeout(()=>$('msg').classList.add('hidden'),5000)}
-async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;document.title=name+' • Admin';if($('loginVersion'))$('loginVersion').textContent='Versi v1.3.0';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
-async function login(){try{const r=await gas('apiAdminLogin',$('username').value,$('password').value);TOKEN=r.token;ADMIN_NAME=r.name;sessionStorage.setItem('af_admin_token',TOKEN);sessionStorage.setItem('af_admin_name',ADMIN_NAME);await start();}catch(e){note(e.message,true)}}function logout(){sessionStorage.clear();location.reload()}
-async function start(){if(!TOKEN)return;$('loginView').classList.add('hidden');$('adminView').classList.remove('hidden');$('adminName').textContent=ADMIN_NAME;try{await loadMasters();await Promise.all([loadDash(),loadUsers()]);setDates();}catch(e){if(/Sesi|akses|Admin/i.test(e.message)){logout();return}note(e.message,true)}}
-function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');if(id==='permits')loadPermits();if(id==='report')loadReport()}
+}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}function note(t,e=false){$('msg').textContent=t;$('msg').className='msg'+(e?' err':'');$('msg').classList.remove('hidden');setTimeout(()=>$('msg').classList.add('hidden'),5000)}
+async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.4.0');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
+async function login(){try{const r=await gas('apiAdminLogin',$('username').value,$('password').value);TOKEN=r.token;ADMIN_NAME=r.name;ADMIN_ROLE=r.role||'ADMIN';sessionStorage.setItem('af_admin_token',TOKEN);sessionStorage.setItem('af_admin_name',ADMIN_NAME);sessionStorage.setItem('af_admin_role',ADMIN_ROLE);await start();}catch(e){note(e.message,true)}}function logout(){sessionStorage.clear();location.reload()}
+function applyRoleUi(){const isSuper=ADMIN_ROLE==='SUPER_ADMIN';document.querySelectorAll('.superOnly').forEach(x=>x.classList.toggle('hidden',!isSuper));if($('sideAdminRole'))$('sideAdminRole').textContent=ADMIN_ROLE||'ADMIN';if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Administrator';}
+function toggleSidebar(force){const el=$('sidebar');if(!el)return;if(force===false)el.classList.remove('open');else el.classList.toggle('open');}
+async function start(){if(!TOKEN)return;$('loginView').classList.add('hidden');$('adminView').classList.remove('hidden');try{const me=await gas('apiAdminMe',TOKEN);ADMIN_NAME=me.name||ADMIN_NAME;ADMIN_ROLE=me.role||'ADMIN';sessionStorage.setItem('af_admin_name',ADMIN_NAME);sessionStorage.setItem('af_admin_role',ADMIN_ROLE);$('adminName').textContent=ADMIN_NAME;if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME;applyRoleUi();await loadMasters();await Promise.all([loadDash(),loadUsers()]);setDates();}catch(e){if(/Sesi|akses|Admin/i.test(e.message)){logout();return}note(e.message,true)}}
+function tab(id,b){if(id==='superadmin'&&ADMIN_ROLE!=='SUPER_ADMIN'){note('Menu ini hanya untuk Super Admin.',true);return;}document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');if(id==='permits')loadPermits();if(id==='report')loadReport();if(id==='superadmin')loadSuperAdmin();if(window.innerWidth<=980)toggleSidebar(false)}
 async function loadDash(){
   const r=await gas('apiAdminDashboard',TOKEN);
-  const ver=String(r.version||'1.3.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;
+  const ver=String(r.version||'1.4.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
   $('kpis').innerHTML=[
     ['Peserta aktif',r.totalUsers],['Terjadwal hari ini',r.scheduledToday],
     ['Hadir hari ini',r.arrived],['Terlambat',r.late],
@@ -188,9 +230,9 @@ async function loadUsers(){
       <td>${esc(u.face_status)}</td>
       <td>${u.status==='PENDING'?`<button class="small" onclick="approve('${u.id}',true)">Setujui</button> <button class="small bad" onclick="approve('${u.id}',false)">Tolak</button>`:''}
       <button class="small alt" onclick="selectAssignment('${u.id}')">Penempatan</button>
-      ${u.face_status==='ENROLLED'?`<button class="small alt" onclick="resetFace('${u.id}')">Reset Face</button>`:''} <button class="small bad" onclick="resetAttendanceToday('${u.id}','${esc(u.name)}')">Reset Absen Hari Ini</button></td></tr>`;
+      ${u.face_status==='ENROLLED'?`<button class="small alt" onclick="resetFace('${u.id}')">Reset Face</button>`:''} <button class="small bad" onclick="resetAttendanceToday('${u.id}','${esc(u.name)}')">Reset Absen Hari Ini</button> <button class="small bad" onclick="deleteUser('${u.id}','${esc(u.name)}')">Hapus</button></td></tr>`;
   });
-  h+='</tbody></table>';$('usersOut').innerHTML=h;fillAssignmentUsers();observeFacePhotos();
+  h+='</tbody></table>';$('usersOut').innerHTML=h;fillAssignmentUsers();observeFacePhotos();renderReportUserPicker();
 }
 
 function observeFacePhotos(){
@@ -213,6 +255,7 @@ async function loadFacePhoto(el){
   }catch(e){el.classList.remove('faceLoading');}
 }
 async function approve(id,yes){try{await gas('apiAdminApproveUser',TOKEN,id,yes);note('Status peserta diperbarui.');await Promise.all([loadUsers(),loadDash()])}catch(e){note(e.message,true)}}async function resetFace(id){if(!confirm('Reset Face ID peserta ini? Peserta harus daftar wajah ulang.'))return;try{await gas('apiAdminResetFace',TOKEN,id);note('Face ID direset.');loadUsers()}catch(e){note(e.message,true)}}async function resetAttendanceToday(id,name){if(!confirm('Reset absensi HARI INI untuk '+name+'?\n\nJam datang/pulang hari ini akan dihapus agar peserta dapat mencoba absensi dari awal. Face ID tidak dihapus.'))return;try{const r=await gas('apiAdminResetAttendanceToday',TOKEN,id);note(r.message||'Absensi hari ini direset.');await Promise.all([loadDash(),loadUsers()])}catch(e){note(e.message,true)}}
+async function deleteUser(id,name){if(!confirm('Hapus peserta '+name+' dari daftar aktif?\n\nAkun tidak dapat login/absen lagi. Face ID dan PIN dinonaktifkan. Riwayat absensi serta perizinan TETAP disimpan.'))return;try{const r=await gas('apiAdminDeleteUser',TOKEN,id);note(r.message||'Peserta dihapus.');await Promise.all([loadUsers(),loadDash()]);if(ADMIN_ROLE==='SUPER_ADMIN'&&SUPER_DATA)loadSuperAdmin();}catch(e){note(e.message,true)}}
 async function loadMasters(){const r=await gas('apiAdminMasters',TOKEN);if(!r||typeof r!=='object')throw new Error('Data master tidak dapat dibaca dari server. Muat ulang halaman setelah memperbarui deployment.');M={ok:r.ok!==false,serverDate:r.serverDate||'',programs:Array.isArray(r.programs)?r.programs:[],institutions:Array.isArray(r.institutions)?r.institutions:[],locations:Array.isArray(r.locations)?r.locations:[],schedules:Array.isArray(r.schedules)?r.schedules:[],settings:Array.isArray(r.settings)?r.settings:[]};fillSelects();renderMasters();renderSchedules();renderSettings();fillAssignmentUsers();$('assignEffective').min=M.serverDate||'';$('schEffective').min=M.serverDate||'';if(!$('assignEffective').value)$('assignEffective').value=M.serverDate||'';if(!$('schEffective').value)$('schEffective').value=M.serverDate||'';if(USERS.length)renderUserRefreshNoFetch()}
 function opts(rows,all=false){rows=Array.isArray(rows)?rows:[];return (all?'<option value="">Semua</option>':'')+rows.filter(x=>x&&x.status==='ACTIVE').map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('')}
 function fillSelects(){$('locInstitution').innerHTML=opts(M.institutions);$('schProgram').innerHTML=opts(M.programs);$('schLocation').innerHTML=opts(M.locations);$('repProgram').innerHTML=opts(M.programs,true);$('repInstitution').innerHTML=opts(M.institutions,true);$('repLocation').innerHTML=opts(M.locations,true);$('assignProgram').innerHTML=opts(M.programs);$('assignInstitution').innerHTML=opts(M.institutions);filterAssignLocations()}
@@ -269,6 +312,24 @@ async function decide(id,d,correction=false){
     await Promise.all([loadPermits(),loadDash()]);
   }catch(e){note(e.message,true)}
 }
+function renderReportUserPicker(){
+  const box=$('repUsers'); if(!box)return;
+  const eligible=REPORT_USERS.filter(u=>u.status==='APPROVED'||u.status==='DELETED');
+  if(!REPORT_SELECTION_INIT){REPORT_SELECTION_INIT=true;}
+  const current=new Set([...document.querySelectorAll('.repUserCheck:checked')].map(x=>x.value));
+  const keep=current.size?current:new Set(eligible.map(u=>String(u.id)));
+  box.innerHTML=eligible.map(u=>`<label class="reportPerson"><input class="repUserCheck" type="checkbox" value="${esc(u.id)}" ${keep.has(String(u.id))?'checked':''} onchange="syncReportUserSelection()"><span>${esc(u.name)}${u.status==='DELETED'?' <span class="pill">Dihapus</span>':''}<br><small class="muted">${esc(u.identifier||u.email)}</small></span></label>`).join('');
+  if(!eligible.length)box.innerHTML='<span class="muted">Belum ada peserta berstatus APPROVED.</span>';
+  syncReportUserSelection();
+}
+function syncReportUserSelection(){
+  const checks=[...document.querySelectorAll('.repUserCheck')],selected=checks.filter(x=>x.checked);
+  if($('repUserCount'))$('repUserCount').textContent=selected.length+' dari '+checks.length+' peserta dipilih';
+  if($('repAllUsers')){$('repAllUsers').checked=checks.length>0&&selected.length===checks.length;$('repAllUsers').indeterminate=selected.length>0&&selected.length<checks.length;}
+}
+function toggleReportAllUsers(checked){document.querySelectorAll('.repUserCheck').forEach(x=>x.checked=checked);syncReportUserSelection();}
+function selectedReportUserIds(){return [...document.querySelectorAll('.repUserCheck:checked')].map(x=>x.value);}
+
 function setDates(){
   const now=new Date(),first=new Date(now.getFullYear(),now.getMonth(),1),last=new Date(now.getFullYear(),now.getMonth()+1,0);
   const iso=x=>{const y=x.getFullYear(),m=String(x.getMonth()+1).padStart(2,'0'),d=String(x.getDate()).padStart(2,'0');return `${y}-${m}-${d}`};
@@ -276,7 +337,45 @@ function setDates(){
   if($('permitFrom'))$('permitFrom').value=iso(first);
   if($('permitToAdmin'))$('permitToAdmin').value=iso(last);
 }
-async function loadReport(){if(!TOKEN)return;try{const r=await gas('apiAdminReport',TOKEN,{from:$('repFrom').value,to:$('repTo').value,programId:$('repProgram').value,institutionId:$('repInstitution').value,locationId:$('repLocation').value});$('reportTitle').textContent=`Laporan Absensi ${r.from} s.d. ${r.to}`;let h='<h4>Rekap Peserta</h4><table><thead><tr><th>Nama</th><th>ID</th><th>Instansi</th><th>Terjadwal</th><th>Hadir</th><th>Terlambat</th><th>Pulang Cepat</th><th>Tidak Lengkap</th><th>Izin</th><th>Sakit</th><th>Dinas</th><th>Izin + Absen</th><th>Tidak Hadir</th></tr></thead><tbody>';r.summary.forEach(x=>h+=`<tr><td><b>${esc(x.user_name)}</b></td><td>${esc(x.identifier||'-')}</td><td>${esc(x.institution_name)}</td><td>${x.scheduled}</td><td>${x.present}</td><td>${x.late}</td><td>${x.early_leave}</td><td>${x.incomplete}</td><td>${x.izin}</td><td>${x.sakit}</td><td>${x.dinas}</td><td>${x.permission_conflict||0}</td><td>${x.absent}</td></tr>`);h+='</tbody></table><h4 style="margin-top:22px">Detail Harian</h4><table><thead><tr><th>Tanggal</th><th>Nama</th><th>Lokasi</th><th>Status</th><th>Datang</th><th>Status Datang</th><th>Jarak</th><th>Pulang</th><th>Status Pulang</th><th>Catatan Izin</th><th>Risiko</th></tr></thead><tbody>';r.details.forEach(a=>h+=`<tr><td>${esc(a.date)}</td><td>${esc(a.user_name)}</td><td>${esc(a.location_name)}</td><td>${esc(a.status)}</td><td>${esc(a.arrival_time||'-')}</td><td>${esc(a.arrival_status||'-')}</td><td>${a.arrival_distance!==''?Math.round(Number(a.arrival_distance))+' m':'-'}</td><td>${esc(a.departure_time||'-')}</td><td>${esc(a.departure_status||'-')}</td><td>${a.permission_conflict?`<span class="pill statusPending">Ada ${esc(a.permission_type)} disetujui • dihitung HADIR</span>`:(a.permission_type?esc(a.permission_type):'-')}</td><td>${esc(a.arrival_risk||a.departure_risk||'-')}</td></tr>`);h+='</tbody></table>';if(!r.summary.length)h='<p class="muted">Tidak ada peserta sesuai filter.</p>';$('reportOut').innerHTML=h}catch(e){note(e.message,true)}}
+async function loadReport(){
+  if(!TOKEN)return;
+  try{
+    const eligible=REPORT_USERS.filter(u=>u.status==='APPROVED'||u.status==='DELETED');
+    const userIds=selectedReportUserIds();
+    if(eligible.length&&userIds.length===0)throw new Error('Pilih minimal satu peserta pada filter laporan.');
+    const r=await gas('apiAdminReport',TOKEN,{from:$('repFrom').value,to:$('repTo').value,programId:$('repProgram').value,institutionId:$('repInstitution').value,locationId:$('repLocation').value,userIds:userIds});
+    $('reportTitle').textContent=`Laporan Absensi ${r.from} s.d. ${r.to}`;
+    let h='<h4>Rekap Peserta</h4><table><thead><tr><th>Nama</th><th>ID</th><th>Instansi</th><th>Terjadwal</th><th>Hadir</th><th>Terlambat</th><th>Pulang Cepat</th><th>Tidak Lengkap</th><th>Izin</th><th>Sakit</th><th>Dinas</th><th>Izin + Absen</th><th>Tidak Hadir</th></tr></thead><tbody>';
+    r.summary.forEach(x=>h+=`<tr><td><b>${esc(x.user_name)}</b></td><td>${esc(x.identifier||'-')}</td><td>${esc(x.institution_name)}</td><td>${x.scheduled}</td><td>${x.present}</td><td>${x.late}</td><td>${x.early_leave}</td><td>${x.incomplete}</td><td>${x.izin}</td><td>${x.sakit}</td><td>${x.dinas}</td><td>${x.permission_conflict||0}</td><td>${x.absent}</td></tr>`);
+    h+='</tbody></table><h4 style="margin-top:22px">Detail Harian</h4><table><thead><tr><th>Tanggal</th><th>Nama</th><th>Lokasi</th><th>Status</th><th>Datang</th><th>Status Datang</th><th>Jarak</th><th>Pulang</th><th>Status Pulang</th><th>Catatan Izin</th><th>Risiko</th></tr></thead><tbody>';
+    r.details.forEach(a=>h+=`<tr><td>${esc(a.date)}</td><td>${esc(a.user_name)}</td><td>${esc(a.location_name)}</td><td>${esc(a.status)}</td><td>${esc(a.arrival_time||'-')}</td><td>${esc(a.arrival_status||'-')}</td><td>${a.arrival_distance!==''?Math.round(Number(a.arrival_distance))+' m':'-'}</td><td>${esc(a.departure_time||'-')}</td><td>${esc(a.departure_status||'-')}</td><td>${a.permission_conflict?`<span class="pill statusPending">Ada ${esc(a.permission_type)} disetujui • dihitung HADIR</span>`:(a.permission_type?esc(a.permission_type):'-')}</td><td>${esc(a.arrival_risk||a.departure_risk||'-')}</td></tr>`);
+    h+='</tbody></table>';
+    if(!r.summary.length)h='<p class="muted">Tidak ada peserta sesuai filter.</p>';
+    $('reportOut').innerHTML=h;
+  }catch(e){note(e.message,true)}
+}
+
+async function loadSuperAdmin(){
+  if(ADMIN_ROLE!=='SUPER_ADMIN')return;
+  try{SUPER_DATA=await gas('apiSuperAdminOverview',TOKEN);renderSuperAdmin();}catch(e){note(e.message,true)}
+}
+function renderSuperAdmin(){
+  if(!SUPER_DATA)return;
+  let a='<table><thead><tr><th>Username</th><th>Nama</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead><tbody>';
+  (SUPER_DATA.admins||[]).forEach(x=>{a+=`<tr><td><b>${esc(x.username)}</b>${x.is_current?' <span class="pill">Anda</span>':''}</td><td>${esc(x.display_name)}</td><td>${esc(x.role)}</td><td>${esc(x.status)}</td><td><button class="small alt" onclick="editAdminUi('${x.id}')">Edit</button> <button class="small alt" onclick="resetAdminPasswordUi('${x.id}','${esc(x.username)}')">Reset Password</button></td></tr>`});
+  a+='</tbody></table>';$('superAdminsOut').innerHTML=a;
+  let d='<table><thead><tr><th>Nama</th><th>Email</th><th>ID</th><th>Aksi</th></tr></thead><tbody>';
+  (SUPER_DATA.deletedUsers||[]).forEach(u=>{d+=`<tr><td><b>${esc(u.name)}</b></td><td>${esc(u.email)}</td><td>${esc(u.identifier||'-')}</td><td><button class="small" onclick="restoreUserUi('${u.id}','${esc(u.name)}')">Pulihkan</button></td></tr>`});
+  d+='</tbody></table>';if(!(SUPER_DATA.deletedUsers||[]).length)d='<div class="msg">Tidak ada peserta yang dihapus.</div>';$('superDeletedOut').innerHTML=d;
+  let log='<table><thead><tr><th>Waktu</th><th>Aktor</th><th>Aksi</th><th>Detail</th></tr></thead><tbody>';
+  (SUPER_DATA.audit||[]).forEach(x=>{let det=String(x.details||'');try{det=JSON.stringify(JSON.parse(det),null,2)}catch(e){}log+=`<tr><td>${esc(x.ts)}</td><td>${esc(x.actor_type)}<br><span class="muted">${esc(x.actor_id)}</span></td><td><b>${esc(x.action)}</b></td><td class="auditDetails">${esc(det)}</td></tr>`});
+  log+='</tbody></table>';$('superAuditOut').innerHTML=log;
+}
+async function createAdminFromUi(){try{const payload={username:$('saUsername').value,display_name:$('saDisplayName').value,password:$('saPassword').value,role:$('saRole').value};await gas('apiSuperAdminCreateAdmin',TOKEN,payload);$('saUsername').value='';$('saDisplayName').value='';$('saPassword').value='';$('saRole').value='ADMIN';note('Administrator berhasil ditambahkan.');await loadSuperAdmin();}catch(e){note(e.message,true)}}
+async function editAdminUi(id){const x=(SUPER_DATA&&SUPER_DATA.admins||[]).find(a=>a.id===id);if(!x)return;const name=prompt('Nama administrator:',x.display_name);if(name===null)return;const role=prompt('Role (ADMIN atau SUPER_ADMIN):',x.role);if(role===null)return;const status=prompt('Status (ACTIVE atau INACTIVE):',x.status);if(status===null)return;try{await gas('apiSuperAdminUpdateAdmin',TOKEN,id,{display_name:name,role:role.trim().toUpperCase(),status:status.trim().toUpperCase()});note('Administrator diperbarui.');const me=await gas('apiAdminMe',TOKEN);ADMIN_NAME=me.name;ADMIN_ROLE=me.role;sessionStorage.setItem('af_admin_name',ADMIN_NAME);sessionStorage.setItem('af_admin_role',ADMIN_ROLE);$('adminName').textContent=ADMIN_NAME;applyRoleUi();if(ADMIN_ROLE==='SUPER_ADMIN')await loadSuperAdmin();else tab('dash',document.querySelector('.nav button'));}catch(e){note(e.message,true)}}
+async function resetAdminPasswordUi(id,username){const p=prompt('Password baru untuk '+username+' (minimal 10 karakter):');if(!p)return;try{const r=await gas('apiSuperAdminResetAdminPassword',TOKEN,id,p);note(r.message||'Password direset.');}catch(e){note(e.message,true)}}
+async function restoreUserUi(id,name){if(!confirm('Pulihkan peserta '+name+'?\n\nStatus menjadi PENDING dan perlu disetujui ulang oleh admin.'))return;try{const r=await gas('apiSuperAdminRestoreUser',TOKEN,id);note(r.message||'Peserta dipulihkan.');await Promise.all([loadSuperAdmin(),loadUsers(),loadDash()]);}catch(e){note(e.message,true)}}
+
 function renderSettings(){const allowed=['SYSTEM_NAME','CAMERA_HELPER_URL','FACE_MATCH_THRESHOLD','FACE_DUPLICATE_THRESHOLD','GLOBAL_MAX_ACCURACY_M','LOCATION_ACCURACY_BUFFER_M','MAX_PLAUSIBLE_SPEED_KMH','ALLOW_WEB_IOS','ALLOW_RETROACTIVE_PERMISSION','REQUIRE_PLAY_INTEGRITY','REGISTRATION_CODE'];$('settingsOut').innerHTML=M.settings.filter(s=>allowed.includes(s.key)).map(s=>`<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="field"><label>${esc(s.key)}</label><input ${s.key==='REGISTRATION_CODE'?'type="password"':''} id="set_${esc(s.key)}" value="${esc(s.value)}"><span class="muted">${esc(s.description||'')}</span></div><button onclick="saveSetting('${esc(s.key)}')">Simpan</button></div>`).join('')}
 async function saveSetting(k){try{await gas('apiAdminSaveSetting',TOKEN,k,$('set_'+k).value);note('Pengaturan disimpan.');await loadMasters();if(k==='SYSTEM_NAME')await loadAppIdentity();}catch(e){note(e.message,true)}}
 loadAppIdentity();if(TOKEN)start();
