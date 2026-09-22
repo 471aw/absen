@@ -110,6 +110,15 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   <span id="adminName" class="hidden"></span>
 </div>
 <section id="dash" class="page">
+<div class="card no-print" style="margin-bottom:14px">
+  <div class="row">
+    <div class="field"><label>Tahun</label><select id="dashYear" onchange="dashYearChanged()"></select></div>
+    <div class="field"><label>Program Magang</label><select id="dashProgram" onchange="dashProgramChanged()"></select></div>
+    <div class="field"><label>Instansi</label><select id="dashInstitution" onchange="loadDash()"></select></div>
+    <button class="alt" onclick="resetDashFilters()">Reset Filter</button>
+  </div>
+  <div id="dashFilterInfo" class="muted" style="margin-top:8px">Statistik mengikuti Tahun, Program, dan Instansi yang dipilih.</div>
+</div>
 <div id="kpis" class="grid"></div>
 <div class="dashboardVisual">
   <div class="dashPanel"><h3>Status Kehadiran Hari Ini</h3><div id="attendanceChart"></div></div>
@@ -365,7 +374,7 @@ function gas(name,...args){
     .then(v=>{if(!silent)adminProcessEnd(true);return v})
     .catch(e=>{if(!silent)adminProcessEnd(false,e&&e.message?e.message:String(e||'Proses gagal'));throw e});
 }function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}function note(t,e=false){$('msg').textContent=t;$('msg').className='msg'+(e?' err':'');$('msg').classList.remove('hidden');setTimeout(()=>$('msg').classList.add('hidden'),5000)}
-async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.7.0');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
+async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.7.1');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
 async function login(){try{
   const r=await gas('apiAdminLogin',$('username').value,$('password').value);
   if(String(r.role||'ADMIN')==='SUPER_ADMIN'){
@@ -436,11 +445,46 @@ function pageMeta(id){return({
   staff:['♙','Guru','Tambah, edit, hapus/nonaktifkan, dan reset password akun Guru.'],
   settings:['⚙','Pengaturan','Pengaturan sistem absensi.'],
 })[id]||['•','Menu',''];}
-function tab(id,b){if(id==='staff'&&ADMIN_ROLE!=='ADMIN'){note('Menu Guru hanya dapat diakses oleh Admin Sekolah.',true);id='dash';b=document.querySelector('.nav button');}document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');const meta=pageMeta(id);if($('pageHeroIcon'))$('pageHeroIcon').textContent=meta[0];if($('pageHeroTitle'))$('pageHeroTitle').textContent=meta[1];if($('pageHeroSub'))$('pageHeroSub').textContent=meta[2];if($('pageBread'))$('pageBread').textContent='Dashboard  ›  '+meta[1];if(id==='permits')loadPermits();if(id==='report')loadReport();if(id==='staff'&&ADMIN_ROLE==='ADMIN')loadStaff();if(window.innerWidth<=900)toggleSidebar(false)}
+function tab(id,b){if(id==='staff'&&ADMIN_ROLE!=='ADMIN'){note('Menu Guru hanya dapat diakses oleh Admin Sekolah.',true);id='dash';b=document.querySelector('.nav button');}document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');const meta=pageMeta(id);if($('pageHeroIcon'))$('pageHeroIcon').textContent=meta[0];if($('pageHeroTitle'))$('pageHeroTitle').textContent=meta[1];if($('pageHeroSub'))$('pageHeroSub').textContent=meta[2];if($('pageBread'))$('pageBread').textContent='Dashboard  ›  '+meta[1];if(id==='dash')loadDash();if(id==='permits')loadPermits();if(id==='report')loadReport();if(id==='staff'&&ADMIN_ROLE==='ADMIN')loadStaff();if(window.innerWidth<=900)toggleSidebar(false)}
 function startHeaderClock(){if(window.__afClockTimer)return;const tick=()=>{const d=new Date(),days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];if($('topDate'))$('topDate').textContent=days[d.getDay()]+', '+String(d.getDate()).padStart(2,'0')+' '+months[d.getMonth()]+' '+d.getFullYear();if($('topTime'))$('topTime').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');const nm=ADMIN_NAME||'Administrator',ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();if($('topAvatar'))$('topAvatar').textContent=ini||'AD';};tick();window.__afClockTimer=setInterval(tick,1000)}
+function dashFilterPayload(){
+  return {
+    year:$('dashYear')?$('dashYear').value:'',
+    programId:$('dashProgram')?$('dashProgram').value:'',
+    institutionId:$('dashInstitution')?$('dashInstitution').value:''
+  };
+}
+function renderDashFilters(f){
+  f=f||{};
+  const y=$('dashYear'),p=$('dashProgram'),i=$('dashInstitution');
+  if(!y||!p||!i)return;
+  const years=f.years||[];
+  y.innerHTML=years.map(v=>`<option value="${esc(v)}" ${String(v)===String(f.selectedYear)?'selected':''}>${esc(v)}</option>`).join('');
+  if(!years.length)y.innerHTML=`<option value="${esc(f.selectedYear||'')}">${esc(f.selectedYear||'-')}</option>`;
+  p.innerHTML='<option value="">Semua Program</option>'+((f.programs||[]).map(x=>`<option value="${esc(x.id)}" ${String(x.id)===String(f.selectedProgramId)?'selected':''}>${esc(x.name||'-')}</option>`).join(''));
+  i.innerHTML='<option value="">Semua Instansi</option>'+((f.institutions||[]).map(x=>`<option value="${esc(x.id)}" ${String(x.id)===String(f.selectedInstitutionId)?'selected':''}>${esc(x.name||'-')}</option>`).join(''));
+  const pn=(f.programs||[]).find(x=>String(x.id)===String(f.selectedProgramId));
+  const inm=(f.institutions||[]).find(x=>String(x.id)===String(f.selectedInstitutionId));
+  if($('dashFilterInfo'))$('dashFilterInfo').innerHTML=`Menampilkan: <b>Tahun ${esc(f.selectedYear||'-')}</b> • <b>${esc(pn?pn.name:'Semua Program')}</b> • <b>${esc(inm?inm.name:'Semua Instansi')}</b>`;
+}
+function dashYearChanged(){
+  if($('dashProgram'))$('dashProgram').value='';
+  if($('dashInstitution'))$('dashInstitution').value='';
+  loadDash();
+}
+function dashProgramChanged(){
+  if($('dashInstitution'))$('dashInstitution').value='';
+  loadDash();
+}
+function resetDashFilters(){
+  if($('dashProgram'))$('dashProgram').value='';
+  if($('dashInstitution'))$('dashInstitution').value='';
+  loadDash();
+}
 async function loadDash(){
-  const r=await gas('apiAdminDashboard',TOKEN);
-  const ver=String(r.version||'1.7.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
+  const r=await gas('apiAdminDashboard',TOKEN,dashFilterPayload());
+  renderDashFilters(r.dashboardFilters||{});
+  const ver=String(r.version||'1.7.1');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
   $('kpis').innerHTML=[
     ['Akun siswa aktif',r.totalUsers],['Master siswa',r.masterStudents||0],
     ['Peserta Program',r.programParticipants||0],['Belum aktivasi',r.awaitingActivation||0],
