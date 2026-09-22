@@ -653,7 +653,8 @@ async function loadMasters(){
     programInstitutions:Array.isArray(r.programInstitutions)?r.programInstitutions:[],
     locations:Array.isArray(r.locations)?r.locations:[],
     schedules:Array.isArray(r.schedules)?r.schedules:[],
-    settings:Array.isArray(r.settings)?r.settings:[]
+    settings:Array.isArray(r.settings)?r.settings:[],
+    participantDirectory:Array.isArray(r.participantDirectory)?r.participantDirectory:[]
   };
   fillSelects();renderMasters();renderSchedules();renderSettings();fillAssignmentUsers();
   $('assignEffective').min=M.serverDate||'';$('schEffective').min=M.serverDate||'';
@@ -915,8 +916,17 @@ async function importProgramStudents(){
 }
 async function loadProgramParticipants(){
   if(!['ADMIN','GURU','SUPER_ADMIN'].includes(ADMIN_ROLE)||!$('ppProgram'))return;
-  const pid=$('ppProgram').value;if(!pid){PROGRAM_PARTICIPANTS=[];$('programParticipantsOut').innerHTML='<p class="muted">Pilih Program untuk melihat peserta.</p>';return;}
-  try{const r=await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_PARTICIPANTS',{program_id:pid});PROGRAM_PARTICIPANTS=r.rows||[];renderProgramParticipants()}catch(e){note(e.message,true)}
+  const pid=$('ppProgram').value;
+  if(!pid){PROGRAM_PARTICIPANTS=[];$('programParticipantsOut').innerHTML='<p class="muted">Pilih Program untuk melihat peserta.</p>';return;}
+  const cached=(M&&Array.isArray(M.participantDirectory)?M.participantDirectory:[]).filter(r=>String(r.program_id)===String(pid));
+  PROGRAM_PARTICIPANTS=cached;
+  renderProgramParticipants();
+  try{
+    const r=await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_PARTICIPANTS',{program_id:pid});
+    if(r&&Array.isArray(r.rows)){PROGRAM_PARTICIPANTS=r.rows;renderProgramParticipants();}
+  }catch(e){
+    if(!cached.length)note(e.message,true);
+  }
 }
 function renderProgramParticipants(){
   if(!$('programParticipantsOut'))return;
