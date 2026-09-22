@@ -191,7 +191,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 <div class="two">
   <div class="card adminOnly">
     <h3>Program Kegiatan</h3>
-    <input id="progId" type="hidden">
+    <input id="progId" type="hidden"><div class="field superOnly hidden"><label>Sekolah tujuan (Super Admin)</label><select id="progSchool"></select></div>
     <div class="field"><label>Nama Program</label><input id="progName" placeholder="contoh: Magang Industri STMJ 2026"></div>
     <div class="row">
       <div class="field"><label>Mulai</label><input id="progStart" type="date"></div>
@@ -212,7 +212,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   <div class="card adminOnly">
     <h3>Master Instansi</h3>
     <p class="muted">Instansi dibuat satu kali dan dapat digunakan kembali pada Program PKL tahun berikutnya.</p>
-    <input id="insId" type="hidden">
+    <input id="insId" type="hidden"><div class="field superOnly hidden"><label>Sekolah tujuan (Super Admin)</label><select id="insSchool"></select></div>
     <div class="field"><label>Nama Instansi</label><input id="insName" placeholder="contoh: PT ABC"></div>
     <div class="field"><label>Alamat</label><textarea id="insAddress"></textarea></div>
     <div class="row"><button onclick="saveInstitution()">Simpan Instansi</button><button class="alt" onclick="clearInstitution()">Baru</button></div>
@@ -317,7 +317,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 <section id="staff" class="page hidden adminOnly">
   <div class="two">
     <div class="card">
-      <h3>Tambah Guru</h3>
+      <h3>Tambah Guru</h3><div class="field superOnly hidden"><label>Sekolah Guru (Super Admin)</label><select id="guruSchool"></select></div>
       <p class="muted">Guru dapat melihat data sekolah serta menambah atau mengoreksi titik lokasi absensi. Guru tidak dapat mengelola Program, Instansi, Peserta, atau akun Guru lain.</p>
       <div class="field"><label>Username</label><input id="guruUsername" placeholder="contoh: guru01"></div>
       <div class="field"><label>Nama Guru</label><input id="guruName"></div>
@@ -331,7 +331,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 </main></div></div></div>
 <script src="/api-client.js"></script>
 <script>
-let TOKEN=sessionStorage.getItem('af_admin_token')||'', ADMIN_NAME=sessionStorage.getItem('af_admin_name')||'', ADMIN_ROLE=sessionStorage.getItem('af_admin_role')||'', ADMIN_SCHOOL=null, M=null, USERS=[], REPORT_USERS=[], APP_CONFIG=null, SUPER_DATA=null, REPORT_SELECTION_INIT=false, LAST_REPORT=null;
+let TOKEN=sessionStorage.getItem('af_admin_token')||sessionStorage.getItem('af_super_token')||'', ADMIN_NAME=sessionStorage.getItem('af_admin_name')||sessionStorage.getItem('af_super_name')||'', ADMIN_ROLE=sessionStorage.getItem('af_admin_role')||sessionStorage.getItem('af_super_role')||'', ADMIN_SCHOOL=null, M=null, USERS=[], REPORT_USERS=[], APP_CONFIG=null, SUPER_DATA=null, REPORT_SELECTION_INIT=false, LAST_REPORT=null;
 const $=id=>document.getElementById(id);let ADMIN_BUSY_COUNT=0,ADMIN_DONE_TIMER=null;
 function adminProcessLabel(name){
   const labels={
@@ -404,30 +404,39 @@ function gas(name,...args){
 async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.7.2');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
 async function login(){try{
   const r=await gas('apiAdminLogin',$('username').value,$('password').value);
-  if(String(r.role||'ADMIN')==='SUPER_ADMIN'){
-    sessionStorage.setItem('af_super_token',r.token);
-    sessionStorage.setItem('af_super_name',r.name||'Super Admin');
-    sessionStorage.setItem('af_super_role','SUPER_ADMIN');
-    sessionStorage.removeItem('af_admin_token');
-    sessionStorage.removeItem('af_admin_name');
-    sessionStorage.removeItem('af_admin_role');
-    location.replace('/superadmin/');
-    return;
-  }
   TOKEN=r.token;ADMIN_NAME=r.name;ADMIN_ROLE=String(r.role||'ADMIN');ADMIN_SCHOOL=r.school||null;
   sessionStorage.setItem('af_admin_token',TOKEN);
   sessionStorage.setItem('af_admin_name',ADMIN_NAME);
   sessionStorage.setItem('af_admin_role',ADMIN_ROLE);
+  if(ADMIN_ROLE==='SUPER_ADMIN'){
+    sessionStorage.setItem('af_super_token',TOKEN);
+    sessionStorage.setItem('af_super_name',ADMIN_NAME||'Super Admin');
+    sessionStorage.setItem('af_super_role','SUPER_ADMIN');
+  }
   await start();
 }catch(e){note(e.message,true)}}
 function logout(){
   sessionStorage.removeItem('af_admin_token');
   sessionStorage.removeItem('af_admin_name');
   sessionStorage.removeItem('af_admin_role');
+  sessionStorage.removeItem('af_super_token');
+  sessionStorage.removeItem('af_super_name');
+  sessionStorage.removeItem('af_super_role');
   location.reload();
 }
-function applyRoleUi(){const isAdmin=ADMIN_ROLE==='ADMIN';document.querySelectorAll('.adminOnly').forEach(x=>x.classList.toggle('hidden',!isAdmin));document.querySelectorAll('.writeOnly').forEach(x=>x.classList.toggle('hidden',!isAdmin));if(!isAdmin&&$('staff'))$('staff').classList.add('hidden');if($('sideAdminRole'))$('sideAdminRole').textContent=ADMIN_ROLE||'ADMIN';if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Administrator';const schoolName=ADMIN_SCHOOL&&ADMIN_SCHOOL.name?ADMIN_SCHOOL.name:'Sekolah';document.querySelectorAll('.schoolNameText').forEach(x=>x.textContent=schoolName);if($('sideSchoolName'))$('sideSchoolName').textContent=schoolName;}
-function sidebarShell(){return document.querySelector('.appShell')}
+function applyRoleUi(){
+  const canManage=ADMIN_ROLE==='ADMIN'||ADMIN_ROLE==='SUPER_ADMIN';
+  const isSuper=ADMIN_ROLE==='SUPER_ADMIN';
+  document.querySelectorAll('.adminOnly').forEach(x=>x.classList.toggle('hidden',!canManage));
+  document.querySelectorAll('.writeOnly').forEach(x=>x.classList.toggle('hidden',!canManage));
+  document.querySelectorAll('.superOnly').forEach(x=>x.classList.toggle('hidden',!isSuper));
+  if(!canManage&&$('staff'))$('staff').classList.add('hidden');
+  if($('sideAdminRole'))$('sideAdminRole').textContent=ADMIN_ROLE||'ADMIN';
+  if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Administrator';
+  const schoolName=isSuper?'Semua Sekolah':(ADMIN_SCHOOL&&ADMIN_SCHOOL.name?ADMIN_SCHOOL.name:'Sekolah');
+  document.querySelectorAll('.schoolNameText').forEach(x=>x.textContent=schoolName);
+  if($('sideSchoolName'))$('sideSchoolName').textContent=schoolName;
+}function sidebarShell(){return document.querySelector('.appShell')}
 function sidebarIsMobile(){return window.innerWidth<=900}
 function hideSidebar(){
   const el=$('sidebar'),shell=sidebarShell();if(!el||!shell)return;
@@ -470,16 +479,6 @@ async function start(){
   if(!TOKEN)return;
   try{
     const me=await gas('apiAdminMe',TOKEN);
-    if(String(me.role||'ADMIN')==='SUPER_ADMIN'){
-      sessionStorage.setItem('af_super_token',TOKEN);
-      sessionStorage.setItem('af_super_name',me.name||ADMIN_NAME||'Super Admin');
-      sessionStorage.setItem('af_super_role','SUPER_ADMIN');
-      sessionStorage.removeItem('af_admin_token');
-      sessionStorage.removeItem('af_admin_name');
-      sessionStorage.removeItem('af_admin_role');
-      location.replace('/superadmin/');
-      return;
-    }
     ADMIN_NAME=me.name||ADMIN_NAME||'Administrator';
     ADMIN_ROLE=String(me.role||'ADMIN');
     ADMIN_SCHOOL=me.school||null;
@@ -492,7 +491,7 @@ async function start(){
     applyRoleUi();
     await loadMasters();
     await Promise.all([loadDash(),loadUsers()]);
-    if(ADMIN_ROLE==='ADMIN') await loadStaff();
+    if(['ADMIN','SUPER_ADMIN'].includes(ADMIN_ROLE)) await loadStaff();
     setDates();
     startHeaderClock();
   }catch(e){
@@ -510,7 +509,7 @@ function pageMeta(id){return({
   staff:['♙','Guru','Tambah, edit, hapus/nonaktifkan, dan reset password akun Guru.'],
   settings:['⚙','Pengaturan','Pengaturan sistem absensi.'],
 })[id]||['•','Menu',''];}
-function tab(id,b){if(id==='staff'&&ADMIN_ROLE!=='ADMIN'){note('Menu Guru hanya dapat diakses oleh Admin Sekolah.',true);id='dash';b=document.querySelector('.nav button');}document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');const meta=pageMeta(id);if($('pageHeroIcon'))$('pageHeroIcon').textContent=meta[0];if($('pageHeroTitle'))$('pageHeroTitle').textContent=meta[1];if($('pageHeroSub'))$('pageHeroSub').textContent=meta[2];if($('pageBread'))$('pageBread').textContent='Dashboard  ›  '+meta[1];if(id==='dash')loadDash();if(id==='permits')loadPermits();if(id==='report')loadReport();if(id==='staff'&&ADMIN_ROLE==='ADMIN')loadStaff();if(window.innerWidth<=900)toggleSidebar(false)}
+function tab(id,b){if(id==='staff'&&!['ADMIN','SUPER_ADMIN'].includes(ADMIN_ROLE)){note('Menu Guru hanya dapat diakses oleh Admin Sekolah.',true);id='dash';b=document.querySelector('.nav button');}document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');const meta=pageMeta(id);if($('pageHeroIcon'))$('pageHeroIcon').textContent=meta[0];if($('pageHeroTitle'))$('pageHeroTitle').textContent=meta[1];if($('pageHeroSub'))$('pageHeroSub').textContent=meta[2];if($('pageBread'))$('pageBread').textContent='Dashboard  ›  '+meta[1];if(id==='dash')loadDash();if(id==='permits')loadPermits();if(id==='report')loadReport();if(id==='staff'&&['ADMIN','SUPER_ADMIN'].includes(ADMIN_ROLE))loadStaff();if(window.innerWidth<=900)toggleSidebar(false)}
 function startHeaderClock(){if(window.__afClockTimer)return;const tick=()=>{const d=new Date(),days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];if($('topDate'))$('topDate').textContent=days[d.getDay()]+', '+String(d.getDate()).padStart(2,'0')+' '+months[d.getMonth()]+' '+d.getFullYear();if($('topTime'))$('topTime').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');const nm=ADMIN_NAME||'Administrator',ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();if($('topAvatar'))$('topAvatar').textContent=ini||'AD';};tick();window.__afClockTimer=setInterval(tick,1000)}
 function dashFilterPayload(){
   return {
@@ -585,7 +584,7 @@ async function loadDash(){
 }
 async function loadUsers(){
   const r=await gas('apiAdminListUsers',TOKEN);USERS=r.users||[];REPORT_USERS=r.reportUsers||r.users||[];
-  const canWrite=ADMIN_ROLE==='ADMIN';
+  const canWrite=ADMIN_ROLE==='ADMIN'||ADMIN_ROLE==='SUPER_ADMIN';
   let h='<table><thead><tr><th>Foto</th><th>Nama</th><th>Email</th><th>NIS</th><th>Status</th><th>Penempatan</th><th>Face</th><th>Aksi</th></tr></thead><tbody>';
   USERS.forEach(u=>{
     const pn=M?(M.programs.find(x=>x.id===u.program_id)||{}).name||'-':'-',
@@ -654,7 +653,8 @@ async function loadMasters(){
     locations:Array.isArray(r.locations)?r.locations:[],
     schedules:Array.isArray(r.schedules)?r.schedules:[],
     settings:Array.isArray(r.settings)?r.settings:[],
-    participantDirectory:Array.isArray(r.participantDirectory)?r.participantDirectory:[]
+    participantDirectory:Array.isArray(r.participantDirectory)?r.participantDirectory:[],
+    schools:Array.isArray(r.schools)?r.schools:[]
   };
   fillSelects();renderMasters();renderSchedules();renderSettings();fillAssignmentUsers();
   $('assignEffective').min=M.serverDate||'';$('schEffective').min=M.serverDate||'';
@@ -670,6 +670,9 @@ function opts(rows,all=false){
     rows.filter(x=>x&&x.status==='ACTIVE').map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('');
 }
 function fillSelects(){
+  if(progSchool)progSchool.innerHTML=(M.schools||[]).map(x=><option value=""></option>).join('');
+  if(insSchool)insSchool.innerHTML=(M.schools||[]).map(x=><option value=""></option>).join('');
+  if(guruSchool)guruSchool.innerHTML=(M.schools||[]).map(x=><option value=""></option>).join('');
   $('locInstitution').innerHTML=opts(M.institutions);
   $('schProgram').innerHTML=opts(M.programs);
   filterScheduleLocations();
@@ -698,12 +701,12 @@ function fillSelects(){
 }
 function statusBtn(type,x){
   const next=x.status==='ACTIVE'?'INACTIVE':'ACTIVE';
-  const allowed=type==='LOCATION'?(ADMIN_ROLE==='ADMIN'||ADMIN_ROLE==='GURU'):ADMIN_ROLE==='ADMIN';
+  const allowed=type==='LOCATION'?(['ADMIN','GURU','SUPER_ADMIN'].includes(ADMIN_ROLE)):(['ADMIN','SUPER_ADMIN'].includes(ADMIN_ROLE));
   if(!allowed)return '<span class="muted">Lihat</span>';
   return `<button class="small alt" onclick="toggleMaster('${type}','${x.id}','${next}')">${next==='ACTIVE'?'Aktifkan':'Nonaktifkan'}</button>`;
 }
 function renderMasters(){
-  const isAdmin=ADMIN_ROLE==='ADMIN';
+  const isAdmin=ADMIN_ROLE==='ADMIN'||ADMIN_ROLE==='SUPER_ADMIN';
   const pn=id=>(M.programs.find(p=>String(p.id)===String(id))||{}).name||'-';
   const inn=id=>(M.institutions.find(i=>String(i.id)===String(id))||{}).name||'-';
 
@@ -931,15 +934,15 @@ async function loadProgramParticipants(){
 function renderProgramParticipants(){
   if(!$('programParticipantsOut'))return;
   if(!PROGRAM_PARTICIPANTS.length){$('programParticipantsOut').innerHTML='<p class="muted">Belum ada peserta pada Program ini.</p>';return;}
-  const canManage=ADMIN_ROLE==='ADMIN'||ADMIN_ROLE==='SUPER_ADMIN';
-  let h='<table><thead><tr><th>NIS</th><th>Nama</th><th>Kelas</th><th>Jenis Kelamin</th><th>Email</th><th>Akun</th><th>Tempat Magang</th><th>Sumber</th><th>Perangkat</th><th>Aksi</th></tr></thead><tbody>';
+  const canManage=ADMIN_ROLE==='ADMIN'||ADMIN_ROLE==='SUPER_ADMIN',isSuper=ADMIN_ROLE==='SUPER_ADMIN';
+  const schoolMap={};(M.schools||[]).forEach(x=>schoolMap[String(x.id)]=x.name||'');
+  let h='<table><thead><tr>'+(isSuper?'<th>Sekolah</th>':'')+'<th>NIS</th><th>Nama</th><th>Kelas</th><th>Jenis Kelamin</th><th>Email</th><th>Akun</th><th>Tempat Magang</th><th>Sumber</th><th>Perangkat</th><th>Aksi</th></tr></thead><tbody>';
   PROGRAM_PARTICIPANTS.forEach(r=>{
     const actions=canManage?`<button class="small alt" onclick="editPpPlacement('${r.id}')">Koreksi</button> ${r.user_id?`<button class="small alt" onclick="resetPpDevice('${r.user_id}','${esc(r.name)}')">Reset Perangkat</button> <button class="small alt" onclick="resetPpPin('${r.user_id}','${esc(r.name)}')">Reset PIN</button>`:''} <button class="small bad" onclick="deactivatePp('${r.id}','${esc(r.name)}')">Keluarkan</button>`:'<span class="muted">Lihat</span>';
-    h+=`<tr><td>${esc(r.nis)}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.class_name||'-')}</td><td>${esc(r.gender==='LAKI-LAKI'?'Laki-laki':(r.gender==='PEREMPUAN'?'Perempuan':'-'))}</td><td>${esc(r.email||'Belum diisi')}</td><td>${esc(r.account_status)}<br><small>${esc(r.face_status||'-')}</small></td><td>${esc(r.institution_name||'Belum memilih')}<br><span class="muted">${esc(r.location_name||'-')} â€¢ ${esc(r.status||'-')}</span></td><td>${esc(r.placement_source||'-')}</td><td>${esc(r.device_status||'-')}${r.device_label?`<br><small>${esc(r.device_label)}</small>`:''}</td><td>${actions}</td></tr>`;
+    h+=`<tr>${isSuper?`<td>${esc(r.school_name||schoolMap[String(r.school_id)]||'-')}</td>`:''}<td>${esc(r.nis)}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.class_name||'-')}</td><td>${esc(r.gender==='LAKI-LAKI'?'Laki-laki':(r.gender==='PEREMPUAN'?'Perempuan':'-'))}</td><td>${esc(r.email||'Belum diisi')}</td><td>${esc(r.account_status)}<br><small>${esc(r.face_status||'-')}</small></td><td>${esc(r.institution_name||'Belum memilih')}<br><span class="muted">${esc(r.location_name||'-')} â€¢ ${esc(r.status||'-')}</span></td><td>${esc(r.placement_source||'-')}</td><td>${esc(r.device_status||'-')}${r.device_label?`<br><small>${esc(r.device_label)}</small>`:''}</td><td>${actions}</td></tr>`;
   });
   h+='</tbody></table>';$('programParticipantsOut').innerHTML=h;
-}
-function ppActiveRelations(){const pid=$('ppProgram').value;return (M.programInstitutions||[]).filter(r=>r.status==='ACTIVE'&&String(r.program_id)===String(pid));}
+}function ppActiveRelations(){const pid=$('ppProgram').value;return (M.programInstitutions||[]).filter(r=>r.status==='ACTIVE'&&String(r.program_id)===String(pid));}
 function editPpPlacement(id){
   const r=PROGRAM_PARTICIPANTS.find(x=>String(x.id)===String(id));if(!r)return;
   $('ppEditId').value=r.id;$('ppEditName').textContent=(r.name||'')+' • '+(r.nis||'');
@@ -1168,12 +1171,12 @@ function downloadReportCsv(){
 
 
 async function loadStaff(){
-  if(ADMIN_ROLE!=='ADMIN')return;
+  if(!['ADMIN','SUPER_ADMIN'].includes(ADMIN_ROLE))return;
   try{
-    const r=await gas('apiAdminStaffOverview',TOKEN);
-    let h='<table><thead><tr><th>Username</th><th>Nama</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead><tbody>';
+    const r=await gas('apiAdminStaffOverview',TOKEN),isSuper=ADMIN_ROLE==='SUPER_ADMIN';
+    let h='<table><thead><tr>'+(isSuper?'<th>Sekolah</th>':'')+'<th>Username</th><th>Nama</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead><tbody>';
     (r.staff||[]).filter(x=>x.role==='GURU').forEach(x=>{
-      h+=`<tr><td><b>${esc(x.username)}</b></td><td>${esc(x.display_name)}</td><td>${esc(x.role)}</td><td>${esc(x.status)}</td><td><button class="small alt" onclick="editGuru('${x.id}','${esc(x.username)}','${esc(x.display_name)}','${esc(x.status)}')">Edit</button> <button class="small alt" onclick="resetGuruPassword('${x.id}','${esc(x.username)}')">Reset Password</button> ${x.status==='ACTIVE'?`<button class="small bad" onclick="deleteGuru('${x.id}','${esc(x.display_name)}')">Hapus</button>`:''}</td></tr>`;
+      h+=`<tr>${isSuper?`<td>${esc(x.school_name||'-')}</td>`:''}<td><b>${esc(x.username)}</b></td><td>${esc(x.display_name)}</td><td>${esc(x.role)}</td><td>${esc(x.status)}</td><td><button class="small alt" onclick="editGuru('${x.id}','${esc(x.username)}','${esc(x.display_name)}','${esc(x.status)}')">Edit</button> <button class="small alt" onclick="resetGuruPassword('${x.id}','${esc(x.username)}')">Reset Password</button> ${x.status==='ACTIVE'?`<button class="small bad" onclick="deleteGuru('${x.id}','${esc(x.display_name)}')">Hapus</button>`:''}</td></tr>`;
     });
     h+='</tbody></table>';
     if(!(r.staff||[]).some(x=>x.role==='GURU'))h='<div class="msg">Belum ada akun Guru.</div>';
@@ -1182,7 +1185,10 @@ async function loadStaff(){
 }
 async function createGuru(){
   try{
-    await gas('apiAdminCreateGuru',TOKEN,{username:$('guruUsername').value,display_name:$('guruName').value,password:$('guruPassword').value});
+    await gas('apiAdminCreateGuru',TOKEN,{
+      username:$('guruUsername').value,display_name:$('guruName').value,password:$('guruPassword').value,
+      school_id:ADMIN_ROLE==='SUPER_ADMIN'?$('guruSchool').value:undefined
+    });
     $('guruUsername').value='';$('guruName').value='';$('guruPassword').value='';
     note('Akun Guru berhasil dibuat.');await loadStaff();
   }catch(e){note(e.message,true)}
