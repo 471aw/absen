@@ -63,6 +63,33 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 @media(max-width:520px){.grid{grid-template-columns:1fr}.topLogout{padding:8px!important}.pageHero{min-height:72px}.pageHeroIcon{width:42px;height:42px}.pageHeroText h1{font-size:18px}}
 @media print{.top,.sidebar,.pageHero,.no-print{display:none!important}.contentArea{padding:0}.appShell{display:block}.card,.dashPanel{border:0!important;box-shadow:none!important}}
 
+
+/* ABSENFLEX v1.7.2-HF2 SAFE SIDEBAR */
+.contentArea .top{position:sticky!important;top:0!important;z-index:900!important}
+.appShell{transition:grid-template-columns .22s ease}
+.appShell.sidebarCollapsed{grid-template-columns:0 minmax(0,1fr)!important}
+.appShell.sidebarCollapsed .sidebar{
+  transform:translateX(-110%)!important;
+  opacity:0;
+  pointer-events:none
+}
+.sidebar{transition:transform .22s ease,opacity .18s ease}
+.mobileMenu{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  min-width:34px;
+  height:34px
+}
+@media(max-width:900px){
+  .appShell.sidebarCollapsed{display:block!important}
+  .appShell.sidebarCollapsed .sidebar{
+    opacity:1;
+    pointer-events:auto;
+    transform:translateX(-100%)!important
+  }
+  .appShell.sidebarCollapsed .sidebar.open{transform:translateX(0)!important}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script></head><body>
 <div id="adminProcess" class="adminProcess hidden" aria-live="polite" aria-busy="false">
   <div class="adminProcessCard">
@@ -400,7 +427,45 @@ function logout(){
   location.reload();
 }
 function applyRoleUi(){const isAdmin=ADMIN_ROLE==='ADMIN';document.querySelectorAll('.adminOnly').forEach(x=>x.classList.toggle('hidden',!isAdmin));document.querySelectorAll('.writeOnly').forEach(x=>x.classList.toggle('hidden',!isAdmin));if(!isAdmin&&$('staff'))$('staff').classList.add('hidden');if($('sideAdminRole'))$('sideAdminRole').textContent=ADMIN_ROLE||'ADMIN';if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Administrator';const schoolName=ADMIN_SCHOOL&&ADMIN_SCHOOL.name?ADMIN_SCHOOL.name:'Sekolah';document.querySelectorAll('.schoolNameText').forEach(x=>x.textContent=schoolName);if($('sideSchoolName'))$('sideSchoolName').textContent=schoolName;}
-function toggleSidebar(force){const el=$('sidebar');if(!el)return;if(force===false)el.classList.remove('open');else el.classList.toggle('open');}
+function sidebarShell(){return document.querySelector('.appShell')}
+function sidebarIsMobile(){return window.innerWidth<=900}
+function hideSidebar(){
+  const el=$('sidebar'),shell=sidebarShell();if(!el||!shell)return;
+  if(sidebarIsMobile()){el.classList.remove('open');return}
+  shell.classList.add('sidebarCollapsed');
+  try{localStorage.setItem('af_sidebar_hidden','1')}catch(e){}
+}
+function showSidebar(){
+  const el=$('sidebar'),shell=sidebarShell();if(!el||!shell)return;
+  if(sidebarIsMobile()){el.classList.add('open');return}
+  shell.classList.remove('sidebarCollapsed');
+  try{localStorage.setItem('af_sidebar_hidden','0')}catch(e){}
+}
+function toggleSidebar(force){
+  const el=$('sidebar'),shell=sidebarShell();if(!el||!shell)return;
+  if(sidebarIsMobile()){
+    if(force===false)el.classList.remove('open');
+    else if(force===true)el.classList.add('open');
+    else el.classList.toggle('open');
+    return;
+  }
+  if(force===false){hideSidebar();return}
+  if(force===true){showSidebar();return}
+  if(shell.classList.contains('sidebarCollapsed'))showSidebar();else hideSidebar();
+}
+function restoreSidebarState(){
+  const el=$('sidebar'),shell=sidebarShell();if(!el||!shell)return;
+  if(sidebarIsMobile()){
+    shell.classList.remove('sidebarCollapsed');
+    el.classList.remove('open');
+    return;
+  }
+  let hidden=false;
+  try{hidden=localStorage.getItem('af_sidebar_hidden')==='1'}catch(e){}
+  shell.classList.toggle('sidebarCollapsed',hidden);
+}
+window.addEventListener('resize',restoreSidebarState);
+document.addEventListener('DOMContentLoaded',restoreSidebarState);
 async function start(){
   if(!TOKEN)return;
   try{
@@ -613,8 +678,15 @@ function fillSelects(){
   $('assignProgram').innerHTML=opts(M.programs);
   if($('ppProgram')){
     const keep=$('ppProgram').value;
+    const activePrograms=(M.programs||[]).filter(x=>x&&x.status==='ACTIVE');
     $('ppProgram').innerHTML='<option value="">Pilih Program</option>'+opts(M.programs);
-    if(M.programs.some(x=>String(x.id)===String(keep)&&x.status==='ACTIVE'))$('ppProgram').value=keep;
+    if(activePrograms.some(x=>String(x.id)===String(keep))){
+      $('ppProgram').value=keep;
+    }else{
+      const today=M.serverDate||'';
+      const current=activePrograms.find(p=>(!p.start_date||String(p.start_date)<=today)&&(!p.end_date||String(p.end_date)>=today))||activePrograms[0];
+      if(current)$('ppProgram').value=current.id;
+    }
   }
 
   if($('relProgram'))$('relProgram').innerHTML='<option value="">Pilih Program PKL</option>'+opts(M.programs);
