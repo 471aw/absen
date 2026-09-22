@@ -223,7 +223,57 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 
 <div class="card"><h3>Data Master</h3><div id="mastersOut" class="scroll"></div></div>
 </section>
-<section id="schedule" class="page hidden"><div class="card"><h3>Jadwal Absensi</h3><p class="muted">Pilih Program dan Instansi, kemudian centang satu atau beberapa titik lokasi. Jika beberapa lokasi dicentang, jam yang sama diterapkan ke seluruh lokasi tersebut. Periode jadwal otomatis mengikuti masa PKL Instansi dalam Program.</p><input id="schId" type="hidden"><div class="row"><div class="field"><label>Program</label><select id="schProgram" onchange="filterScheduleInstitutions()"></select></div><div class="field"><label>Instansi</label><select id="schInstitution" onchange="renderScheduleLocationChecks(true)"></select></div><div class="field"><label>Hari</label><select id="schDay"><option value="1">Senin</option><option value="2">Selasa</option><option value="3">Rabu</option><option value="4">Kamis</option><option value="5">Jumat</option><option value="6">Sabtu</option><option value="7">Minggu</option></select></div><div class="field"><label>Berlaku mulai</label><input id="schEffective" type="date"></div><div class="field"><label>Berlaku sampai</label><input id="schEffectiveTo" type="date"></div></div><div id="schPeriodHelp" class="muted" style="margin:5px 0 10px">Pilih Program dan Instansi untuk menentukan periode jadwal.</div><div class="reportPeopleBox"><div class="reportPeopleHead"><label style="font-weight:800"><input id="schAllLocations" type="checkbox" onchange="toggleScheduleAllLocations(this.checked)"> Pilih semua lokasi instansi</label><span id="schLocationCount" class="muted">0 lokasi dipilih</span></div><div id="schLocations" class="reportPeopleList"></div></div><div class="row" style="margin-top:12px"><div class="field"><label>Datang buka</label><input id="aOpen" type="time" value="06:00"></div><div class="field"><label>Terlambat setelah</label><input id="aLate" type="time" value="07:00"></div><div class="field"><label>Datang tutup</label><input id="aClose" type="time" value="10:00"></div><div class="field"><label>Pulang buka</label><input id="dOpen" type="time" value="15:00"></div><div class="field"><label>Pulang normal</label><input id="dNormal" type="time" value="16:00"></div><div class="field"><label>Pulang tutup</label><input id="dClose" type="time" value="21:00"></div><div class="field"><label>Batas pengajuan izin</label><input id="pDeadline" type="time" value="08:00"></div></div><div class="row"><button class="adminOnly" onclick="saveSchedule()">Simpan Jadwal</button><button class="alt adminOnly" onclick="clearSchedule()">Baru</button></div></div><div class="card"><div id="scheduleOut" class="scroll"></div></div></section>
+<section id="schedule" class="page hidden">
+<div class="card">
+  <h3>Jadwal Absensi</h3>
+  <p class="muted">Pilih Program dan Instansi, lalu centang satu atau beberapa hari serta satu atau beberapa titik lokasi. Hari/lokasi yang dicentang bersama akan memakai jam yang sama. Untuk hari dengan shift berbeda (misalnya shift malam), pilih hari tersebut saja lalu simpan jam khususnya.</p>
+  <input id="schId" type="hidden">
+  <div class="row">
+    <div class="field"><label>Program</label><select id="schProgram" onchange="filterScheduleInstitutions()"></select></div>
+    <div class="field"><label>Instansi</label><select id="schInstitution" onchange="renderScheduleLocationChecks(true)"></select></div>
+    <div class="field"><label>Berlaku mulai</label><input id="schEffective" type="date"></div>
+    <div class="field"><label>Berlaku sampai</label><input id="schEffectiveTo" type="date"></div>
+  </div>
+  <div id="schPeriodHelp" class="muted" style="margin:5px 0 10px">Pilih Program dan Instansi untuk menentukan periode jadwal.</div>
+
+  <div class="reportPeopleBox">
+    <div class="reportPeopleHead">
+      <label style="font-weight:800"><input id="schAllDays" type="checkbox" onchange="toggleScheduleAllDays(this.checked)"> Pilih semua hari</label>
+      <span id="schDayCount" class="muted">0 dari 7 hari dipilih</span>
+    </div>
+    <div id="schDays" class="reportPeopleList">
+      <label class="reportPerson"><input class="schDayCheck" type="checkbox" value="1" onchange="syncScheduleDaySelection()"><span>Senin</span></label>
+      <label class="reportPerson"><input class="schDayCheck" type="checkbox" value="2" onchange="syncScheduleDaySelection()"><span>Selasa</span></label>
+      <label class="reportPerson"><input class="schDayCheck" type="checkbox" value="3" onchange="syncScheduleDaySelection()"><span>Rabu</span></label>
+      <label class="reportPerson"><input class="schDayCheck" type="checkbox" value="4" onchange="syncScheduleDaySelection()"><span>Kamis</span></label>
+      <label class="reportPerson"><input class="schDayCheck" type="checkbox" value="5" onchange="syncScheduleDaySelection()"><span>Jumat</span></label>
+      <label class="reportPerson"><input class="schDayCheck" type="checkbox" value="6" onchange="syncScheduleDaySelection()"><span>Sabtu</span></label>
+      <label class="reportPerson"><input class="schDayCheck" type="checkbox" value="7" onchange="syncScheduleDaySelection()"><span>Minggu</span></label>
+    </div>
+  </div>
+
+  <div class="reportPeopleBox" style="margin-top:10px">
+    <div class="reportPeopleHead">
+      <label style="font-weight:800"><input id="schAllLocations" type="checkbox" onchange="toggleScheduleAllLocations(this.checked)"> Pilih semua lokasi instansi</label>
+      <span id="schLocationCount" class="muted">0 lokasi dipilih</span>
+    </div>
+    <div id="schLocations" class="reportPeopleList"></div>
+  </div>
+
+  <div class="row" style="margin-top:12px">
+    <div class="field"><label>Datang buka</label><input id="aOpen" type="time" value="06:00"></div>
+    <div class="field"><label>Terlambat setelah</label><input id="aLate" type="time" value="07:00"></div>
+    <div class="field"><label>Datang tutup</label><input id="aClose" type="time" value="10:00"></div>
+    <div class="field"><label>Pulang buka</label><input id="dOpen" type="time" value="15:00"></div>
+    <div class="field"><label>Pulang normal</label><input id="dNormal" type="time" value="16:00"></div>
+    <div class="field"><label>Pulang tutup</label><input id="dClose" type="time" value="21:00"></div>
+    <div class="field"><label>Batas pengajuan izin</label><input id="pDeadline" type="time" value="08:00"></div>
+  </div>
+  <div class="muted" style="margin-top:6px">Shift malam lintas tengah malam didukung. Contoh: datang 20:00–22:00, pulang 05:00–08:00. Absen pulang setelah tengah malam tetap dicatat ke tanggal shift dimulai.</div>
+  <div class="row" style="margin-top:10px"><button class="adminOnly" onclick="saveSchedule()">Simpan Jadwal</button><button class="alt adminOnly" onclick="clearSchedule()">Baru</button></div>
+</div>
+<div class="card"><div id="scheduleOut" class="scroll"></div></div>
+</section>
 <section id="permits" class="page hidden"><div class="card">
 <div class="row"><div><h3 style="margin-bottom:2px">Perizinan</h3><div class="muted">Filter berdasarkan rentang tanggal dan status pengajuan.</div></div></div>
 <div class="permitFilters no-print">
@@ -319,7 +369,7 @@ function gas(name,...args){
     .then(v=>{if(!silent)adminProcessEnd(true);return v})
     .catch(e=>{if(!silent)adminProcessEnd(false,e&&e.message?e.message:String(e||'Proses gagal'));throw e});
 }function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}function note(t,e=false){$('msg').textContent=t;$('msg').className='msg'+(e?' err':'');$('msg').classList.remove('hidden');setTimeout(()=>$('msg').classList.add('hidden'),5000)}
-async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.6.3');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
+async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.6.4');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
 async function login(){try{
   const r=await gas('apiAdminLogin',$('username').value,$('password').value);
   if(String(r.role||'ADMIN')==='SUPER_ADMIN'){
@@ -432,7 +482,7 @@ function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add
 function startHeaderClock(){if(window.__afClockTimer)return;const tick=()=>{const d=new Date(),days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];if($('topDate'))$('topDate').textContent=days[d.getDay()]+', '+String(d.getDate()).padStart(2,'0')+' '+months[d.getMonth()]+' '+d.getFullYear();if($('topTime'))$('topTime').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');const nm=ADMIN_NAME||'Administrator',ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();if($('topAvatar'))$('topAvatar').textContent=ini||'AD';};tick();window.__afClockTimer=setInterval(tick,1000)}
 async function loadDash(){
   const r=await gas('apiAdminDashboard',TOKEN);
-  const ver=String(r.version||'1.6.3');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
+  const ver=String(r.version||'1.6.4');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
   $('kpis').innerHTML=[
     ['Peserta aktif',r.totalUsers],['Terjadwal hari ini',r.scheduledToday],
     ['Hadir hari ini',r.arrived],['Terlambat',r.late],
@@ -1274,5 +1324,73 @@ function downloadReportCsv(){
 
 /* ABSENFLEX_V163_STATIC_OVERRIDE_END */
 
+
+/* ABSENFLEX_V164_STATIC_OVERRIDE_START */
+function applyRoleUi(){
+  const isAdmin=ADMIN_ROLE==='ADMIN';
+  document.querySelectorAll('.adminOnly').forEach(x=>x.classList.toggle('hidden',!isAdmin));
+  document.querySelectorAll('.writeOnly').forEach(x=>x.classList.toggle('hidden',!isAdmin));
+
+  const masterBtn=document.querySelector('button[onclick="tab(\'masters\',this)"]');
+  const scheduleBtn=document.querySelector('button[onclick="tab(\'schedule\',this)"]');
+  [masterBtn,scheduleBtn].forEach(x=>{
+    if(!x)return;
+    x.classList.remove('adminOnly','hidden');
+    x.style.removeProperty('display');
+  });
+
+  const staffBtn=document.querySelector('button[onclick="tab(\'staff\',this)"]');
+  const staffNav=staffBtn?staffBtn.closest('.nav'):null;
+  const staffSection=$('staff');
+  [staffBtn,staffNav,staffSection].forEach(x=>{
+    if(!x)return;
+    if(isAdmin){
+      x.style.removeProperty('display');
+      x.classList.remove('hidden');
+    }else{
+      x.style.setProperty('display','none','important');
+      x.classList.add('hidden');
+    }
+  });
+
+  if($('sideAdminRole'))$('sideAdminRole').textContent=ADMIN_ROLE||'ADMIN';
+  if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Administrator';
+  const schoolName=ADMIN_SCHOOL&&ADMIN_SCHOOL.name?ADMIN_SCHOOL.name:'Sekolah';
+  document.querySelectorAll('.schoolNameText').forEach(x=>x.textContent=schoolName);
+  if($('sideSchoolName'))$('sideSchoolName').textContent=schoolName;
+}
+
+function selectedScheduleDayNumbers(){return [...document.querySelectorAll('.schDayCheck:checked')].map(x=>Number(x.value)).filter(x=>x>=1&&x<=7);}
+function syncScheduleDaySelection(){
+  const checks=[...document.querySelectorAll('.schDayCheck')],selected=checks.filter(x=>x.checked);
+  if($('schDayCount'))$('schDayCount').textContent=selected.length+' dari '+checks.length+' hari dipilih';
+  if($('schAllDays')){$('schAllDays').checked=checks.length>0&&selected.length===checks.length;$('schAllDays').indeterminate=selected.length>0&&selected.length<checks.length;$('schAllDays').disabled=!!$('schId').value;}
+}
+function toggleScheduleAllDays(checked){if($('schId').value)return;document.querySelectorAll('.schDayCheck:not(:disabled)').forEach(x=>x.checked=checked);syncScheduleDaySelection();}
+function clearSchedule(){
+  $('schId').value='';$('aOpen').value='06:00';$('aLate').value='07:00';$('aClose').value='10:00';$('dOpen').value='15:00';$('dNormal').value='16:00';$('dClose').value='21:00';$('pDeadline').value='08:00';
+  document.querySelectorAll('.schDayCheck').forEach(c=>{c.checked=false;c.disabled=false;});syncScheduleDaySelection();
+  filterScheduleInstitutions();renderScheduleLocationChecks(true);
+}
+function editSchedule(id){
+  const x=M.schedules.find(v=>String(v.id)===String(id));if(!x)return;
+  const loc=M.locations.find(l=>String(l.id)===String(x.location_id));if(!loc)return;
+  $('schId').value=x.id;$('schProgram').value=x.program_id;filterScheduleInstitutions();$('schInstitution').value=loc.institution_id;renderScheduleLocationChecks(false);
+  document.querySelectorAll('.schLocationCheck').forEach(c=>{c.checked=String(c.value)===String(x.location_id);c.disabled=String(c.value)!==String(x.location_id);});syncScheduleLocationSelection();
+  document.querySelectorAll('.schDayCheck').forEach(c=>{c.checked=Number(c.value)===Number(x.day_of_week);c.disabled=Number(c.value)!==Number(x.day_of_week);});syncScheduleDaySelection();
+  $('schEffective').value=x.effective_from||'';$('schEffectiveTo').value=x.effective_to||'';$('aOpen').value=x.arrival_open;$('aLate').value=x.arrival_late_after;$('aClose').value=x.arrival_close;$('dOpen').value=x.departure_open;$('dNormal').value=x.departure_normal;$('dClose').value=x.departure_close;$('pDeadline').value=x.permission_deadline||'';syncSchedulePeriodBounds(false);window.scrollTo({top:0,behavior:'smooth'});
+}
+async function saveSchedule(){
+  try{
+    if(ADMIN_ROLE!=='ADMIN')throw new Error('Hanya Admin Sekolah yang dapat mengubah jadwal.');
+    const ids=selectedScheduleLocationIds();if(!ids.length)throw new Error('Pilih minimal satu titik lokasi.');
+    const days=selectedScheduleDayNumbers();if(!days.length)throw new Error('Pilih minimal satu hari.');
+    await gas('apiAdminUpsertSchedule',TOKEN,{id:$('schId').value||undefined,program_id:$('schProgram').value,location_ids:ids,day_of_weeks:days,effective_from:$('schEffective').value,effective_to:$('schEffectiveTo').value,arrival_open:$('aOpen').value,arrival_late_after:$('aLate').value,arrival_close:$('aClose').value,departure_open:$('dOpen').value,departure_normal:$('dNormal').value,departure_close:$('dClose').value,permission_deadline:$('pDeadline').value,status:'ACTIVE'});
+    const total=ids.length*days.length;
+    clearSchedule();note(total>1?'Jadwal berhasil diterapkan ke '+days.length+' hari × '+ids.length+' lokasi ('+total+' jadwal).':'Jadwal disimpan.');await loadMasters();
+  }catch(e){note(e.message,true)}
+}
+
+/* ABSENFLEX_V164_STATIC_OVERRIDE_END */
 loadAppIdentity();if(TOKEN)start();
 </script></body></html>
