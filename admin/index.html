@@ -168,10 +168,61 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 </div>
 </section>
 <section id="users" class="page hidden">
-<div class="card writeOnly"><h3>Ubah Penempatan Peserta</h3><p class="muted">Peserta tidak dapat mengubah penempatan sendiri setelah disetujui. Hanya admin yang dapat memindahkan program, instansi, dan titik lokasi. Riwayat lama tidak ditimpa.</p><div class="row"><div class="field"><label>Peserta</label><select id="assignUser"></select></div><div class="field"><label>Program</label><select id="assignProgram"></select></div><div class="field"><label>Instansi</label><select id="assignInstitution" onchange="filterAssignLocations()"></select></div><div class="field"><label>Lokasi</label><select id="assignLocation"></select></div><div class="field"><label>Berlaku mulai</label><input id="assignEffective" type="date"></div><button onclick="saveAssignment()">Simpan Penempatan</button></div></div>
+<div class="card writeOnly"><h3>Ubah Penempatan Peserta</h3><p class="muted">Penempatan hanya dapat diubah Admin Sekolah. Pilihan instansi mengikuti daftar Instansi dalam Program; riwayat lama tidak ditimpa.</p><div class="row"><div class="field"><label>Peserta</label><select id="assignUser"></select></div><div class="field"><label>Program</label><select id="assignProgram" onchange="filterAssignInstitutions()"></select></div><div class="field"><label>Instansi</label><select id="assignInstitution" onchange="filterAssignLocations()"></select></div><div class="field"><label>Lokasi</label><select id="assignLocation"></select></div><div class="field"><label>Berlaku mulai</label><input id="assignEffective" type="date"></div><button onclick="saveAssignment()">Simpan Penempatan</button></div></div>
 <div class="card"><div class="row"><h3 style="flex:1">Peserta</h3><button class="alt no-print" onclick="loadUsers()">Refresh</button></div><div id="usersOut" class="scroll"></div></div></section>
-<section id="masters" class="page hidden"><div class="two"><div class="card"><h3>Program</h3><input id="progId" type="hidden"><div class="field"><label>Nama</label><input id="progName"></div><div class="row"><div class="field"><label>Mulai</label><input id="progStart" type="date"></div><div class="field"><label>Selesai</label><input id="progEnd" type="date"></div></div><div class="row"><button onclick="saveProgram()">Simpan Program</button><button class="alt" onclick="clearProgram()">Baru</button></div></div><div class="card"><h3>Instansi</h3><input id="insId" type="hidden"><div class="field"><label>Nama</label><input id="insName"></div><div class="field"><label>Alamat</label><textarea id="insAddress"></textarea></div><div class="row"><button onclick="saveInstitution()">Simpan Instansi</button><button class="alt" onclick="clearInstitution()">Baru</button></div></div></div>
-<div class="card"><h3>Lokasi Absensi</h3><input id="locId" type="hidden"><div class="row"><div class="field"><label>Instansi</label><select id="locInstitution"></select></div><div class="field"><label>Nama lokasi</label><input id="locName"></div><div class="field"><label>Latitude</label><input id="locLat" inputmode="decimal"></div><div class="field"><label>Longitude</label><input id="locLng" inputmode="decimal"></div><div class="field"><label>Radius (m)</label><input id="locRadius" type="number" value="100"></div><div class="field"><label>Akurasi maks (m)</label><input id="locAccuracy" type="number" value="80"></div></div><div class="row"><button onclick="saveLocation()">Simpan Lokasi</button><button class="alt" onclick="clearLocation()">Baru</button></div></div><div class="card"><h3>Data Master</h3><div id="mastersOut" class="scroll"></div></div></section>
+<section id="masters" class="page hidden">
+<div class="two">
+  <div class="card adminOnly">
+    <h3>Program PKL</h3>
+    <input id="progId" type="hidden">
+    <div class="field"><label>Nama Program</label><input id="progName" placeholder="contoh: PKL 2026"></div>
+    <div class="row">
+      <div class="field"><label>Mulai</label><input id="progStart" type="date"></div>
+      <div class="field"><label>Selesai</label><input id="progEnd" type="date"></div>
+    </div>
+    <div class="row"><button onclick="saveProgram()">Simpan Program</button><button class="alt" onclick="clearProgram()">Baru</button></div>
+  </div>
+  <div class="card adminOnly">
+    <h3>Master Instansi</h3>
+    <p class="muted">Instansi dibuat satu kali dan dapat digunakan kembali pada Program PKL tahun berikutnya.</p>
+    <input id="insId" type="hidden">
+    <div class="field"><label>Nama Instansi</label><input id="insName" placeholder="contoh: PT ABC"></div>
+    <div class="field"><label>Alamat</label><textarea id="insAddress"></textarea></div>
+    <div class="row"><button onclick="saveInstitution()">Simpan Instansi</button><button class="alt" onclick="clearInstitution()">Baru</button></div>
+  </div>
+</div>
+
+<div class="card adminOnly">
+  <h3>Instansi dalam Program</h3>
+  <p class="muted">Pilih Program PKL dan Instansi yang sudah terdaftar, lalu tentukan lama PKL pada instansi tersebut.</p>
+  <input id="relId" type="hidden">
+  <div class="row">
+    <div class="field"><label>Program PKL</label><select id="relProgram" onchange="syncProgramInstitutionBounds(true)"></select></div>
+    <div class="field"><label>Instansi</label><select id="relInstitution"></select></div>
+    <div class="field"><label>Mulai PKL di Instansi</label><input id="relStart" type="date"></div>
+    <div class="field"><label>Selesai PKL di Instansi</label><input id="relEnd" type="date"></div>
+  </div>
+  <div id="relPeriodHelp" class="muted" style="margin:5px 0 10px">Periode instansi harus berada di dalam periode Program PKL.</div>
+  <div class="row"><button onclick="saveProgramInstitution()">Simpan ke Program</button><button class="alt" onclick="clearProgramInstitution()">Baru</button></div>
+</div>
+
+<div class="card">
+  <h3>Lokasi Absensi</h3>
+  <p class="muted">Satu instansi dapat memiliki beberapa titik lokasi, misalnya kantor pusat, kantor cabang, pabrik, atau gudang. Admin dan Guru dapat menambah/mengoreksi titik lokasi.</p>
+  <input id="locId" type="hidden">
+  <div class="row">
+    <div class="field"><label>Instansi</label><select id="locInstitution"></select></div>
+    <div class="field"><label>Nama lokasi</label><input id="locName"></div>
+    <div class="field"><label>Latitude</label><input id="locLat" inputmode="decimal"></div>
+    <div class="field"><label>Longitude</label><input id="locLng" inputmode="decimal"></div>
+    <div class="field"><label>Radius (m)</label><input id="locRadius" type="number" value="100"></div>
+    <div class="field"><label>Akurasi maks (m)</label><input id="locAccuracy" type="number" value="80"></div>
+  </div>
+  <div class="row"><button onclick="saveLocation()">Simpan Lokasi</button><button class="alt" onclick="clearLocation()">Baru</button></div>
+</div>
+
+<div class="card"><h3>Data Master</h3><div id="mastersOut" class="scroll"></div></div>
+</section>
 <section id="schedule" class="page hidden"><div class="card"><h3>Jadwal Absensi</h3><p class="muted">Untuk perubahan jam, buat versi baru dan tentukan tanggal mulai berlaku agar laporan lama tidak berubah.</p><input id="schId" type="hidden"><div class="row"><div class="field"><label>Program</label><select id="schProgram"></select></div><div class="field"><label>Lokasi</label><select id="schLocation"></select></div><div class="field"><label>Hari</label><select id="schDay"><option value="1">Senin</option><option value="2">Selasa</option><option value="3">Rabu</option><option value="4">Kamis</option><option value="5">Jumat</option><option value="6">Sabtu</option><option value="7">Minggu</option></select></div><div class="field"><label>Berlaku mulai</label><input id="schEffective" type="date"></div></div><div class="row"><div class="field"><label>Datang buka</label><input id="aOpen" type="time" value="06:00"></div><div class="field"><label>Terlambat setelah</label><input id="aLate" type="time" value="07:00"></div><div class="field"><label>Datang tutup</label><input id="aClose" type="time" value="10:00"></div><div class="field"><label>Pulang buka</label><input id="dOpen" type="time" value="15:00"></div><div class="field"><label>Pulang normal</label><input id="dNormal" type="time" value="16:00"></div><div class="field"><label>Pulang tutup</label><input id="dClose" type="time" value="21:00"></div><div class="field"><label>Batas pengajuan izin</label><input id="pDeadline" type="time" value="08:00"></div></div><div class="row"><button onclick="saveSchedule()">Simpan Jadwal</button><button class="alt" onclick="clearSchedule()">Baru</button></div></div><div class="card"><div id="scheduleOut" class="scroll"></div></div></section>
 <section id="permits" class="page hidden"><div class="card">
 <div class="row"><div><h3 style="margin-bottom:2px">Perizinan</h3><div class="muted">Filter berdasarkan rentang tanggal dan status pengajuan.</div></div></div>
@@ -190,7 +241,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   <div class="two">
     <div class="card">
       <h3>Tambah Guru</h3>
-      <p class="muted">Guru hanya dapat melihat dashboard, peserta, perizinan, dan laporan sekolah.</p>
+      <p class="muted">Guru dapat melihat data sekolah serta menambah atau mengoreksi titik lokasi absensi. Guru tidak dapat mengelola Program, Instansi, Peserta, atau akun Guru lain.</p>
       <div class="field"><label>Username</label><input id="guruUsername" placeholder="contoh: guru01"></div>
       <div class="field"><label>Nama Guru</label><input id="guruName"></div>
       <div class="field"><label>Password awal (min. 10 karakter)</label><input id="guruPassword" type="password"></div>
@@ -268,7 +319,7 @@ function gas(name,...args){
     .then(v=>{if(!silent)adminProcessEnd(true);return v})
     .catch(e=>{if(!silent)adminProcessEnd(false);throw e});
 }function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}function note(t,e=false){$('msg').textContent=t;$('msg').className='msg'+(e?' err':'');$('msg').classList.remove('hidden');setTimeout(()=>$('msg').classList.add('hidden'),5000)}
-async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.5.0');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
+async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.6.0');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
 async function login(){try{
   const r=await gas('apiAdminLogin',$('username').value,$('password').value);
   if(String(r.role||'ADMIN')==='SUPER_ADMIN'){
@@ -381,7 +432,7 @@ function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add
 function startHeaderClock(){if(window.__afClockTimer)return;const tick=()=>{const d=new Date(),days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];if($('topDate'))$('topDate').textContent=days[d.getDay()]+', '+String(d.getDate()).padStart(2,'0')+' '+months[d.getMonth()]+' '+d.getFullYear();if($('topTime'))$('topTime').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');const nm=ADMIN_NAME||'Administrator',ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();if($('topAvatar'))$('topAvatar').textContent=ini||'AD';};tick();window.__afClockTimer=setInterval(tick,1000)}
 async function loadDash(){
   const r=await gas('apiAdminDashboard',TOKEN);
-  const ver=String(r.version||'1.5.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
+  const ver=String(r.version||'1.6.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
   $('kpis').innerHTML=[
     ['Peserta aktif',r.totalUsers],['Terjadwal hari ini',r.scheduledToday],
     ['Hadir hari ini',r.arrived],['Terlambat',r.late],
@@ -614,5 +665,375 @@ async function restoreUserUi(id,name){if(!confirm('Pulihkan peserta '+name+'?\n\
 
 function renderSettings(){const allowed=['SYSTEM_NAME','CAMERA_HELPER_URL','FACE_MATCH_THRESHOLD','FACE_DUPLICATE_THRESHOLD','GLOBAL_MAX_ACCURACY_M','LOCATION_ACCURACY_BUFFER_M','MAX_PLAUSIBLE_SPEED_KMH','ALLOW_WEB_IOS','ALLOW_RETROACTIVE_PERMISSION','REQUIRE_PLAY_INTEGRITY','REGISTRATION_CODE'];$('settingsOut').innerHTML=M.settings.filter(s=>allowed.includes(s.key)).map(s=>`<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="field"><label>${esc(s.key)}</label><input ${s.key==='REGISTRATION_CODE'?'type="password"':''} id="set_${esc(s.key)}" value="${esc(s.value)}"><span class="muted">${esc(s.description||'')}</span></div><button onclick="saveSetting('${esc(s.key)}')">Simpan</button></div>`).join('')}
 async function saveSetting(k){try{await gas('apiAdminSaveSetting',TOKEN,k,$('set_'+k).value);note('Pengaturan disimpan.');await loadMasters();if(k==='SYSTEM_NAME')await loadAppIdentity();}catch(e){note(e.message,true)}}
+
+
+/* ABSENFLEX_V160_STATIC_OVERRIDE_START */
+function applyRoleUi(){const isAdmin=ADMIN_ROLE==='ADMIN';document.querySelectorAll('.adminOnly').forEach(x=>x.classList.toggle('hidden',!isAdmin));document.querySelectorAll('.writeOnly').forEach(x=>x.classList.toggle('hidden',!isAdmin));if($('sideAdminRole'))$('sideAdminRole').textContent=ADMIN_ROLE||'ADMIN';if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Administrator';const schoolName=ADMIN_SCHOOL&&ADMIN_SCHOOL.name?ADMIN_SCHOOL.name:'Sekolah';document.querySelectorAll('.schoolNameText').forEach(x=>x.textContent=schoolName);if($('sideSchoolName'))$('sideSchoolName').textContent=schoolName;}
+
+async function loadUsers(){
+  const r=await gas('apiAdminListUsers',TOKEN);USERS=r.users||[];REPORT_USERS=r.reportUsers||r.users||[];
+  const canWrite=ADMIN_ROLE==='ADMIN';
+  let h='<table><thead><tr><th>Foto</th><th>Nama</th><th>Email</th><th>NIS</th><th>Status</th><th>Penempatan</th><th>Face</th><th>Aksi</th></tr></thead><tbody>';
+  USERS.forEach(u=>{
+    const pn=M?(M.programs.find(x=>x.id===u.program_id)||{}).name||'-':'-',
+      inm=M?(M.institutions.find(x=>x.id===u.institution_id)||{}).name||'-':'-',
+      ln=M?(M.locations.find(x=>x.id===u.location_id)||{}).name||'-':'-',
+      ini=String(u.name||'PK').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+    let actions='<span class="muted">Lihat saja</span>';
+    if(canWrite){
+      actions=(u.status==='PENDING'?`<button class="small" onclick="approve('${u.id}',true)">Setujui</button> <button class="small bad" onclick="approve('${u.id}',false)">Tolak</button> `:'')+
+      `<button class="small alt" onclick="editUserProfile('${u.id}')">Edit</button> `+
+      `<button class="small alt" onclick="selectAssignment('${u.id}')">Penempatan</button> `+
+      (u.face_status==='ENROLLED'?`<button class="small alt" onclick="resetFace('${u.id}')">Reset Face</button> `:'')+
+      `<button class="small bad" onclick="resetAttendanceToday('${u.id}','${esc(u.name)}')">Reset Absen Hari Ini</button> <button class="small bad" onclick="deleteUser('${u.id}','${esc(u.name)}')">Hapus</button>`;
+    }
+    h+=`<tr>
+      <td><div class="faceCell"><div id="face_${u.id}" class="faceFallback ${u.face_status==='ENROLLED'?'faceLoading':''}" data-face-user="${u.face_status==='ENROLLED'?esc(u.id):''}">${esc(ini)}</div></div></td>
+      <td><b>${esc(u.name)}</b></td><td>${esc(u.email)}</td><td>${esc(u.identifier||'-')}</td>
+      <td><span class="pill">${esc(u.status)}</span></td>
+      <td>${esc(pn)}<br>${esc(inm)} • ${esc(ln)}${u.assignment_effective_from?`<br><span class="muted">sejak ${esc(u.assignment_effective_from)}</span>`:''}</td>
+      <td>${esc(u.face_status)}</td><td>${actions}</td></tr>`;
+  });
+  h+='</tbody></table>';$('usersOut').innerHTML=h;fillAssignmentUsers();observeFacePhotos();renderReportUserPicker();
+}
+
+
+async function editUserProfile(id){
+  const u=USERS.find(x=>String(x.id)===String(id));if(!u)return;
+  const name=prompt('Nama peserta:',u.name||'');if(name===null)return;
+  const email=prompt('Email peserta:',u.email||'');if(email===null)return;
+  const identifier=prompt('NIS / ID peserta:',u.identifier||'');if(identifier===null)return;
+  try{
+    const r=await gas('apiAdminUpdateUserProfile',TOKEN,id,{name,email,identifier});
+    note(r.message||'Data peserta diperbarui.');
+    await loadUsers();
+  }catch(e){note(e.message,true)}
+}
+async function deleteUser(id,name){if(!confirm('Hapus peserta '+name+' dari daftar aktif?\n\nAkun tidak dapat login/absen lagi. Face ID dan PIN dinonaktifkan. Riwayat absensi serta perizinan TETAP disimpan.'))return;try{const r=await gas('apiAdminDeleteUser',TOKEN,id);note(r.message||'Peserta dihapus.');await Promise.all([loadUsers(),loadDash()]);if(ADMIN_ROLE==='SUPER_ADMIN'&&SUPER_DATA)loadSuperAdmin();}catch(e){note(e.message,true)}}
+
+async function loadMasters(){
+  const r=await gas('apiAdminMasters',TOKEN);
+  if(!r||typeof r!=='object')throw new Error('Data master tidak dapat dibaca dari server. Muat ulang halaman setelah memperbarui deployment.');
+  M={
+    ok:r.ok!==false,serverDate:r.serverDate||'',
+    programs:Array.isArray(r.programs)?r.programs:[],
+    institutions:Array.isArray(r.institutions)?r.institutions:[],
+    programInstitutions:Array.isArray(r.programInstitutions)?r.programInstitutions:[],
+    locations:Array.isArray(r.locations)?r.locations:[],
+    schedules:Array.isArray(r.schedules)?r.schedules:[],
+    settings:Array.isArray(r.settings)?r.settings:[]
+  };
+  fillSelects();renderMasters();renderSchedules();renderSettings();fillAssignmentUsers();
+  $('assignEffective').min=M.serverDate||'';$('schEffective').min=M.serverDate||'';
+  if(!$('assignEffective').value)$('assignEffective').value=M.serverDate||'';
+  if(!$('schEffective').value)$('schEffective').value=M.serverDate||'';
+  syncAssignmentPeriodBounds();syncSchedulePeriodBounds();
+  if(USERS.length)renderUserRefreshNoFetch();
+}
+function opts(rows,all=false){
+  rows=Array.isArray(rows)?rows:[];
+  return (all?'<option value="">Semua</option>':'')+
+    rows.filter(x=>x&&x.status==='ACTIVE').map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('');
+}
+function fillSelects(){
+  $('locInstitution').innerHTML=opts(M.institutions);
+  $('schProgram').innerHTML=opts(M.programs);
+  filterScheduleLocations();
+  $('repProgram').innerHTML=opts(M.programs,true);
+  $('repInstitution').innerHTML=opts(M.institutions,true);
+  $('repLocation').innerHTML=opts(M.locations,true);
+  $('assignProgram').innerHTML=opts(M.programs);
+
+  if($('relProgram'))$('relProgram').innerHTML='<option value="">Pilih Program PKL</option>'+opts(M.programs);
+  if($('relInstitution'))$('relInstitution').innerHTML='<option value="">Pilih Instansi</option>'+opts(M.institutions);
+
+  filterAssignInstitutions();
+  syncProgramInstitutionBounds(false);
+}
+function statusBtn(type,x){
+  const next=x.status==='ACTIVE'?'INACTIVE':'ACTIVE';
+  const allowed=type==='LOCATION'?(ADMIN_ROLE==='ADMIN'||ADMIN_ROLE==='GURU'):ADMIN_ROLE==='ADMIN';
+  if(!allowed)return '<span class="muted">Lihat</span>';
+  return `<button class="small alt" onclick="toggleMaster('${type}','${x.id}','${next}')">${next==='ACTIVE'?'Aktifkan':'Nonaktifkan'}</button>`;
+}
+function renderMasters(){
+  const isAdmin=ADMIN_ROLE==='ADMIN';
+  const pn=id=>(M.programs.find(p=>String(p.id)===String(id))||{}).name||'-';
+  const inn=id=>(M.institutions.find(i=>String(i.id)===String(id))||{}).name||'-';
+
+  let h='<b>Program PKL</b><table><tr><th>Nama</th><th>Mulai</th><th>Selesai</th><th>Status</th><th>Aksi</th></tr>'+
+    M.programs.map(x=>{
+      const act=isAdmin?`<button class="small alt" onclick="editProgram('${x.id}')">Edit</button> ${x.status!=='DELETED'?`<button class="small bad" onclick="deleteProgram('${x.id}','${esc(x.name)}')">Hapus</button>`:'<span class="pill">Dihapus</span>'}`:'<span class="muted">Lihat</span>';
+      return `<tr><td>${esc(x.name)}</td><td>${esc(x.start_date||'-')}</td><td>${esc(x.end_date||'-')}</td><td>${esc(x.status)}</td><td>${act}</td></tr>`;
+    }).join('')+'</table>';
+
+  h+='<br><b>Master Instansi</b><table><tr><th>Nama</th><th>Alamat</th><th>Status</th><th>Aksi</th></tr>'+
+    M.institutions.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.address||'-')}</td><td>${esc(x.status)}</td><td>${isAdmin?`<button class="small alt" onclick="editInstitution('${x.id}')">Edit</button> ${statusBtn('INSTITUTION',x)}`:'<span class="muted">Lihat</span>'}</td></tr>`).join('')+'</table>';
+
+  h+='<br><b>Instansi dalam Program</b><table><tr><th>Program</th><th>Instansi</th><th>Periode di Instansi</th><th>Status</th><th>Aksi</th></tr>'+
+    M.programInstitutions.map(x=>{
+      const next=x.status==='ACTIVE'?'INACTIVE':'ACTIVE';
+      const act=isAdmin?`<button class="small alt" onclick="editProgramInstitution('${x.id}')">Edit</button> <button class="small alt" onclick="setProgramInstitutionStatus('${x.id}','${next}')">${next==='ACTIVE'?'Aktifkan':'Nonaktifkan'}</button>`:'<span class="muted">Lihat</span>';
+      return `<tr><td>${esc(pn(x.program_id))}</td><td>${esc(inn(x.institution_id))}</td><td>${esc(x.start_date||'-')} s.d. ${esc(x.end_date||'-')}</td><td>${esc(x.status)}</td><td>${act}</td></tr>`;
+    }).join('')+'</table>';
+
+  h+='<br><b>Lokasi Absensi</b><table><tr><th>Nama</th><th>Instansi</th><th>Lat</th><th>Lng</th><th>Radius</th><th>Akurasi</th><th>Status</th><th>Aksi</th></tr>'+
+    M.locations.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(inn(x.institution_id))}</td><td>${esc(x.lat)}</td><td>${esc(x.lng)}</td><td>${esc(x.radius_m)} m</td><td>${esc(x.max_accuracy_m)} m</td><td>${esc(x.status)}</td><td><button class="small alt" onclick="editLocation('${x.id}')">Edit</button> ${statusBtn('LOCATION',x)}</td></tr>`).join('')+'</table>';
+
+  $('mastersOut').innerHTML=h;
+}
+function clearProgram(){$('progId').value='';$('progName').value='';$('progStart').value='';$('progEnd').value=''}
+function clearInstitution(){$('insId').value='';$('insName').value='';$('insAddress').value=''}
+function clearProgramInstitution(){
+  $('relId').value='';$('relProgram').disabled=false;$('relInstitution').disabled=false;
+  $('relProgram').value='';$('relInstitution').value='';$('relStart').value='';$('relEnd').value='';
+  syncProgramInstitutionBounds(false);
+}
+function clearLocation(){$('locId').value='';$('locName').value='';$('locLat').value='';$('locLng').value='';$('locRadius').value='100';$('locAccuracy').value='80'}
+function editProgram(id){
+  const x=M.programs.find(v=>v.id===id);if(!x)return;
+  $('progId').value=x.id;$('progName').value=x.name||'';$('progStart').value=x.start_date||'';$('progEnd').value=x.end_date||'';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function editInstitution(id){
+  const x=M.institutions.find(v=>v.id===id);if(!x)return;
+  $('insId').value=x.id;$('insName').value=x.name||'';$('insAddress').value=x.address||'';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function editProgramInstitution(id){
+  const x=M.programInstitutions.find(v=>v.id===id);if(!x)return;
+  $('relId').value=x.id;$('relProgram').value=x.program_id||'';$('relInstitution').value=x.institution_id||'';
+  $('relProgram').disabled=true;$('relInstitution').disabled=true;
+  $('relStart').value=x.start_date||'';$('relEnd').value=x.end_date||'';
+  syncProgramInstitutionBounds(false);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function editLocation(id){
+  const x=M.locations.find(v=>v.id===id);if(!x)return;
+  $('locId').value=x.id;$('locInstitution').value=x.institution_id||'';$('locName').value=x.name||'';
+  $('locLat').value=x.lat||'';$('locLng').value=x.lng||'';$('locRadius').value=x.radius_m||100;$('locAccuracy').value=x.max_accuracy_m||80;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+async function saveProgram(){
+  try{
+    const start=$('progStart').value,end=$('progEnd').value;
+    if(!start||!end)throw new Error('Tanggal mulai dan selesai Program PKL wajib diisi.');
+    if(start>end)throw new Error('Tanggal selesai Program PKL tidak boleh sebelum tanggal mulai.');
+    await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM',{
+      id:$('progId').value||undefined,name:$('progName').value,start_date:start,end_date:end,status:'ACTIVE'
+    });
+    clearProgram();note('Program PKL disimpan.');await loadMasters();
+  }catch(e){note(e.message,true)}
+}
+async function deleteProgram(id,name){
+  if(!confirm('Hapus Program '+name+' dari daftar aktif?\\n\\nRiwayat penempatan dan laporan lama tetap disimpan. Peserta pada program ini tidak dapat absen sampai program dipulihkan/diedit kembali.'))return;
+  try{
+    const r=await gas('apiAdminDeleteProgram',TOKEN,id);
+    note(r.message||'Program dihapus.');
+    await Promise.all([loadMasters(),loadUsers(),loadDash()]);
+  }catch(e){note(e.message,true)}
+}
+async function saveInstitution(){
+  try{
+    await gas('apiAdminUpsertMaster',TOKEN,'INSTITUTION',{
+      id:$('insId').value||undefined,name:$('insName').value,address:$('insAddress').value,status:'ACTIVE'
+    });
+    clearInstitution();note('Master Instansi disimpan. Instansi dapat digunakan kembali untuk Program PKL lain.');await loadMasters();
+  }catch(e){note(e.message,true)}
+}
+function syncProgramInstitutionBounds(fillDefaults){
+  if(!M||!$('relProgram'))return;
+  const p=M.programs.find(x=>String(x.id)===String($('relProgram').value));
+  const st=$('relStart'),en=$('relEnd'),h=$('relPeriodHelp');
+  if(!p){
+    st.removeAttribute('min');st.removeAttribute('max');en.removeAttribute('min');en.removeAttribute('max');
+    if(h)h.textContent='Pilih Program PKL terlebih dahulu.';return;
+  }
+  if(p.start_date){st.min=p.start_date;en.min=p.start_date}else{st.removeAttribute('min');en.removeAttribute('min')}
+  if(p.end_date){st.max=p.end_date;en.max=p.end_date}else{st.removeAttribute('max');en.removeAttribute('max')}
+  if(fillDefaults){st.value=p.start_date||'';en.value=p.end_date||''}
+  if(h)h.textContent='Periode Program: '+(p.start_date||'-')+' s.d. '+(p.end_date||'-')+'. Periode PKL di instansi harus berada di dalam rentang ini.';
+}
+async function saveProgramInstitution(){
+  try{
+    const pid=$('relProgram').value,iid=$('relInstitution').value,start=$('relStart').value,end=$('relEnd').value;
+    if(!pid)throw new Error('Pilih Program PKL.');
+    if(!iid)throw new Error('Pilih Instansi.');
+    if(!start||!end)throw new Error('Tanggal mulai dan selesai di instansi wajib diisi.');
+    if(start>end)throw new Error('Tanggal selesai tidak boleh sebelum tanggal mulai.');
+    await gas('apiAdminUpsertProgramInstitution',TOKEN,{
+      id:$('relId').value||undefined,program_id:pid,institution_id:iid,start_date:start,end_date:end,status:'ACTIVE'
+    });
+    clearProgramInstitution();note('Instansi berhasil didaftarkan pada Program PKL.');await loadMasters();
+  }catch(e){note(e.message,true)}
+}
+async function setProgramInstitutionStatus(id,status){
+  try{
+    await gas('apiAdminSetProgramInstitutionStatus',TOKEN,id,status);
+    note('Status Instansi dalam Program diperbarui.');await loadMasters();
+  }catch(e){note(e.message,true)}
+}
+async function saveLocation(){
+  try{
+    await gas('apiAdminUpsertMaster',TOKEN,'LOCATION',{
+      id:$('locId').value||undefined,institution_id:$('locInstitution').value,name:$('locName').value,
+      lat:$('locLat').value,lng:$('locLng').value,radius_m:$('locRadius').value,max_accuracy_m:$('locAccuracy').value,status:'ACTIVE'
+    });
+    clearLocation();note('Titik lokasi absensi disimpan.');await loadMasters();
+  }catch(e){note(e.message,true)}
+}
+async function toggleMaster(type,id,status){
+  const rows=type==='PROGRAM'?M.programs:type==='INSTITUTION'?M.institutions:M.locations;
+  const x=rows.find(v=>v.id===id);if(!x)return;
+  try{
+    const payload={...x,status};delete payload._row;
+    await gas('apiAdminUpsertMaster',TOKEN,type,payload);
+    note('Status master diperbarui.');await loadMasters();
+  }catch(e){note(e.message,true)}
+}
+
+function filterScheduleLocations(){
+  if(!M||!$('schProgram')||!$('schLocation'))return;
+  const pid=$('schProgram').value,cur=$('schLocation').value;
+  const rels=M.programInstitutions.filter(r=>r.status==='ACTIVE'&&String(r.program_id)===String(pid));
+  const instIds=new Set(rels.map(r=>String(r.institution_id)));
+  const rows=M.locations.filter(l=>l.status==='ACTIVE'&&instIds.has(String(l.institution_id)));
+  $('schLocation').innerHTML=opts(rows);
+  if(rows.some(x=>String(x.id)===String(cur)))$('schLocation').value=cur;
+  syncSchedulePeriodBounds();
+}
+function syncSchedulePeriodBounds(){
+  if(!M||!$('schProgram')||!$('schLocation')||!$('schEffective'))return;
+  const pid=$('schProgram').value,lid=$('schLocation').value;
+  const loc=M.locations.find(x=>String(x.id)===String(lid));
+  const rel=loc?M.programInstitutions.find(r=>r.status==='ACTIVE'&&String(r.program_id)===String(pid)&&String(r.institution_id)===String(loc.institution_id)):null;
+  let min=M.serverDate||'',max='';
+  if(rel){
+    if(rel.start_date&&(!min||rel.start_date>min))min=rel.start_date;
+    max=rel.end_date||'';
+  }
+  if(min)$('schEffective').min=min;else $('schEffective').removeAttribute('min');
+  if(max)$('schEffective').max=max;else $('schEffective').removeAttribute('max');
+}
+function clearSchedule(){$('schId').value='';$('schDay').value='1';$('schEffective').value=(M&&M.serverDate)||'';$('aOpen').value='06:00';$('aLate').value='07:00';$('aClose').value='10:00';$('dOpen').value='15:00';$('dNormal').value='16:00';$('dClose').value='21:00';$('pDeadline').value='08:00'}
+function editSchedule(id){const x=M.schedules.find(v=>v.id===id);if(!x)return;$('schId').value=x.id;$('schProgram').value=x.program_id;filterScheduleLocations();$('schLocation').value=x.location_id;syncSchedulePeriodBounds();$('schDay').value=String(x.day_of_week);$('schEffective').value=x.effective_from||M.serverDate||'';$('aOpen').value=x.arrival_open;$('aLate').value=x.arrival_late_after;$('aClose').value=x.arrival_close;$('dOpen').value=x.departure_open;$('dNormal').value=x.departure_normal;$('dClose').value=x.departure_close;$('pDeadline').value=x.permission_deadline||'';window.scrollTo({top:0,behavior:'smooth'})}
+async function saveSchedule(){try{await gas('apiAdminUpsertSchedule',TOKEN,{id:$('schId').value||undefined,program_id:$('schProgram').value,location_id:$('schLocation').value,day_of_week:$('schDay').value,effective_from:$('schEffective').value,arrival_open:$('aOpen').value,arrival_late_after:$('aLate').value,arrival_close:$('aClose').value,departure_open:$('dOpen').value,departure_normal:$('dNormal').value,departure_close:$('dClose').value,permission_deadline:$('pDeadline').value,status:'ACTIVE'});clearSchedule();note('Jadwal disimpan.');await loadMasters()}catch(e){note(e.message,true)}}
+function renderSchedules(){const days=['','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'],pn=id=>(M.programs.find(x=>x.id===id)||{}).name||id,ln=id=>(M.locations.find(x=>x.id===id)||{}).name||id;let h='<table><thead><tr><th>Program</th><th>Lokasi</th><th>Hari</th><th>Datang</th><th>Terlambat</th><th>Pulang</th><th>Normal</th><th>Batas Izin</th><th>Berlaku</th><th>Status</th><th>Aksi</th></tr></thead><tbody>'+M.schedules.map(s=>`<tr><td>${esc(pn(s.program_id))}</td><td>${esc(ln(s.location_id))}</td><td>${days[Number(s.day_of_week)]}</td><td>${esc(s.arrival_open)}–${esc(s.arrival_close)}</td><td>&gt; ${esc(s.arrival_late_after)}</td><td>${esc(s.departure_open)}–${esc(s.departure_close)}</td><td>${esc(s.departure_normal)}</td><td>${esc(s.permission_deadline||'-')}</td><td>${esc(s.effective_from||'-')} s.d. ${esc(s.effective_to||'seterusnya')}</td><td>${esc(s.status)}</td><td><button class="small alt" onclick="editSchedule('${s.id}')">Koreksi</button></td></tr>`).join('')+'</tbody></table>';$('scheduleOut').innerHTML=h}
+function fillAssignmentUsers(){
+  if(!$('assignUser'))return;
+  $('assignUser').innerHTML=USERS.filter(u=>u.status==='APPROVED'||u.status==='PENDING')
+    .map(u=>`<option value="${esc(u.id)}">${esc(u.name)} • ${esc(u.identifier||u.email)}</option>`).join('');
+  if($('assignUser').value)selectAssignment($('assignUser').value,false);
+}
+function activeProgramRelations(pid){
+  if(!M)return[];
+  return M.programInstitutions.filter(r=>r.status==='ACTIVE'&&String(r.program_id)===String(pid));
+}
+function filterAssignInstitutions(){
+  if(!M)return;
+  const pid=$('assignProgram').value,cur=$('assignInstitution').value;
+  const rels=activeProgramRelations(pid);
+  const allowedIds=new Set(rels.map(r=>String(r.institution_id)));
+  const rows=M.institutions.filter(x=>x.status==='ACTIVE'&&allowedIds.has(String(x.id)));
+  $('assignInstitution').innerHTML=opts(rows);
+  if(rows.some(x=>String(x.id)===String(cur)))$('assignInstitution').value=cur;
+  filterAssignLocations();syncAssignmentPeriodBounds();
+}
+function filterAssignLocations(){
+  if(!M)return;
+  const iid=$('assignInstitution').value,cur=$('assignLocation').value;
+  const rows=M.locations.filter(x=>x.status==='ACTIVE'&&String(x.institution_id)===String(iid));
+  $('assignLocation').innerHTML=opts(rows);
+  if(rows.some(x=>String(x.id)===String(cur)))$('assignLocation').value=cur;
+  syncAssignmentPeriodBounds();
+}
+function syncAssignmentPeriodBounds(){
+  if(!M||!$('assignEffective'))return;
+  const pid=$('assignProgram').value,iid=$('assignInstitution').value;
+  const rel=M.programInstitutions.find(r=>r.status==='ACTIVE'&&String(r.program_id)===String(pid)&&String(r.institution_id)===String(iid));
+  let min=M.serverDate||'',max='';
+  if(rel){
+    if(rel.start_date&&(!min||rel.start_date>min))min=rel.start_date;
+    max=rel.end_date||'';
+  }
+  if(min)$('assignEffective').min=min;else $('assignEffective').removeAttribute('min');
+  if(max)$('assignEffective').max=max;else $('assignEffective').removeAttribute('max');
+  if($('assignEffective').value&&min&&$('assignEffective').value<min)$('assignEffective').value=min;
+  if($('assignEffective').value&&max&&$('assignEffective').value>max)$('assignEffective').value=max;
+}
+function selectAssignment(id,scroll=true){
+  const u=USERS.find(x=>x.id===id);if(!u||!M)return;
+  $('assignUser').value=u.id;$('assignProgram').value=u.program_id||'';
+  filterAssignInstitutions();$('assignInstitution').value=u.institution_id||'';
+  filterAssignLocations();$('assignLocation').value=u.location_id||'';
+  $('assignEffective').value=M.serverDate||'';syncAssignmentPeriodBounds();
+  if(scroll)$('users').scrollIntoView({behavior:'smooth',block:'start'});
+}
+async function saveAssignment(){
+  try{
+    const uid=$('assignUser').value;if(!uid)throw new Error('Pilih peserta.');
+    const effective=$('assignEffective').value;if(!effective)throw new Error('Tanggal mulai penempatan wajib diisi.');
+    await gas('apiAdminUpdateUserAssignment',TOKEN,uid,{
+      program_id:$('assignProgram').value,institution_id:$('assignInstitution').value,
+      location_id:$('assignLocation').value,effective_from:effective
+    });
+    note('Penempatan peserta diperbarui mulai '+effective+'. Riwayat lama tetap tersimpan.');
+    await loadUsers();
+  }catch(e){note(e.message,true)}
+}
+async function decide(id,d,correction=false){
+  if(correction && !confirm('Koreksi status perizinan ini? Perubahan akan berlaku untuk seluruh rentang tanggal pengajuan.'))return;
+  try{
+    await gas('apiAdminDecidePermission',TOKEN,id,d);
+    note(d==='PENDING'?'Status dikembalikan ke Menunggu.':'Status perizinan berhasil dikoreksi.');
+    await Promise.all([loadPermits(),loadDash()]);
+  }catch(e){note(e.message,true)}
+}
+
+async function loadStaff(){
+  if(ADMIN_ROLE!=='ADMIN')return;
+  try{
+    const r=await gas('apiAdminStaffOverview',TOKEN);
+    let h='<table><thead><tr><th>Username</th><th>Nama</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead><tbody>';
+    (r.staff||[]).filter(x=>x.role==='GURU').forEach(x=>{
+      h+=`<tr><td><b>${esc(x.username)}</b></td><td>${esc(x.display_name)}</td><td>${esc(x.role)}</td><td>${esc(x.status)}</td><td><button class="small alt" onclick="editGuru('${x.id}','${esc(x.username)}','${esc(x.display_name)}','${esc(x.status)}')">Edit</button> <button class="small alt" onclick="resetGuruPassword('${x.id}','${esc(x.username)}')">Reset Password</button> ${x.status==='ACTIVE'?`<button class="small bad" onclick="deleteGuru('${x.id}','${esc(x.display_name)}')">Hapus</button>`:''}</td></tr>`;
+    });
+    h+='</tbody></table>';
+    if(!(r.staff||[]).some(x=>x.role==='GURU'))h='<div class="msg">Belum ada akun Guru.</div>';
+    $('staffOut').innerHTML=h;
+  }catch(e){note(e.message,true)}
+}
+async function createGuru(){
+  try{
+    await gas('apiAdminCreateGuru',TOKEN,{username:$('guruUsername').value,display_name:$('guruName').value,password:$('guruPassword').value});
+    $('guruUsername').value='';$('guruName').value='';$('guruPassword').value='';
+    note('Akun Guru berhasil dibuat.');await loadStaff();
+  }catch(e){note(e.message,true)}
+}
+async function editGuru(id,username,name,status){
+  const u=prompt('Username Guru:',username);if(u===null)return;
+  const n=prompt('Nama Guru:',name);if(n===null)return;
+  const st=prompt('Status (ACTIVE atau INACTIVE):',status);if(st===null)return;
+  try{
+    await gas('apiAdminUpdateGuru',TOKEN,id,{username:u,display_name:n,status:st.trim().toUpperCase()});
+    note('Akun Guru diperbarui.');await loadStaff();
+  }catch(e){note(e.message,true)}
+}
+
+async function deleteGuru(id,name){
+  if(!confirm('Hapus/nonaktifkan Guru '+name+'?\\n\\nGuru tidak dapat login lagi, tetapi riwayat audit tetap disimpan.'))return;
+  try{
+    const r=await gas('apiAdminDeleteGuru',TOKEN,id);
+    note(r.message||'Guru dinonaktifkan.');await loadStaff();
+  }catch(e){note(e.message,true)}
+}
+async function resetGuruPassword(id,username){
+  const p=prompt('Password baru untuk '+username+' (minimal 10 karakter):');if(!p)return;
+  try{const r=await gas('apiAdminResetGuruPassword',TOKEN,id,p);note(r.message||'Password Guru direset.');}catch(e){note(e.message,true)}
+}
+
+
+/* ABSENFLEX_V160_STATIC_OVERRIDE_END */
+
 loadAppIdentity();if(TOKEN)start();
 </script></body></html>
