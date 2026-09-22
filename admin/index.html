@@ -670,9 +670,9 @@ function opts(rows,all=false){
     rows.filter(x=>x&&x.status==='ACTIVE').map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('');
 }
 function fillSelects(){
-  if(progSchool)progSchool.innerHTML=(M.schools||[]).map(x=><option value=""></option>).join('');
-  if(insSchool)insSchool.innerHTML=(M.schools||[]).map(x=><option value=""></option>).join('');
-  if(guruSchool)guruSchool.innerHTML=(M.schools||[]).map(x=><option value=""></option>).join('');
+  if(progSchool)progSchool.innerHTML=(M.schools||[]).map(x=>'<option value="'+esc(x.id)+'">'+esc((x.code?x.code+' - ':'')+x.name)+'</option>').join('');
+  if(insSchool)insSchool.innerHTML=(M.schools||[]).map(x=>'<option value="'+esc(x.id)+'">'+esc((x.code?x.code+' - ':'')+x.name)+'</option>').join('');
+  if(guruSchool)guruSchool.innerHTML=(M.schools||[]).map(x=>'<option value="'+esc(x.id)+'">'+esc((x.code?x.code+' - ':'')+x.name)+'</option>').join('');
   $('locInstitution').innerHTML=opts(M.institutions);
   $('schProgram').innerHTML=opts(M.programs);
   filterScheduleLocations();
