@@ -153,26 +153,26 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 </div>
 </section>
 <section id="users" class="page hidden">
-<div class="card adminOnly">
+<div class="card">
   <h3>Peserta Program</h3>
   <p class="muted">Admin memasukkan data siswa yang mengikuti Program. Bisa satu per satu atau upload Excel dengan kolom <b>NIS, NAMA, KELAS, JENIS KELAMIN</b>. Data siswa disimpan satu kali sebagai master; jika siswa mengikuti Program lain, NIS yang sama cukup ditambahkan ke Program tersebut.</p>
   <div class="row">
     <div class="field"><label>Program</label><select id="ppProgram" onchange="loadProgramParticipants()"></select></div>
-    <button class="alt" onclick="downloadStudentTemplate()">Unduh Template Excel</button>
+    <button class="alt adminOnly" onclick="downloadStudentTemplate()">Unduh Template Excel</button>
     <button class="alt" onclick="loadProgramParticipants()">Refresh</button>
   </div>
-  <div class="row" style="margin-top:10px">
+  <div class="row adminOnly" style="margin-top:10px">
     <div class="field"><label>NIS</label><input id="ppNis" placeholder="NIS siswa"></div>
     <div class="field"><label>Nama</label><input id="ppName" placeholder="Nama lengkap"></div>
     <div class="field"><label>Kelas</label><input id="ppClass" placeholder="contoh: XII TOI 1"></div><div class="field"><label>Jenis Kelamin</label><select id="ppGender"><option value="">Pilih</option><option value="LAKI-LAKI">Laki-laki</option><option value="PEREMPUAN">Perempuan</option></select></div>
     <button onclick="addProgramStudent()">Tambah Siswa</button>
   </div>
-  <div class="row" style="margin-top:10px">
+  <div class="row adminOnly" style="margin-top:10px">
     <div class="field"><label>Upload Excel (.xlsx/.xls)</label><input id="ppFile" type="file" accept=".xlsx,.xls"></div>
     <button onclick="importProgramStudents()">Upload Data</button>
     <span id="ppImportInfo" class="muted"></span>
   </div>
-  <div id="ppPlacementEditor" class="reportPeopleBox hidden">
+  <div id="ppPlacementEditor" class="reportPeopleBox hidden adminOnly">
     <div class="reportPeopleHead"><b>Koreksi Penempatan: <span id="ppEditName">-</span></b><button class="small alt" onclick="closePpPlacementEditor()">Tutup</button></div>
     <input id="ppEditId" type="hidden">
     <div class="row" style="margin-top:10px">
@@ -661,7 +661,7 @@ async function loadMasters(){
   if(!$('schEffective').value)$('schEffective').value=M.serverDate||'';
   syncAssignmentPeriodBounds();syncSchedulePeriodBounds();
   if(USERS.length)renderUserRefreshNoFetch();
-  if(ADMIN_ROLE==='ADMIN'&&$('ppProgram')&&$('ppProgram').value)loadProgramParticipants();
+  if(['ADMIN','GURU','SUPER_ADMIN'].includes(ADMIN_ROLE)&&$('ppProgram')&&$('ppProgram').value)loadProgramParticipants();
 }
 function opts(rows,all=false){
   rows=Array.isArray(rows)?rows:[];
@@ -684,7 +684,7 @@ function fillSelects(){
       $('ppProgram').value=keep;
     }else{
       const today=M.serverDate||'';
-      const current=activePrograms.find(p=>(!p.start_date||String(p.start_date)<=today)&&(!p.end_date||String(p.end_date)>=today))||activePrograms[0];
+      const datedCurrent=activePrograms.filter(p=>p.start_date&&p.end_date&&String(p.start_date)<=today&&String(p.end_date)>=today).sort((x,y)=>String(y.start_date).localeCompare(String(x.start_date)));const dated=activePrograms.filter(p=>p.start_date&&p.end_date).sort((x,y)=>String(y.start_date).localeCompare(String(x.start_date)));const current=datedCurrent[0]||dated[0]||activePrograms[0];
       if(current)$('ppProgram').value=current.id;
     }
   }
@@ -914,16 +914,18 @@ async function importProgramStudents(){
   }catch(e){$('ppImportInfo').textContent='';note(e.message,true)}
 }
 async function loadProgramParticipants(){
-  if(ADMIN_ROLE!=='ADMIN'||!$('ppProgram'))return;
+  if(!['ADMIN','GURU','SUPER_ADMIN'].includes(ADMIN_ROLE)||!$('ppProgram'))return;
   const pid=$('ppProgram').value;if(!pid){PROGRAM_PARTICIPANTS=[];$('programParticipantsOut').innerHTML='<p class="muted">Pilih Program untuk melihat peserta.</p>';return;}
   try{const r=await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_PARTICIPANTS',{program_id:pid});PROGRAM_PARTICIPANTS=r.rows||[];renderProgramParticipants()}catch(e){note(e.message,true)}
 }
 function renderProgramParticipants(){
   if(!$('programParticipantsOut'))return;
   if(!PROGRAM_PARTICIPANTS.length){$('programParticipantsOut').innerHTML='<p class="muted">Belum ada peserta pada Program ini.</p>';return;}
+  const canManage=ADMIN_ROLE==='ADMIN'||ADMIN_ROLE==='SUPER_ADMIN';
   let h='<table><thead><tr><th>NIS</th><th>Nama</th><th>Kelas</th><th>Jenis Kelamin</th><th>Email</th><th>Akun</th><th>Tempat Magang</th><th>Sumber</th><th>Perangkat</th><th>Aksi</th></tr></thead><tbody>';
   PROGRAM_PARTICIPANTS.forEach(r=>{
-    h+=`<tr><td>${esc(r.nis)}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.class_name||'-')}</td><td>${esc(r.gender==='LAKI-LAKI'?'Laki-laki':(r.gender==='PEREMPUAN'?'Perempuan':'-'))}</td><td>${esc(r.email||'Belum diisi')}</td><td>${esc(r.account_status)}<br><small>${esc(r.face_status||'-')}</small></td><td>${esc(r.institution_name||'Belum memilih')}<br><span class="muted">${esc(r.location_name||'-')} • ${esc(r.status||'-')}</span></td><td>${esc(r.placement_source||'-')}</td><td>${esc(r.device_status||'-')}${r.device_label?`<br><small>${esc(r.device_label)}</small>`:''}</td><td><button class="small alt" onclick="editPpPlacement('${r.id}')">Koreksi</button> ${r.user_id?`<button class="small alt" onclick="resetPpDevice('${r.user_id}','${esc(r.name)}')">Reset Perangkat</button> <button class="small alt" onclick="resetPpPin('${r.user_id}','${esc(r.name)}')">Reset PIN</button>`:''} <button class="small bad" onclick="deactivatePp('${r.id}','${esc(r.name)}')">Keluarkan</button></td></tr>`;
+    const actions=canManage?`<button class="small alt" onclick="editPpPlacement('${r.id}')">Koreksi</button> ${r.user_id?`<button class="small alt" onclick="resetPpDevice('${r.user_id}','${esc(r.name)}')">Reset Perangkat</button> <button class="small alt" onclick="resetPpPin('${r.user_id}','${esc(r.name)}')">Reset PIN</button>`:''} <button class="small bad" onclick="deactivatePp('${r.id}','${esc(r.name)}')">Keluarkan</button>`:'<span class="muted">Lihat</span>';
+    h+=`<tr><td>${esc(r.nis)}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.class_name||'-')}</td><td>${esc(r.gender==='LAKI-LAKI'?'Laki-laki':(r.gender==='PEREMPUAN'?'Perempuan':'-'))}</td><td>${esc(r.email||'Belum diisi')}</td><td>${esc(r.account_status)}<br><small>${esc(r.face_status||'-')}</small></td><td>${esc(r.institution_name||'Belum memilih')}<br><span class="muted">${esc(r.location_name||'-')} â€¢ ${esc(r.status||'-')}</span></td><td>${esc(r.placement_source||'-')}</td><td>${esc(r.device_status||'-')}${r.device_label?`<br><small>${esc(r.device_label)}</small>`:''}</td><td>${actions}</td></tr>`;
   });
   h+='</tbody></table>';$('programParticipantsOut').innerHTML=h;
 }

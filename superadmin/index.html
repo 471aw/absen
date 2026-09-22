@@ -174,6 +174,16 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 </div>
 </section>
 <section id="users" class="page hidden">
+<div class="card">
+  <h3>Peserta Program â€¢ Semua Sekolah</h3>
+  <p class="muted">Super Admin dapat melihat peserta Program seluruh sekolah. Pilih Sekolah lalu Program untuk menampilkan siswa, termasuk yang belum aktivasi akun.</p>
+  <div class="row no-print">
+    <div class="field"><label>Sekolah</label><select id="superPpSchool" onchange="superPpSchoolChanged()"></select></div>
+    <div class="field"><label>Program</label><select id="superPpProgram" onchange="loadSuperProgramParticipants()"></select></div>
+    <button class="alt" onclick="loadSuperProgramParticipants()">Refresh</button>
+  </div>
+  <div id="superProgramParticipantsOut" class="scroll" style="margin-top:12px"></div>
+</div>
 <div class="card"><h3>Ubah Penempatan Peserta</h3><p class="muted">Peserta tidak dapat mengubah penempatan sendiri setelah disetujui. Hanya admin yang dapat memindahkan program, instansi, dan titik lokasi. Riwayat lama tidak ditimpa.</p><div class="row"><div class="field"><label>Peserta</label><select id="assignUser"></select></div><div class="field"><label>Program</label><select id="assignProgram"></select></div><div class="field"><label>Instansi</label><select id="assignInstitution" onchange="filterAssignLocations()"></select></div><div class="field"><label>Lokasi</label><select id="assignLocation"></select></div><div class="field"><label>Berlaku mulai</label><input id="assignEffective" type="date"></div><button onclick="saveAssignment()">Simpan Penempatan</button></div></div>
 <div class="card"><div class="row"><h3 style="flex:1">Peserta</h3><button class="alt no-print" onclick="loadUsers()">Refresh</button></div><div id="usersOut" class="scroll"></div></div></section>
 <section id="masters" class="page hidden"><div class="two"><div class="card"><h3>Program</h3><input id="progId" type="hidden"><div class="field"><label>Nama</label><input id="progName"></div><div class="row"><div class="field"><label>Mulai</label><input id="progStart" type="date"></div><div class="field"><label>Selesai</label><input id="progEnd" type="date"></div></div><div class="row"><button onclick="saveProgram()">Simpan Program</button><button class="alt" onclick="clearProgram()">Baru</button></div></div><div class="card"><h3>Instansi</h3><input id="insId" type="hidden"><div class="field"><label>Nama</label><input id="insName"></div><div class="field"><label>Alamat</label><textarea id="insAddress"></textarea></div><div class="row"><button onclick="saveInstitution()">Simpan Instansi</button><button class="alt" onclick="clearInstitution()">Baru</button></div></div></div>
@@ -382,7 +392,7 @@ function pageMeta(id){return({
   deleted:['♻','Peserta Nonaktif','Pulihkan akun peserta tanpa mengubah histori lama.'],
   audit:['☷','Audit Aktivitas','Pantau perubahan dan tindakan penting di seluruh sistem.']
 })[id]||['•','Menu',''];}
-function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');const meta=pageMeta(id);if($('pageHeroIcon'))$('pageHeroIcon').textContent=meta[0];if($('pageHeroTitle'))$('pageHeroTitle').textContent=meta[1];if($('pageHeroSub'))$('pageHeroSub').textContent=meta[2];if($('pageBread'))$('pageBread').textContent='Dashboard  ›  '+meta[1];if(id==='permits')loadPermits();if(id==='report')loadReport();if(['admins','deleted','audit'].includes(id))loadSuperAdmin();if(window.innerWidth<=900)toggleSidebar(false)}
+function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');const meta=pageMeta(id);if($('pageHeroIcon'))$('pageHeroIcon').textContent=meta[0];if($('pageHeroTitle'))$('pageHeroTitle').textContent=meta[1];if($('pageHeroSub'))$('pageHeroSub').textContent=meta[2];if($('pageBread'))$('pageBread').textContent='Dashboard  ›  '+meta[1];if(id==='permits')loadPermits();if(id==='report')loadReport();if(id==='users')setupSuperProgramParticipants();if(['admins','deleted','audit'].includes(id))loadSuperAdmin();if(window.innerWidth<=900)toggleSidebar(false)}
 function startHeaderClock(){if(window.__afClockTimer)return;const tick=()=>{const d=new Date(),days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];if($('topDate'))$('topDate').textContent=days[d.getDay()]+', '+String(d.getDate()).padStart(2,'0')+' '+months[d.getMonth()]+' '+d.getFullYear();if($('topTime'))$('topTime').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');const nm=ADMIN_NAME||'Administrator',ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();if($('topAvatar'))$('topAvatar').textContent=ini||'AD';};tick();window.__afClockTimer=setInterval(tick,1000)}
 async function loadDash(){
   const r=await gas('apiAdminDashboard',TOKEN);
@@ -616,5 +626,44 @@ async function restoreUserUi(id,name){if(!confirm('Pulihkan peserta '+name+'?\n\
 
 function renderSettings(){const allowed=['SYSTEM_NAME','CAMERA_HELPER_URL','FACE_MATCH_THRESHOLD','FACE_DUPLICATE_THRESHOLD','GLOBAL_MAX_ACCURACY_M','LOCATION_ACCURACY_BUFFER_M','MAX_PLAUSIBLE_SPEED_KMH','ALLOW_WEB_IOS','ALLOW_RETROACTIVE_PERMISSION','REQUIRE_PLAY_INTEGRITY','REGISTRATION_CODE'];$('settingsOut').innerHTML=M.settings.filter(s=>allowed.includes(s.key)).map(s=>`<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="field"><label>${esc(s.key)}</label><input ${s.key==='REGISTRATION_CODE'?'type="password"':''} id="set_${esc(s.key)}" value="${esc(s.value)}"><span class="muted">${esc(s.description||'')}</span></div><button onclick="saveSetting('${esc(s.key)}')">Simpan</button></div>`).join('')}
 async function saveSetting(k){try{await gas('apiAdminSaveSetting',TOKEN,k,$('set_'+k).value);note('Pengaturan disimpan.');await loadMasters();if(k==='SYSTEM_NAME')await loadAppIdentity();}catch(e){note(e.message,true)}}
+
+/* HF4 - read-only Program Participants for SUPER_ADMIN */
+let SUPER_PROGRAM_PARTICIPANTS=[];
+function superCurrentDatedProgram(rows){
+  rows=(rows||[]).filter(p=>p&&p.status==='ACTIVE');
+  const today=(M&&M.serverDate)||'';
+  const current=rows.filter(p=>p.start_date&&p.end_date&&String(p.start_date)<=today&&String(p.end_date)>=today).sort((a,b)=>String(b.start_date).localeCompare(String(a.start_date)));
+  const dated=rows.filter(p=>p.start_date&&p.end_date).sort((a,b)=>String(b.start_date).localeCompare(String(a.start_date)));
+  return current[0]||dated[0]||rows[0]||null;
+}
+function setupSuperProgramParticipants(){
+  const schoolSel=$('superPpSchool'),progSel=$('superPpProgram');if(!schoolSel||!progSel||!M||!SUPER_DATA)return;
+  const keep=schoolSel.value;
+  const schools=(SUPER_DATA.schools||[]).filter(x=>x.status==='ACTIVE');
+  schoolSel.innerHTML=schools.map(x=>`<option value="${esc(x.id)}">${esc((x.code?x.code+' - ':'')+x.name)}</option>`).join('');
+  if(schools.some(x=>String(x.id)===String(keep)))schoolSel.value=keep;
+  else if(schools.length)schoolSel.value=schools[0].id;
+  superPpSchoolChanged();
+}
+function superPpSchoolChanged(){
+  const sid=$('superPpSchool')?$('superPpSchool').value:'';const sel=$('superPpProgram');if(!sel||!M)return;
+  const rows=(M.programs||[]).filter(p=>p.status==='ACTIVE'&&String(p.school_id||'')===String(sid));
+  sel.innerHTML=rows.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+  const current=superCurrentDatedProgram(rows);if(current)sel.value=current.id;
+  loadSuperProgramParticipants();
+}
+async function loadSuperProgramParticipants(){
+  const pid=$('superPpProgram')?$('superPpProgram').value:'';const out=$('superProgramParticipantsOut');if(!out)return;
+  if(!pid){SUPER_PROGRAM_PARTICIPANTS=[];out.innerHTML='<p class="muted">Pilih Sekolah dan Program.</p>';return;}
+  try{const r=await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_PARTICIPANTS',{program_id:pid});SUPER_PROGRAM_PARTICIPANTS=r.rows||[];renderSuperProgramParticipants()}catch(e){out.innerHTML='<div class="msg error">'+esc(e.message||e)+'</div>';}
+}
+function renderSuperProgramParticipants(){
+  const out=$('superProgramParticipantsOut');if(!out)return;
+  if(!SUPER_PROGRAM_PARTICIPANTS.length){out.innerHTML='<p class="muted">Belum ada peserta pada Program ini.</p>';return;}
+  const sid=$('superPpSchool')?$('superPpSchool').value:'';const school=(SUPER_DATA&&SUPER_DATA.schools||[]).find(x=>String(x.id)===String(sid))||{};
+  let h='<table><thead><tr><th>Sekolah</th><th>NIS</th><th>Nama</th><th>Kelas</th><th>Jenis Kelamin</th><th>Email</th><th>Akun</th><th>Tempat Magang</th><th>Status Program</th></tr></thead><tbody>';
+  SUPER_PROGRAM_PARTICIPANTS.forEach(r=>{h+=`<tr><td>${esc(school.name||'-')}</td><td>${esc(r.nis||'-')}</td><td><b>${esc(r.name||'-')}</b></td><td>${esc(r.class_name||'-')}</td><td>${esc(r.gender==='LAKI-LAKI'?'Laki-laki':(r.gender==='PEREMPUAN'?'Perempuan':'-'))}</td><td>${esc(r.email||'Belum diisi')}</td><td>${esc(r.account_status||'-')}</td><td>${esc(r.institution_name||'Belum memilih')}<br><span class="muted">${esc(r.location_name||'-')}</span></td><td>${esc(r.status||'-')}</td></tr>`;});
+  h+='</tbody></table>';out.innerHTML=h;
+}
 loadAppIdentity();if(TOKEN)start();
 </script></body></html>
