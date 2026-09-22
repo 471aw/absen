@@ -319,7 +319,7 @@ function gas(name,...args){
     .then(v=>{if(!silent)adminProcessEnd(true);return v})
     .catch(e=>{if(!silent)adminProcessEnd(false,e&&e.message?e.message:String(e||'Proses gagal'));throw e});
 }function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}function note(t,e=false){$('msg').textContent=t;$('msg').className='msg'+(e?' err':'');$('msg').classList.remove('hidden');setTimeout(()=>$('msg').classList.add('hidden'),5000)}
-async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.6.0');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
+async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.6.2');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
 async function login(){try{
   const r=await gas('apiAdminLogin',$('username').value,$('password').value);
   if(String(r.role||'ADMIN')==='SUPER_ADMIN'){
@@ -432,7 +432,7 @@ function tab(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add
 function startHeaderClock(){if(window.__afClockTimer)return;const tick=()=>{const d=new Date(),days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];if($('topDate'))$('topDate').textContent=days[d.getDay()]+', '+String(d.getDate()).padStart(2,'0')+' '+months[d.getMonth()]+' '+d.getFullYear();if($('topTime'))$('topTime').textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');const nm=ADMIN_NAME||'Administrator',ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();if($('topAvatar'))$('topAvatar').textContent=ini||'AD';};tick();window.__afClockTimer=setInterval(tick,1000)}
 async function loadDash(){
   const r=await gas('apiAdminDashboard',TOKEN);
-  const ver=String(r.version||'1.6.0');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
+  const ver=String(r.version||'1.6.2');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
   $('kpis').innerHTML=[
     ['Peserta aktif',r.totalUsers],['Terjadwal hari ini',r.scheduledToday],
     ['Hadir hari ini',r.arrived],['Terlambat',r.late],
@@ -1035,5 +1035,118 @@ async function resetGuruPassword(id,username){
 
 /* ABSENFLEX_V160_STATIC_OVERRIDE_END */
 
+
+/* ABSENFLEX_V162_STATIC_OVERRIDE_START */
+
+function renderMasters(){
+  const isAdmin=ADMIN_ROLE==='ADMIN';
+  const pn=id=>(M.programs.find(p=>String(p.id)===String(id))||{}).name||'-';
+  const inn=id=>(M.institutions.find(i=>String(i.id)===String(id))||{}).name||'-';
+
+  let h='<b>Program PKL</b><table><tr><th>Nama</th><th>Mulai</th><th>Selesai</th><th>Status</th><th>Aksi</th></tr>'+
+    M.programs.map(x=>{
+      const act=isAdmin
+        ? `<button class="small alt" onclick="editProgram('${x.id}')">Edit</button> ${
+            x.status!=='DELETED'
+              ? `<button class="small bad" onclick="deleteProgram('${x.id}','${esc(x.name)}')">Hapus</button>`
+              : '<span class="pill">Dihapus</span>'
+          }`
+        : '<span class="muted">Lihat</span>';
+      return `<tr><td>${esc(x.name)}</td><td>${esc(x.start_date||'-')}</td><td>${esc(x.end_date||'-')}</td><td>${esc(x.status)}</td><td>${act}</td></tr>`;
+    }).join('')+'</table>';
+
+  h+='<br><b>Master Instansi</b><table><tr><th>Nama</th><th>Alamat</th><th>Status</th><th>Aksi</th></tr>'+
+    M.institutions.map(x=>{
+      let act='<span class="muted">Lihat</span>';
+      if(isAdmin){
+        if(x.status==='DELETED'){
+          act=`<button class="small alt" onclick="editInstitution('${x.id}')">Edit</button> <button class="small alt" onclick="restoreInstitution('${x.id}','${esc(x.name)}')">Pulihkan</button> <span class="pill">Dihapus</span>`;
+        }else{
+          act=`<button class="small alt" onclick="editInstitution('${x.id}')">Edit</button> ${statusBtn('INSTITUTION',x)} <button class="small bad" onclick="deleteInstitution('${x.id}','${esc(x.name)}')">Hapus</button>`;
+        }
+      }
+      return `<tr><td>${esc(x.name)}</td><td>${esc(x.address||'-')}</td><td>${esc(x.status)}</td><td>${act}</td></tr>`;
+    }).join('')+'</table>';
+
+  h+='<br><b>Instansi dalam Program</b><table><tr><th>Program</th><th>Instansi</th><th>Periode di Instansi</th><th>Status</th><th>Aksi</th></tr>'+
+    M.programInstitutions.map(x=>{
+      const next=x.status==='ACTIVE'?'INACTIVE':'ACTIVE';
+      const act=isAdmin
+        ? `<button class="small alt" onclick="editProgramInstitution('${x.id}')">Edit</button> <button class="small alt" onclick="setProgramInstitutionStatus('${x.id}','${next}')">${next==='ACTIVE'?'Aktifkan':'Nonaktifkan'}</button>`
+        : '<span class="muted">Lihat</span>';
+      return `<tr><td>${esc(pn(x.program_id))}</td><td>${esc(inn(x.institution_id))}</td><td>${esc(x.start_date||'-')} s.d. ${esc(x.end_date||'-')}</td><td>${esc(x.status)}</td><td>${act}</td></tr>`;
+    }).join('')+'</table>';
+
+  h+='<br><b>Lokasi Absensi</b><table><tr><th>Nama</th><th>Instansi</th><th>Lat</th><th>Lng</th><th>Radius</th><th>Akurasi</th><th>Status</th><th>Aksi</th></tr>'+
+    M.locations.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(inn(x.institution_id))}</td><td>${esc(x.lat)}</td><td>${esc(x.lng)}</td><td>${esc(x.radius_m)} m</td><td>${esc(x.max_accuracy_m)} m</td><td>${esc(x.status)}</td><td><button class="small alt" onclick="editLocation('${x.id}')">Edit</button> ${statusBtn('LOCATION',x)}</td></tr>`).join('')+'</table>';
+
+  $('mastersOut').innerHTML=h;
+}
+
+async function deleteProgram(id,name){
+  if(!confirm('Hapus Program '+name+' dari daftar aktif?\n\nIni adalah SOFT DELETE. Riwayat penempatan dan laporan lama tetap disimpan. Peserta pada program ini tidak dapat absen sampai program dipulihkan/diedit kembali.'))return;
+  try{
+    const r=await gas('apiAdminUpsertMaster',TOKEN,'DELETE_PROGRAM',{id:id});
+    note(r.message||'Program dihapus.');
+    await Promise.all([loadMasters(),loadUsers(),loadDash()]);
+  }catch(e){note(e.message,true)}
+}
+
+async function deleteInstitution(id,name){
+  if(!confirm('Hapus Instansi '+name+' dari daftar aktif?\n\nIni adalah SOFT DELETE. Riwayat Program, lokasi, penempatan, absensi, dan laporan lama tetap disimpan. Peserta pada instansi ini tidak dapat absen sampai instansi dipulihkan.'))return;
+  try{
+    const r=await gas('apiAdminUpsertMaster',TOKEN,'DELETE_INSTITUTION',{id:id});
+    note(r.message||'Instansi dihapus dari daftar aktif.');
+    await Promise.all([loadMasters(),loadUsers(),loadDash()]);
+  }catch(e){note(e.message,true)}
+}
+
+async function restoreInstitution(id,name){
+  if(!confirm('Pulihkan Instansi '+name+' menjadi ACTIVE?\n\nRelasi Program dan lokasi lama yang masih aktif akan dapat digunakan kembali sesuai periode dan status masing-masing.'))return;
+  const x=M.institutions.find(v=>String(v.id)===String(id));if(!x)return;
+  try{
+    const payload={...x,status:'ACTIVE'};delete payload._row;
+    await gas('apiAdminUpsertMaster',TOKEN,'INSTITUTION',payload);
+    note('Instansi berhasil dipulihkan.');
+    await loadMasters();
+  }catch(e){note(e.message,true)}
+}
+
+async function saveProgramInstitution(){
+  try{
+    const pid=$('relProgram').value;
+    const iid=$('relInstitution').value;
+    const start=$('relStart').value;
+    const end=$('relEnd').value;
+
+    if(!pid)throw new Error('Pilih Program PKL.');
+    if(!iid)throw new Error('Pilih Instansi.');
+    if(!start||!end)throw new Error('Tanggal mulai dan selesai di instansi wajib diisi.');
+    if(start>end)throw new Error('Tanggal selesai tidak boleh sebelum tanggal mulai.');
+
+    await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_INSTITUTION',{
+      id:$('relId').value||undefined,
+      program_id:pid,
+      institution_id:iid,
+      start_date:start,
+      end_date:end,
+      status:'ACTIVE'
+    });
+
+    clearProgramInstitution();
+    note('Instansi berhasil didaftarkan pada Program PKL.');
+    await loadMasters();
+  }catch(e){note(e.message,true)}
+}
+
+async function setProgramInstitutionStatus(id,status){
+  try{
+    await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_INSTITUTION_STATUS',{id:id,status:status});
+    note('Status Instansi dalam Program diperbarui.');
+    await loadMasters();
+  }catch(e){note(e.message,true)}
+}
+
+/* ABSENFLEX_V162_STATIC_OVERRIDE_END */
 loadAppIdentity();if(TOKEN)start();
 </script></body></html>
