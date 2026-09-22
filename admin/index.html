@@ -291,7 +291,7 @@ function adminProcessStart(name){
   $('adminProcessTitle').textContent=adminProcessLabel(name)+'…';
   $('adminProcessSub').textContent='Proses masih berjalan, mohon tunggu';
 }
-function adminProcessEnd(ok){
+function adminProcessEnd(ok,detail){
   ADMIN_BUSY_COUNT=Math.max(0,ADMIN_BUSY_COUNT-1);
   if(ADMIN_BUSY_COUNT>0)return;
   const el=$('adminProcess');if(!el)return;
@@ -304,8 +304,8 @@ function adminProcessEnd(ok){
   }else{
     el.className='adminProcess error';
     $('adminProcessTitle').textContent='Proses gagal';
-    $('adminProcessSub').textContent='Periksa pesan kesalahan';
-    ADMIN_DONE_TIMER=setTimeout(()=>el.classList.add('hidden'),1200);
+    $('adminProcessSub').textContent=String(detail||'Periksa pesan kesalahan');
+    ADMIN_DONE_TIMER=setTimeout(()=>el.classList.add('hidden'),3000);
   }
 }
 function gas(name,...args){
@@ -317,7 +317,7 @@ function gas(name,...args){
   }
   return AbsensiAPI.call(name,...args)
     .then(v=>{if(!silent)adminProcessEnd(true);return v})
-    .catch(e=>{if(!silent)adminProcessEnd(false);throw e});
+    .catch(e=>{if(!silent)adminProcessEnd(false,e&&e.message?e.message:String(e||'Proses gagal'));throw e});
 }function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}function note(t,e=false){$('msg').textContent=t;$('msg').className='msg'+(e?' err':'');$('msg').classList.remove('hidden');setTimeout(()=>$('msg').classList.add('hidden'),5000)}
 async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.6.0');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
 async function login(){try{
