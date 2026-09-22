@@ -71,12 +71,12 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   </div>
 </div><div class="wrap">
 <div id="msg" class="msg hidden"></div>
-<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Administrator</h2><p class="muted">Masuk dengan username dan password admin.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.7.0</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="?" target="_top" style="display:block;text-align:center;margin-top:14px">Kembali ke peserta</a></div>
+<div id="loginView" class="card login"><div id="loginSystemName" class="brand" style="margin-bottom:4px">Absensi</div><h2 style="margin:0 0 8px">Portal Administrator</h2><p class="muted">Masuk dengan username dan password admin.</p><div id="loginVersion" class="versionBadge loginVersion">Versi v1.7.2</div><div class="field"><label>Username</label><input id="username" autocomplete="username"></div><div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div><button style="width:100%;margin-top:12px" onclick="login()">Masuk</button><a href="?" target="_top" style="display:block;text-align:center;margin-top:14px">Kembali ke peserta</a></div>
 <div id="adminView" class="hidden"><div class="appShell">
 <aside id="sidebar" class="sidebar no-print">
   <div class="sidebarHead">
     <div class="sideLogo">✓</div>
-    <div><div id="sideSystemName" class="sideBrand">Absen Murid PKL</div><div id="sideSchoolName" class="sideSub">Sekolah</div><div id="sideVersion" class="sideVersion">v1.7.0</div></div>
+    <div><div id="sideSystemName" class="sideBrand">Absen Murid PKL</div><div id="sideSchoolName" class="sideSub">Sekolah</div><div id="sideVersion" class="sideVersion">v1.7.2</div></div>
   </div>
   <div class="sideSectionLabel">MENU UTAMA</div>
   <div class="nav">
@@ -128,7 +128,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 <section id="users" class="page hidden">
 <div class="card adminOnly">
   <h3>Peserta Program</h3>
-  <p class="muted">Admin memasukkan data siswa yang mengikuti Program. Bisa satu per satu atau upload Excel dengan kolom <b>NIS, NAMA, KELAS</b>. Data siswa disimpan satu kali sebagai master; jika siswa mengikuti Program lain, NIS yang sama cukup ditambahkan ke Program tersebut.</p>
+  <p class="muted">Admin memasukkan data siswa yang mengikuti Program. Bisa satu per satu atau upload Excel dengan kolom <b>NIS, NAMA, KELAS, JENIS KELAMIN</b>. Data siswa disimpan satu kali sebagai master; jika siswa mengikuti Program lain, NIS yang sama cukup ditambahkan ke Program tersebut.</p>
   <div class="row">
     <div class="field"><label>Program</label><select id="ppProgram" onchange="loadProgramParticipants()"></select></div>
     <button class="alt" onclick="downloadStudentTemplate()">Unduh Template Excel</button>
@@ -137,7 +137,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   <div class="row" style="margin-top:10px">
     <div class="field"><label>NIS</label><input id="ppNis" placeholder="NIS siswa"></div>
     <div class="field"><label>Nama</label><input id="ppName" placeholder="Nama lengkap"></div>
-    <div class="field"><label>Kelas</label><input id="ppClass" placeholder="contoh: XII TOI 1"></div>
+    <div class="field"><label>Kelas</label><input id="ppClass" placeholder="contoh: XII TOI 1"></div><div class="field"><label>Jenis Kelamin</label><select id="ppGender"><option value="">Pilih</option><option value="LAKI-LAKI">Laki-laki</option><option value="PEREMPUAN">Perempuan</option></select></div>
     <button onclick="addProgramStudent()">Tambah Siswa</button>
   </div>
   <div class="row" style="margin-top:10px">
@@ -374,7 +374,7 @@ function gas(name,...args){
     .then(v=>{if(!silent)adminProcessEnd(true);return v})
     .catch(e=>{if(!silent)adminProcessEnd(false,e&&e.message?e.message:String(e||'Proses gagal'));throw e});
 }function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}function note(t,e=false){$('msg').textContent=t;$('msg').className='msg'+(e?' err':'');$('msg').classList.remove('hidden');setTimeout(()=>$('msg').classList.add('hidden'),5000)}
-async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.7.1');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
+async function loadAppIdentity(){try{APP_CONFIG=await gas('apiPublicConfig');const name=((APP_CONFIG&&APP_CONFIG.systemName)||'Absensi').trim()||'Absensi';const ver=String((APP_CONFIG&&APP_CONFIG.version)||'1.7.2');if($('loginSystemName'))$('loginSystemName').textContent=name;if($('adminSystemName'))$('adminSystemName').textContent=name;if($('sideSystemName'))$('sideSystemName').textContent=name;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;document.title=name+' • Admin';}catch(e){console.warn('Nama aplikasi gagal dimuat:',e.message||e);}}
 async function login(){try{
   const r=await gas('apiAdminLogin',$('username').value,$('password').value);
   if(String(r.role||'ADMIN')==='SUPER_ADMIN'){
@@ -484,7 +484,7 @@ function resetDashFilters(){
 async function loadDash(){
   const r=await gas('apiAdminDashboard',TOKEN,dashFilterPayload());
   renderDashFilters(r.dashboardFilters||{});
-  const ver=String(r.version||'1.7.1');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
+  const ver=String(r.version||'1.7.2');if($('adminVersion'))$('adminVersion').textContent='v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;if($('loginVersion'))$('loginVersion').textContent='Versi v'+ver;if($('sideVersion'))$('sideVersion').textContent='v'+ver;
   $('kpis').innerHTML=[
     ['Akun siswa aktif',r.totalUsers],['Master siswa',r.masterStudents||0],
     ['Peserta Program',r.programParticipants||0],['Belum aktivasi',r.awaitingActivation||0],
@@ -811,16 +811,16 @@ async function rotateProgramCode(){
 }
 function downloadStudentTemplate(){
   if(!window.XLSX){note('Library Excel belum termuat. Muat ulang halaman.',true);return;}
-  const ws=XLSX.utils.aoa_to_sheet([['NIS','NAMA','KELAS']]);
-  ws['!cols']=[{wch:18},{wch:32},{wch:18}];
+  const ws=XLSX.utils.aoa_to_sheet([['NIS','NAMA','KELAS','JENIS KELAMIN']]);
+  ws['!cols']=[{wch:18},{wch:32},{wch:18},{wch:20}];
   const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'PESERTA');
   XLSX.writeFile(wb,'Template_Peserta_Program_AbsenFlex.xlsx');
 }
 async function addProgramStudent(){
   try{
     const pid=$('ppProgram').value;if(!pid)throw new Error('Pilih Program terlebih dahulu.');
-    await gas('apiAdminUpsertProgramStudent',TOKEN,pid,{nis:$('ppNis').value.trim(),name:$('ppName').value.trim(),class_name:$('ppClass').value.trim()});
-    $('ppNis').value='';$('ppName').value='';$('ppClass').value='';note('Siswa ditambahkan ke Program.');await Promise.all([loadProgramParticipants(),loadDash()]);
+    await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_STUDENT_UPSERT',{program_id:pid,student:{nis:$('ppNis').value.trim(),name:$('ppName').value.trim(),class_name:$('ppClass').value.trim(),gender:$('ppGender').value}});
+    $('ppNis').value='';$('ppName').value='';$('ppClass').value='';$('ppGender').value='';note('Siswa ditambahkan ke Program.');await Promise.all([loadProgramParticipants(),loadDash()]);
   }catch(e){note(e.message,true)}
 }
 async function importProgramStudents(){
@@ -830,12 +830,12 @@ async function importProgramStudents(){
     if(!window.XLSX)throw new Error('Library Excel belum termuat. Muat ulang halaman.');
     const buf=await f.arrayBuffer(),wb=XLSX.read(buf,{type:'array'}),ws=wb.Sheets[wb.SheetNames[0]];
     const raw=XLSX.utils.sheet_to_json(ws,{defval:''});
-    const rows=raw.map((r,i)=>{const o={};Object.keys(r).forEach(k=>o[String(k).trim().toUpperCase()]=r[k]);return {nis:String(o.NIS||'').trim(),name:String(o.NAMA||'').trim(),class_name:String(o.KELAS||'').trim(),_row:i+2};}).filter(r=>r.nis||r.name||r.class_name);
-    if(!rows.length)throw new Error('File Excel tidak berisi data. Header wajib: NIS, NAMA, KELAS.');
-    if(rows.some(r=>!r.nis||!r.name||!r.class_name))throw new Error('Ada baris yang belum lengkap. NIS, NAMA, dan KELAS wajib diisi.');
+    const rows=raw.map((r,i)=>{const o={};Object.keys(r).forEach(k=>o[String(k).trim().toUpperCase()]=r[k]);return {nis:String(o.NIS||'').trim(),name:String(o.NAMA||'').trim(),class_name:String(o.KELAS||'').trim(),gender:String(o['JENIS KELAMIN']||o.JENIS_KELAMIN||o.GENDER||'').trim(),_row:i+2};}).filter(r=>r.nis||r.name||r.class_name||r.gender);
+    if(!rows.length)throw new Error('File Excel tidak berisi data. Header wajib: NIS, NAMA, KELAS, JENIS KELAMIN.');
+    if(rows.some(r=>!r.nis||!r.name||!r.class_name||!r.gender))throw new Error('Ada baris yang belum lengkap. NIS, NAMA, KELAS, dan JENIS KELAMIN wajib diisi.');
     if(rows.length>1000)throw new Error('Maksimal 1.000 siswa per upload.');
     $('ppImportInfo').textContent='Mengupload '+rows.length+' siswa…';
-    const r=await gas('apiAdminImportProgramStudents',TOKEN,pid,rows);
+    const r=await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_STUDENT_IMPORT',{program_id:pid,rows:rows});
     const x=r.result||{};$('ppImportInfo').textContent=`Selesai: ${x.inserted||0} baru, ${x.updated||0} diperbarui, ${(x.errors||[]).length} gagal.`;
     if((x.errors||[]).length)note('Sebagian baris gagal. Baris pertama: '+x.errors[0].row+' - '+x.errors[0].message,true);else note('Import peserta Program berhasil.');
     $('ppFile').value='';await Promise.all([loadProgramParticipants(),loadDash()]);
@@ -844,14 +844,14 @@ async function importProgramStudents(){
 async function loadProgramParticipants(){
   if(ADMIN_ROLE!=='ADMIN'||!$('ppProgram'))return;
   const pid=$('ppProgram').value;if(!pid){PROGRAM_PARTICIPANTS=[];$('programParticipantsOut').innerHTML='<p class="muted">Pilih Program untuk melihat peserta.</p>';return;}
-  try{const r=await gas('apiAdminProgramParticipants',TOKEN,pid);PROGRAM_PARTICIPANTS=r.rows||[];renderProgramParticipants()}catch(e){note(e.message,true)}
+  try{const r=await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_PARTICIPANTS',{program_id:pid});PROGRAM_PARTICIPANTS=r.rows||[];renderProgramParticipants()}catch(e){note(e.message,true)}
 }
 function renderProgramParticipants(){
   if(!$('programParticipantsOut'))return;
   if(!PROGRAM_PARTICIPANTS.length){$('programParticipantsOut').innerHTML='<p class="muted">Belum ada peserta pada Program ini.</p>';return;}
-  let h='<table><thead><tr><th>NIS</th><th>Nama</th><th>Kelas</th><th>Email</th><th>Akun</th><th>Tempat Magang</th><th>Sumber</th><th>Perangkat</th><th>Aksi</th></tr></thead><tbody>';
+  let h='<table><thead><tr><th>NIS</th><th>Nama</th><th>Kelas</th><th>Jenis Kelamin</th><th>Email</th><th>Akun</th><th>Tempat Magang</th><th>Sumber</th><th>Perangkat</th><th>Aksi</th></tr></thead><tbody>';
   PROGRAM_PARTICIPANTS.forEach(r=>{
-    h+=`<tr><td>${esc(r.nis)}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.class_name||'-')}</td><td>${esc(r.email||'Belum diisi')}</td><td>${esc(r.account_status)}<br><small>${esc(r.face_status||'-')}</small></td><td>${esc(r.institution_name||'Belum memilih')}<br><span class="muted">${esc(r.location_name||'-')} • ${esc(r.status||'-')}</span></td><td>${esc(r.placement_source||'-')}</td><td>${esc(r.device_status||'-')}${r.device_label?`<br><small>${esc(r.device_label)}</small>`:''}</td><td><button class="small alt" onclick="editPpPlacement('${r.id}')">Koreksi</button> ${r.user_id?`<button class="small alt" onclick="resetPpDevice('${r.user_id}','${esc(r.name)}')">Reset Perangkat</button> <button class="small alt" onclick="resetPpPin('${r.user_id}','${esc(r.name)}')">Reset PIN</button>`:''} <button class="small bad" onclick="deactivatePp('${r.id}','${esc(r.name)}')">Keluarkan</button></td></tr>`;
+    h+=`<tr><td>${esc(r.nis)}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.class_name||'-')}</td><td>${esc(r.gender==='LAKI-LAKI'?'Laki-laki':(r.gender==='PEREMPUAN'?'Perempuan':'-'))}</td><td>${esc(r.email||'Belum diisi')}</td><td>${esc(r.account_status)}<br><small>${esc(r.face_status||'-')}</small></td><td>${esc(r.institution_name||'Belum memilih')}<br><span class="muted">${esc(r.location_name||'-')} • ${esc(r.status||'-')}</span></td><td>${esc(r.placement_source||'-')}</td><td>${esc(r.device_status||'-')}${r.device_label?`<br><small>${esc(r.device_label)}</small>`:''}</td><td><button class="small alt" onclick="editPpPlacement('${r.id}')">Koreksi</button> ${r.user_id?`<button class="small alt" onclick="resetPpDevice('${r.user_id}','${esc(r.name)}')">Reset Perangkat</button> <button class="small alt" onclick="resetPpPin('${r.user_id}','${esc(r.name)}')">Reset PIN</button>`:''} <button class="small bad" onclick="deactivatePp('${r.id}','${esc(r.name)}')">Keluarkan</button></td></tr>`;
   });
   h+='</tbody></table>';$('programParticipantsOut').innerHTML=h;
 }
@@ -867,15 +867,15 @@ function editPpPlacement(id){
 function filterPpPlacementLocations(){const iid=$('ppEditInstitution').value;const rows=M.locations.filter(l=>l.status==='ACTIVE'&&String(l.institution_id)===String(iid));$('ppEditLocation').innerHTML=opts(rows)}
 function closePpPlacementEditor(){$('ppPlacementEditor').classList.add('hidden');$('ppEditId').value=''}
 async function savePpPlacement(){
-  try{const id=$('ppEditId').value;if(!id)throw new Error('Pilih peserta.');await gas('apiAdminUpdateProgramParticipant',TOKEN,id,{action:'PLACEMENT',institutionId:$('ppEditInstitution').value,locationId:$('ppEditLocation').value,effectiveFrom:$('ppEditEffective').value});closePpPlacementEditor();note('Penempatan peserta dikoreksi oleh Admin.');await Promise.all([loadProgramParticipants(),loadUsers(),loadDash()])}catch(e){note(e.message,true)}
+  try{const id=$('ppEditId').value;if(!id)throw new Error('Pilih peserta.');await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_PARTICIPANT_UPDATE',{participant_id:id,data:{action:'PLACEMENT',institutionId:$('ppEditInstitution').value,locationId:$('ppEditLocation').value,effectiveFrom:$('ppEditEffective').value}});closePpPlacementEditor();note('Penempatan peserta dikoreksi oleh Admin.');await Promise.all([loadProgramParticipants(),loadUsers(),loadDash()])}catch(e){note(e.message,true)}
 }
-async function resetPpDevice(userId,name){if(!confirm('Reset perangkat '+name+'? Sesi perangkat lama akan tidak berlaku dan siswa dapat login dari satu perangkat baru.'))return;try{const r=await gas('apiAdminResetUserDevice',TOKEN,userId);note(r.message||'Perangkat direset.');await loadProgramParticipants()}catch(e){note(e.message,true)}}
+async function resetPpDevice(userId,name){if(!confirm('Reset perangkat '+name+'? Sesi perangkat lama akan tidak berlaku dan siswa dapat login dari satu perangkat baru.'))return;try{const r=await gas('apiAdminUpsertMaster',TOKEN,'RESET_USER_DEVICE',{user_id:userId});note(r.message||'Perangkat direset.');await loadProgramParticipants()}catch(e){note(e.message,true)}}
 async function resetPpPin(userId,name){
   const pin=prompt('Masukkan PIN sementara 6 digit untuk '+name+'. Hindari 123456/111111 dan berikan PIN ini langsung kepada siswa.');
   if(pin===null)return;
-  try{const r=await gas('apiAdminResetStudentPin',TOKEN,userId,String(pin).trim());note(r.message||'PIN sementara berhasil disimpan.')}catch(e){note(e.message,true)}
+  try{const r=await gas('apiAdminUpsertMaster',TOKEN,'RESET_STUDENT_PIN',{user_id:userId,pin:String(pin).trim()});note(r.message||'PIN sementara berhasil disimpan.')}catch(e){note(e.message,true)}
 }
-async function deactivatePp(id,name){if(!confirm('Keluarkan '+name+' dari Program ini? Riwayat lama tetap disimpan.'))return;try{await gas('apiAdminUpdateProgramParticipant',TOKEN,id,{action:'INACTIVE'});note('Peserta dikeluarkan dari Program.');await Promise.all([loadProgramParticipants(),loadDash()])}catch(e){note(e.message,true)}}
+async function deactivatePp(id,name){if(!confirm('Keluarkan '+name+' dari Program ini? Riwayat lama tetap disimpan.'))return;try{await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_PARTICIPANT_UPDATE',{participant_id:id,data:{action:'INACTIVE'}});note('Peserta dikeluarkan dari Program.');await Promise.all([loadProgramParticipants(),loadDash()])}catch(e){note(e.message,true)}}
 
 function scheduleRelation(){
   if(!M||!$('schProgram')||!$('schInstitution'))return null;
