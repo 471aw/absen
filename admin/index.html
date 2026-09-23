@@ -489,6 +489,7 @@ async function start(){
     $('adminName').textContent=ADMIN_NAME;
     if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME;
     applyRoleUi();
+    hf10EnsureInactiveUi();/*HF10V3START*/
     await loadMasters();
     await Promise.all([loadDash(),loadUsers()]);
     if(['ADMIN','SUPER_ADMIN'].includes(ADMIN_ROLE)) await loadStaff();
@@ -888,8 +889,18 @@ async function rotateProgramCode(){
 function downloadStudentTemplate(){
   if(!window.XLSX){note('Library Excel belum termuat. Muat ulang halaman.',true);return;}
   const ws=XLSX.utils.aoa_to_sheet([['NIS','NAMA','KELAS','JENIS KELAMIN']]);
-  ws['!cols']=[{wch:18},{wch:32},{wch:18},{wch:20}];
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'PESERTA');
+
+  /* HF9 - NIS diperlakukan sebagai TEKS.
+     Tidak ada batas panjang dan nol di depan harus tetap dipertahankan.
+     Contoh: 001237 tetap 001237, bukan 1237. */
+  for(let r=2;r<=1001;r++){
+    ws['A'+r]={t:'s',v:'',z:'@'};
+  }
+  ws['!ref']='A1:D1001';
+  ws['!cols']=[{wch:22},{wch:32},{wch:18},{wch:20}];
+
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'PESERTA');
   XLSX.writeFile(wb,'Template_Peserta_Program_AbsenFlex.xlsx');
 }
 async function addProgramStudent(){
@@ -905,7 +916,7 @@ async function importProgramStudents(){
     const f=$('ppFile').files&&$('ppFile').files[0];if(!f)throw new Error('Pilih file Excel terlebih dahulu.');
     if(!window.XLSX)throw new Error('Library Excel belum termuat. Muat ulang halaman.');
     const buf=await f.arrayBuffer(),wb=XLSX.read(buf,{type:'array'}),ws=wb.Sheets[wb.SheetNames[0]];
-    const raw=XLSX.utils.sheet_to_json(ws,{defval:''});
+    const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});
     const rows=raw.map((r,i)=>{const o={};Object.keys(r).forEach(k=>o[String(k).trim().toUpperCase()]=r[k]);return {nis:String(o.NIS||'').trim(),name:String(o.NAMA||'').trim(),class_name:String(o.KELAS||'').trim(),gender:String(o['JENIS KELAMIN']||o.JENIS_KELAMIN||o.GENDER||'').trim(),_row:i+2};}).filter(r=>r.nis||r.name||r.class_name||r.gender);
     if(!rows.length)throw new Error('File Excel tidak berisi data. Header wajib: NIS, NAMA, KELAS, JENIS KELAMIN.');
     if(rows.some(r=>!r.nis||!r.name||!r.class_name||!r.gender))throw new Error('Ada baris yang belum lengkap. NIS, NAMA, KELAS, dan JENIS KELAMIN wajib diisi.');
@@ -1169,6 +1180,35 @@ function downloadReportCsv(){
   const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Laporan_Absensi_'+LAST_REPORT.from+'_sd_'+LAST_REPORT.to+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
+
+/* HF10-V3-INACTIVE-DYNAMIC-UI */
+let INACTIVE_PARTICIPANTS=[];
+function hf10EnsureInactiveUi(){
+  if(!['ADMIN','SUPER_ADMIN'].includes(ADMIN_ROLE))return;
+  if(!document.querySelector('[data-hf10-inactive-menu]')){
+    const staffBtn=[...document.querySelectorAll('.nav button')].find(b=>String(b.getAttribute('onclick')||'').includes("tab('staff'"));
+    if(staffBtn)staffBtn.insertAdjacentHTML('afterend','<button class="adminOnly" data-hf10-inactive-menu="1" onclick="openInactiveParticipantsPage(this)"><span class="mi">♻</span><span>Peserta Nonaktif</span></button>');
+  }
+  if(!$('inactiveParticipants')){
+    const staff=$('staff');
+    if(staff)staff.insertAdjacentHTML('beforebegin','<section id="inactiveParticipants" class="page hidden adminOnly"><div class="card"><div class="row"><div style="flex:1"><h3 style="margin-bottom:2px">Peserta Nonaktif</h3><div class="muted">Peserta Program yang telah dikeluarkan dari sekolah ini. Riwayat lama tetap tersimpan.</div></div><button class="alt no-print" onclick="loadInactiveParticipants()">Refresh</button></div></div><div class="card"><div id="inactiveParticipantsOut" class="scroll"></div></div></section>');
+  }
+}
+function renderInactiveParticipants(){
+  const out=$('inactiveParticipantsOut');if(!out)return;
+  if(!INACTIVE_PARTICIPANTS.length){out.innerHTML='<div class="msg">Tidak ada peserta Program nonaktif pada sekolah ini.</div>';return;}
+  let h='<table><thead><tr><th>NIS</th><th>Nama</th><th>Kelas</th><th>Program</th><th>Akun</th><th>Status</th><th>Aksi</th></tr></thead><tbody>';
+  INACTIVE_PARTICIPANTS.forEach(r=>{h+=`<tr><td>${esc(r.nis||'-')}</td><td><b>${esc(r.name||'-')}</b></td><td>${esc(r.class_name||'-')}</td><td>${esc(r.program_name||'-')}</td><td>${esc(r.account_status||'BELUM AKTIVASI')}</td><td><span class="pill">INACTIVE</span></td><td><button class="small" onclick="restoreInactiveParticipant('${esc(r.participant_id||r.id)}')">Aktifkan Kembali</button></td></tr>`;});
+  h+='</tbody></table>';out.innerHTML=h;
+}
+async function loadInactiveParticipants(){if(!['ADMIN','SUPER_ADMIN'].includes(ADMIN_ROLE))return;try{const r=await gas('apiAdminMasters',TOKEN);INACTIVE_PARTICIPANTS=Array.isArray(r.inactiveParticipants)?r.inactiveParticipants:[];renderInactiveParticipants();}catch(e){note(e.message,true)}}
+function openInactiveParticipantsPage(b){
+  hf10EnsureInactiveUi();if(!$('inactiveParticipants'))return;
+  document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$('inactiveParticipants').classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');
+  if($('pageHeroIcon'))$('pageHeroIcon').textContent='♻';if($('pageHeroTitle'))$('pageHeroTitle').textContent='Peserta Nonaktif';if($('pageHeroSub'))$('pageHeroSub').textContent='Lihat dan aktifkan kembali peserta Program yang telah dikeluarkan.';if($('pageBread'))$('pageBread').textContent='Dashboard  ›  Peserta Nonaktif';
+  loadInactiveParticipants();if(window.innerWidth<=900)toggleSidebar(false);
+}
+async function restoreInactiveParticipant(id){const row=INACTIVE_PARTICIPANTS.find(x=>String(x.participant_id||x.id)===String(id))||{},name=row.name||'peserta ini';if(!confirm('Aktifkan kembali '+name+' sebagai peserta Program?\n\nRiwayat absensi, izin, dan penempatan lama tidak dihapus.'))return;try{const r=await gas('apiAdminUpsertMaster',TOKEN,'RESTORE_PROGRAM_PARTICIPANT',{participant_id:id});note(r.message||'Peserta berhasil diaktifkan kembali.');await loadInactiveParticipants();await Promise.all([loadDash(),loadUsers()]);if($('ppProgram')&&$('ppProgram').value)await loadProgramParticipants();}catch(e){note(e.message,true)}}
 
 async function loadStaff(){
   if(!['ADMIN','SUPER_ADMIN'].includes(ADMIN_ROLE))return;
