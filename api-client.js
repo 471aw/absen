@@ -1,6 +1,8 @@
 (() => {
   "use strict";
-  const API_URL = "https://api-absen.skai.my.id/api";
+  // Untuk versi terpisah disarankan memakai subdomain API sendiri.
+  // Ubah nilai ini sesuai Worker Cloudflare yang Anda deploy.
+  const API_URL = "https://api-absen-siswa.skai.my.id/api";
   const DEFAULT_TIMEOUT_MS = 90000;
 
   async function call(method, ...args) {
@@ -13,19 +15,14 @@
         credentials: "omit",
         cache: "no-store",
         referrerPolicy: "no-referrer",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ method, args }),
         signal: controller.signal
       });
 
       let data;
-      try {
-        data = await response.json();
-      } catch {
-        throw new Error("Respons API tidak valid.");
-      }
+      try { data = await response.json(); }
+      catch { throw new Error("Respons API tidak valid."); }
 
       if (!response.ok || !data || data.ok !== true) {
         throw new Error((data && data.error) || ("API error " + response.status));
