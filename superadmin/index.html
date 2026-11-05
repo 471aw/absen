@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="id"><head>
 <meta name="referrer" content="no-referrer">
-<meta name="af-build" content="1.8.9-master-edit-hotfix">
+<meta name="af-build" content="1.8.9-super-participant-school">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -170,12 +170,14 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 <section id="users" class="page hidden">
 <div class="card">
   <h3>Peserta Program</h3>
-  <p class="muted">Admin memasukkan data siswa yang mengikuti Program. Bisa satu per satu atau upload Excel dengan kolom <b>NIS, NAMA, KELAS, JENIS KELAMIN</b>. Data siswa disimpan satu kali sebagai master; jika siswa mengikuti Program lain, NIS yang sama cukup ditambahkan ke Program tersebut.</p>
+  <p class="muted">Super Admin dapat memasukkan peserta untuk sekolah yang sudah terdaftar. Pilih <b>Sekolah / Admin Tujuan</b>, lalu pilih Program milik sekolah tersebut. Data dapat ditambah satu per satu atau upload Excel dengan kolom <b>NIS, NAMA, KELAS, JENIS KELAMIN</b>.</p>
   <div class="row">
-    <div class="field"><label>Program</label><select id="ppProgram" onchange="loadProgramParticipants()"></select></div>
+    <div class="field"><label>Sekolah / Admin Tujuan</label><select id="ppSchool" onchange="participantSchoolChanged()"><option value="">Pilih Sekolah</option></select></div>
+    <div class="field"><label>Program</label><select id="ppProgram" onchange="loadProgramParticipants()"><option value="">Pilih Program</option></select></div>
     <button class="alt" onclick="downloadStudentTemplate()">Unduh Template Excel</button>
     <button class="alt" onclick="loadProgramParticipants()">Refresh</button>
   </div>
+  <div id="ppTargetInfo" class="dashNote" style="margin-top:10px">Pilih Sekolah / Admin tujuan terlebih dahulu. Program yang tampil hanya milik sekolah tersebut.</div>
   <div class="row" style="margin-top:10px">
     <div class="field"><label>NIS</label><input id="ppNis" placeholder="NIS siswa"></div>
     <div class="field"><label>Nama</label><input id="ppName" placeholder="Nama lengkap"></div>
@@ -387,7 +389,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 </section>
 <section id="settings" class="page hidden"><div class="card"><h3>Pengaturan Sistem</h3><p class="muted">Perubahan penting langsung memengaruhi semua peserta. Play Integrity diaktifkan setelah APK sudah terhubung ke Play Console.</p><div id="settingsOut"></div></div></section>
 </main></div></div></div>
-<script src="../api-client.js?v=1892-master-edit"></script>
+<script src="../api-client.js?v=1893-super-participant-school"></script>
 <script>
 let TOKEN=sessionStorage.getItem('af_super_token')||'', ADMIN_NAME=sessionStorage.getItem('af_super_name')||'', ADMIN_ROLE='SUPER_ADMIN', ADMIN_SCHOOL=null, M=null, USERS=[], REPORT_USERS=[], APP_CONFIG=null, SUPER_DATA=null, REPORT_SELECTION_INIT=false, LAST_REPORT=null;
 const $=id=>document.getElementById(id);let ADMIN_BUSY_COUNT=0,ADMIN_DONE_TIMER=null;
@@ -710,6 +712,55 @@ function opts(rows,all=false){
   return (all?'<option value="">Semua</option>':'')+
     rows.filter(x=>x&&x.status==='ACTIVE').map(x=>`<option value="${esc(x.id)}">${esc(x.name)}${x.school_id&&schoolLabel(x.school_id)?' — '+esc(schoolLabel(x.school_id)):''}</option>`).join('');
 }
+function ppAdminNamesForSchool(sid){
+  const rows=(SUPER_DATA&&SUPER_DATA.admins)||[];
+  const names=rows.filter(a=>String(a.school_id||'')===String(sid||'')&&String(a.status||'ACTIVE')==='ACTIVE'&&String(a.role||'')!=='SUPER_ADMIN')
+    .map(a=>(a.display_name||a.username||'Admin')+' ('+(a.role||'ADMIN')+')');
+  return names.length?names.join(', '):'Belum ada Admin/Guru aktif';
+}
+function refreshPpSchoolOptions(){
+  if(!$('ppSchool')||!M)return;
+  const keep=$('ppSchool').value;
+  const rows=(M.schools||[]).filter(s=>String(s.status||'ACTIVE')==='ACTIVE');
+  $('ppSchool').innerHTML='<option value="">Pilih Sekolah</option>'+rows.map(s=>{
+    const admins=ppAdminNamesForSchool(s.id);
+    return `<option value="${esc(s.id)}">${esc(s.name)} (${esc(s.code||'-')}) — ${esc(admins)}</option>`;
+  }).join('');
+  if(rows.some(s=>String(s.id)===String(keep)))$('ppSchool').value=keep;
+}
+function filterPpProgramsBySchool(keepProgram=true){
+  if(!$('ppSchool')||!$('ppProgram')||!M)return;
+  const sid=$('ppSchool').value;
+  const old=keepProgram?$('ppProgram').value:'';
+  const rows=(M.programs||[]).filter(p=>String(p.status)==='ACTIVE'&&String(p.school_id||'')===String(sid||''));
+  $('ppProgram').innerHTML='<option value="">Pilih Program</option>'+rows.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+  if(rows.some(p=>String(p.id)===String(old)))$('ppProgram').value=old;
+  const school=(M.schools||[]).find(s=>String(s.id)===String(sid));
+  if($('ppTargetInfo')){
+    if(!sid)$('ppTargetInfo').textContent='Pilih Sekolah / Admin tujuan terlebih dahulu. Program yang tampil hanya milik sekolah tersebut.';
+    else $('ppTargetInfo').innerHTML=`Tujuan: <b>${esc(school?school.name:'Sekolah')}</b> • Admin/Guru: <b>${esc(ppAdminNamesForSchool(sid))}</b>${rows.length?` • ${rows.length} Program aktif`:' • Belum ada Program aktif'}`;
+  }
+  if(!sid||!rows.length){
+    PROGRAM_PARTICIPANTS=[];
+    if($('programParticipantsOut'))$('programParticipantsOut').innerHTML='<p class="muted">Pilih Sekolah dan Program untuk melihat peserta.</p>';
+  }
+}
+function participantSchoolChanged(){
+  PROGRAM_PARTICIPANTS=[];
+  filterPpProgramsBySchool(false);
+  if($('ppPlacementEditor'))$('ppPlacementEditor').classList.add('hidden');
+  if($('programParticipantsOut'))$('programParticipantsOut').innerHTML='<p class="muted">Pilih Program milik sekolah tersebut untuk melihat peserta.</p>';
+}
+function assertPpSchoolProgram(){
+  const sid=$('ppSchool')?$('ppSchool').value:'';
+  const pid=$('ppProgram')?$('ppProgram').value:'';
+  if(!sid)throw new Error('Pilih Sekolah / Admin tujuan terlebih dahulu.');
+  if(!pid)throw new Error('Pilih Program terlebih dahulu.');
+  const p=(M.programs||[]).find(x=>String(x.id)===String(pid));
+  if(!p)throw new Error('Program tidak ditemukan.');
+  if(String(p.school_id||'')!==String(sid))throw new Error('Program tidak sesuai dengan Sekolah tujuan. Pilih ulang Sekolah dan Program.');
+  return {schoolId:sid,program:p};
+}
 function fillSelects(){
   const schoolOpts='<option value="">Pilih Sekolah</option>'+((M.schools||[]).filter(s=>s.status==='ACTIVE').map(s=>`<option value="${esc(s.id)}">${esc(s.name)} (${esc(s.code||'-')})</option>`).join(''));
   ['progSchool','insSchool','guruSchool'].forEach(id=>{if($(id)){const keep=$(id).value;$(id).innerHTML=schoolOpts;if((M.schools||[]).some(s=>String(s.id)===String(keep)))$(id).value=keep;}});
@@ -721,10 +772,9 @@ function fillSelects(){
   $('repInstitution').innerHTML=opts(M.institutions,true);
   $('repLocation').innerHTML=opts(M.locations,true);
   $('assignProgram').innerHTML=opts(M.programs);
-  if($('ppProgram')){
-    const keep=$('ppProgram').value;
-    $('ppProgram').innerHTML='<option value="">Pilih Program</option>'+opts(M.programs);
-    if(M.programs.some(x=>String(x.id)===String(keep)&&x.status==='ACTIVE'))$('ppProgram').value=keep;
+  if($('ppSchool')&&$('ppProgram')){
+    refreshPpSchoolOptions();
+    filterPpProgramsBySchool(true);
   }
 
   if($('relProgram'))$('relProgram').innerHTML='<option value="">Pilih Program</option>'+opts(M.programs);
@@ -972,14 +1022,14 @@ function downloadStudentTemplate(){
 }
 async function addProgramStudent(){
   try{
-    const pid=$('ppProgram').value;if(!pid)throw new Error('Pilih Program terlebih dahulu.');
+    const target=assertPpSchoolProgram(),pid=target.program.id;
     await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_STUDENT_UPSERT',{program_id:pid,student:{nis:$('ppNis').value.trim(),name:$('ppName').value.trim(),class_name:$('ppClass').value.trim(),gender:$('ppGender').value}});
     $('ppNis').value='';$('ppName').value='';$('ppClass').value='';$('ppGender').value='';note('Siswa ditambahkan ke Program.');await Promise.all([loadProgramParticipants(),loadDash()]);
   }catch(e){note(e.message,true)}
 }
 async function importProgramStudents(){
   try{
-    const pid=$('ppProgram').value;if(!pid)throw new Error('Pilih Program terlebih dahulu.');
+    const target=assertPpSchoolProgram(),pid=target.program.id;
     const f=$('ppFile').files&&$('ppFile').files[0];if(!f)throw new Error('Pilih file Excel terlebih dahulu.');
     if(!window.XLSX)throw new Error('Library Excel belum termuat. Muat ulang halaman.');
     const buf=await f.arrayBuffer(),wb=XLSX.read(buf,{type:'array'}),ws=wb.Sheets[wb.SheetNames[0]];
@@ -996,16 +1046,19 @@ async function importProgramStudents(){
   }catch(e){$('ppImportInfo').textContent='';note(e.message,true)}
 }
 async function loadProgramParticipants(){
-  if(ADMIN_ROLE!=='ADMIN'&&ADMIN_ROLE!=='SUPER_ADMIN'||!$('ppProgram'))return;
-  const pid=$('ppProgram').value;if(!pid){PROGRAM_PARTICIPANTS=[];$('programParticipantsOut').innerHTML='<p class="muted">Pilih Program untuk melihat peserta.</p>';return;}
+  if(ADMIN_ROLE!=='SUPER_ADMIN'||!$('ppProgram'))return;
+  let target;
+  try{target=assertPpSchoolProgram()}catch(e){PROGRAM_PARTICIPANTS=[];$('programParticipantsOut').innerHTML='<p class="muted">'+esc(e.message)+'</p>';return}
+  const pid=target.program.id;
   try{const r=await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_PARTICIPANTS',{program_id:pid});PROGRAM_PARTICIPANTS=r.rows||[];renderProgramParticipants()}catch(e){note(e.message,true)}
 }
 function renderProgramParticipants(){
   if(!$('programParticipantsOut'))return;
   if(!PROGRAM_PARTICIPANTS.length){$('programParticipantsOut').innerHTML='<p class="muted">Belum ada peserta pada Program ini.</p>';return;}
-  let h='<table><thead><tr><th>NIS</th><th>Nama</th><th>Kelas</th><th>Jenis Kelamin</th><th>Email</th><th>Akun</th><th>Tempat Magang</th><th>Sumber</th><th>Perangkat</th><th>Aksi</th></tr></thead><tbody>';
+  const targetSchool=(M.schools||[]).find(s=>String(s.id)===String($('ppSchool').value));
+  let h='<table><thead><tr><th>Sekolah</th><th>NIS</th><th>Nama</th><th>Kelas</th><th>Jenis Kelamin</th><th>Email</th><th>Akun</th><th>Instansi</th><th>Sumber</th><th>Perangkat</th><th>Aksi</th></tr></thead><tbody>';
   PROGRAM_PARTICIPANTS.forEach(r=>{
-    h+=`<tr><td>${esc(r.nis)}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.class_name||'-')}</td><td>${esc(r.gender==='LAKI-LAKI'?'Laki-laki':(r.gender==='PEREMPUAN'?'Perempuan':'-'))}</td><td>${esc(r.email||'Belum diisi')}</td><td>${esc(r.account_status)}</td><td>${esc(r.institution_name||'Belum memilih')}<br><span class="muted">${esc(r.location_name||'-')} • ${esc(r.status||'-')}</span></td><td>${esc(r.placement_source||'-')}</td><td>${esc(r.device_status||'-')}${r.device_label?`<br><small>${esc(r.device_label)}</small>`:''}</td><td><button class="small alt" onclick="editPpPlacement('${r.id}')">Koreksi</button> ${r.user_id?`<button class="small alt" onclick="resetPpDevice('${r.user_id}','${esc(r.name)}')">Reset Perangkat</button> <button class="small alt" onclick="resetPpPin('${r.user_id}','${esc(r.name)}')">Reset PIN</button>`:''} <button class="small bad" onclick="deactivatePp('${r.id}','${esc(r.name)}')">Keluarkan</button></td></tr>`;
+    h+=`<tr><td><b>${esc(targetSchool?targetSchool.name:'-')}</b></td><td>${esc(r.nis)}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.class_name||'-')}</td><td>${esc(r.gender==='LAKI-LAKI'?'Laki-laki':(r.gender==='PEREMPUAN'?'Perempuan':'-'))}</td><td>${esc(r.email||'Belum diisi')}</td><td>${esc(r.account_status)}</td><td>${esc(r.institution_name||'Belum memilih')}<br><span class="muted">${esc(r.location_name||'-')} • ${esc(r.status||'-')}</span></td><td>${esc(r.placement_source||'-')}</td><td>${esc(r.device_status||'-')}${r.device_label?`<br><small>${esc(r.device_label)}</small>`:''}</td><td><button class="small alt" onclick="editPpPlacement('${r.id}')">Koreksi</button> ${r.user_id?`<button class="small alt" onclick="resetPpDevice('${r.user_id}','${esc(r.name)}')">Reset Perangkat</button> <button class="small alt" onclick="resetPpPin('${r.user_id}','${esc(r.name)}')">Reset PIN</button>`:''} <button class="small bad" onclick="deactivatePp('${r.id}','${esc(r.name)}')">Keluarkan</button></td></tr>`;
   });
   h+='</tbody></table>';$('programParticipantsOut').innerHTML=h;
 }
@@ -1339,7 +1392,11 @@ async function resetGuruPassword(id,username){
 
 async function loadSuperAdmin(){
   if(ADMIN_ROLE!=='SUPER_ADMIN')return;
-  try{SUPER_DATA=await gas('apiSuperAdminOverview',TOKEN);renderSuperAdmin();}catch(e){note(e.message,true)}
+  try{
+    SUPER_DATA=await gas('apiSuperAdminOverview',TOKEN);
+    renderSuperAdmin();
+    if($('ppSchool')){refreshPpSchoolOptions();filterPpProgramsBySchool(true);}
+  }catch(e){note(e.message,true)}
 }
 function renderSuperAdmin(){
   if(!SUPER_DATA)return;
