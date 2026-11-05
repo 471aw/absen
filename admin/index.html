@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="id"><head>
 <meta name="referrer" content="no-referrer">
-<meta name="af-build" content="1.8.8-nis-email-otp">
+<meta name="af-build" content="1.8.9-admin-ui">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -67,6 +67,14 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 @media(max-width:520px){.grid{grid-template-columns:1fr}.topLogout{padding:8px!important}.pageHero{min-height:72px}.pageHeroIcon{width:42px;height:42px}.pageHeroText h1{font-size:18px}}
 @media print{.top,.sidebar,.pageHero,.no-print{display:none!important}.contentArea{padding:0}.appShell{display:block}.card,.dashPanel{border:0!important;box-shadow:none!important}}
 
+
+@media(min-width:981px){
+  .mobileMenu{display:inline-flex!important;align-items:center;justify-content:center;min-width:40px}
+  .appShell{transition:grid-template-columns .2s ease}
+  .appShell.sidebarCollapsed{grid-template-columns:0 minmax(0,1fr)}
+  .appShell.sidebarCollapsed .sidebar{width:0;min-width:0;padding-left:0;padding-right:0;border:0;opacity:0;overflow:hidden;pointer-events:none}
+}
+.editFocus{outline:3px solid rgba(8,125,221,.18);box-shadow:0 0 0 5px rgba(8,125,221,.08),var(--cp-shadow)!important}
 </style><script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script></head><body>
 <div id="adminProcess" class="adminProcess hidden" aria-live="polite" aria-busy="false">
   <div class="adminProcessCard">
@@ -167,7 +175,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 </section>
 <section id="masters" class="page hidden">
 <div class="two">
-  <div class="card adminOnly">
+  <div id="programFormCard" class="card adminOnly">
     <h3>Program Kegiatan</h3>
     <input id="progId" type="hidden">
     <div class="field"><label>Nama Program</label><input id="progName" placeholder="contoh: Magang Industri STMJ 2026"></div>
@@ -187,7 +195,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
     <p class="muted" style="margin-top:7px">Kode Program dipakai siswa untuk aktivasi/gabung. Penempatan Instansi ditentukan Admin; aturan absensi mengikuti Instansi dalam Program.</p>
     <div class="row"><button onclick="saveProgram()">Simpan Program</button><button class="alt" onclick="clearProgram()">Baru</button></div>
   </div>
-  <div class="card adminOnly">
+  <div id="institutionFormCard" class="card adminOnly">
     <h3>Master Instansi</h3>
     <p class="muted">Instansi dibuat satu kali dan dapat digunakan kembali pada program lain atau periode berikutnya.</p>
     <input id="insId" type="hidden">
@@ -197,7 +205,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   </div>
 </div>
 
-<div class="card adminOnly">
+<div id="programInstitutionFormCard" class="card adminOnly">
   <h3>Instansi dalam Program</h3>
   <p class="muted">Pilih Program dan Instansi yang sudah terdaftar, lalu tentukan periode program pada instansi tersebut.</p>
   <input id="relId" type="hidden">
@@ -231,7 +239,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 <div class="card"><h3>Data Master</h3><div id="mastersOut" class="scroll"></div></div>
 </section>
 <section id="schedule" class="page hidden">
-<div class="card">
+<div id="scheduleFormCard" class="card">
   <h3>Jadwal Absensi</h3>
   <p class="muted">Menu ini hanya untuk Instansi yang Aturan Waktunya = Terjadwal. Instansi Fleksibel tidak membutuhkan jadwal. Untuk mode Terjadwal, pilih hari dan titik referensi lalu atur jam datang/pulang.</p>
   <input id="schId" type="hidden">
@@ -325,7 +333,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 </section>
 <section id="settings" class="page hidden"><div class="card"><h3>Pengaturan Sistem</h3><p class="muted">Perubahan penting langsung memengaruhi semua peserta. Play Integrity diaktifkan setelah APK sudah terhubung ke Play Console.</p><div id="settingsOut"></div></div></section>
 </main></div></div></div>
-<script src="../api-client.js?v=1881-nis-email-otp"></script>
+<script src="../api-client.js?v=1890-admin-ui"></script>
 <script>
 let TOKEN=sessionStorage.getItem('af_admin_token')||'', ADMIN_NAME=sessionStorage.getItem('af_admin_name')||'', ADMIN_ROLE=sessionStorage.getItem('af_admin_role')||'', ADMIN_SCHOOL=null, M=null, USERS=[], REPORT_USERS=[], APP_CONFIG=null, SUPER_DATA=null, REPORT_SELECTION_INIT=false, LAST_REPORT=null;
 const $=id=>document.getElementById(id);let ADMIN_BUSY_COUNT=0,ADMIN_DONE_TIMER=null;
@@ -417,7 +425,26 @@ function logout(){
   location.reload();
 }
 function applyRoleUi(){const isAdmin=ADMIN_ROLE==='ADMIN';document.querySelectorAll('.adminOnly').forEach(x=>x.classList.toggle('hidden',!isAdmin));document.querySelectorAll('.writeOnly').forEach(x=>x.classList.toggle('hidden',!isAdmin));if(!isAdmin&&$('staff'))$('staff').classList.add('hidden');if($('sideAdminRole'))$('sideAdminRole').textContent=ADMIN_ROLE||'ADMIN';if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME||'Administrator';const schoolName=ADMIN_SCHOOL&&ADMIN_SCHOOL.name?ADMIN_SCHOOL.name:'Sekolah';document.querySelectorAll('.schoolNameText').forEach(x=>x.textContent=schoolName);if($('sideSchoolName'))$('sideSchoolName').textContent=schoolName;}
-function toggleSidebar(force){const el=$('sidebar');if(!el)return;if(force===false)el.classList.remove('open');else el.classList.toggle('open');}
+function toggleSidebar(force){
+  const el=$('sidebar'),shell=document.querySelector('.appShell');if(!el||!shell)return;
+  if(window.innerWidth<=980){
+    if(force===false)el.classList.remove('open');else if(force===true)el.classList.add('open');else el.classList.toggle('open');
+    return;
+  }
+  const collapsed=force===false?true:(force===true?false:!shell.classList.contains('sidebarCollapsed'));
+  shell.classList.toggle('sidebarCollapsed',collapsed);
+  sessionStorage.setItem('af_sidebar_collapsed',collapsed?'1':'0');
+}
+function restoreSidebarState(){
+  if(window.innerWidth>980&&sessionStorage.getItem('af_sidebar_collapsed')==='1'){
+    const shell=document.querySelector('.appShell');if(shell)shell.classList.add('sidebarCollapsed');
+  }
+}
+function focusEditCard(id){
+  const el=$(id);if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+  el.classList.add('editFocus');setTimeout(()=>el.classList.remove('editFocus'),1400);
+}
 async function start(){
   if(!TOKEN)return;
   try{
@@ -442,6 +469,7 @@ async function start(){
     $('adminName').textContent=ADMIN_NAME;
     if($('sideAdminName'))$('sideAdminName').textContent=ADMIN_NAME;
     applyRoleUi();
+    restoreSidebarState();
     await loadMasters();
     await Promise.all([loadDash(),loadUsers()]);
     if(ADMIN_ROLE==='ADMIN') await loadStaff();
@@ -613,6 +641,7 @@ async function loadMasters(){
   if(USERS.length)renderUserRefreshNoFetch();
   if(ADMIN_ROLE==='ADMIN'&&$('ppProgram')&&$('ppProgram').value)loadProgramParticipants();
 }
+function renderUserRefreshNoFetch(){/* peserta tetap; tabel akan ikut diperbarui saat Refresh */}
 function opts(rows,all=false){
   rows=Array.isArray(rows)?rows:[];
   return (all?'<option value="">Semua</option>':'')+
@@ -698,12 +727,12 @@ function editProgram(id){
   $('progJoinCode').value=x.join_code||'';
   const rm=document.querySelector(`input[name="progJoinMode"][value="${String(x.join_mode||'ADMIN_ONLY')}"]`);if(rm)rm.checked=true;
   $('progStudentPlacement').checked=false;
-  window.scrollTo({top:0,behavior:'smooth'});
+  focusEditCard('programFormCard');
 }
 function editInstitution(id){
   const x=M.institutions.find(v=>v.id===id);if(!x)return;
   $('insId').value=x.id;$('insName').value=x.name||'';$('insAddress').value=x.address||'';
-  window.scrollTo({top:0,behavior:'smooth'});
+  focusEditCard('institutionFormCard');
 }
 function editProgramInstitution(id){
   const x=M.programInstitutions.find(v=>v.id===id);if(!x)return;
@@ -711,13 +740,13 @@ function editProgramInstitution(id){
   $('relProgram').disabled=true;$('relInstitution').disabled=true;
   $('relStart').value=x.start_date||'';$('relEnd').value=x.end_date||'';$('relLocationMode').value=x.location_mode||'ANYWHERE';$('relTimeMode').value=x.time_mode||'FLEXIBLE';
   syncProgramInstitutionBounds(false);
-  window.scrollTo({top:0,behavior:'smooth'});
+  focusEditCard('programInstitutionFormCard');
 }
 function editLocation(id){
   const x=M.locations.find(v=>v.id===id);if(!x)return;
   $('locId').value=x.id;$('locInstitution').value=x.institution_id||'';$('locName').value=x.name||'';
   $('locLat').value=x.lat||'';$('locLng').value=x.lng||'';$('locRadius').value=x.radius_m||100;$('locAccuracy').value=x.max_accuracy_m||80;
-  window.scrollTo({top:0,behavior:'smooth'});
+  focusEditCard('locationFormCard');
 }
 async function saveProgram(){
   try{
@@ -961,7 +990,7 @@ function editSchedule(id){
   $('schId').value=x.id;$('schProgram').value=x.program_id;filterScheduleInstitutions();$('schInstitution').value=loc.institution_id;renderScheduleLocationChecks(false);
   document.querySelectorAll('.schLocationCheck').forEach(c=>{c.checked=String(c.value)===String(x.location_id);c.disabled=String(c.value)!==String(x.location_id);});syncScheduleLocationSelection();
   document.querySelectorAll('.schDayCheck').forEach(c=>{c.checked=Number(c.value)===Number(x.day_of_week);c.disabled=Number(c.value)!==Number(x.day_of_week);});syncScheduleDaySelection();
-  $('schEffective').value=x.effective_from||'';$('schEffectiveTo').value=x.effective_to||'';$('aOpen').value=x.arrival_open;$('aLate').value=x.arrival_late_after;$('aClose').value=x.arrival_close;$('dOpen').value=x.departure_open;$('dNormal').value=x.departure_normal;$('dClose').value=x.departure_close;$('pDeadline').value=x.permission_deadline||'';syncSchedulePeriodBounds(false);window.scrollTo({top:0,behavior:'smooth'});
+  $('schEffective').value=x.effective_from||'';$('schEffectiveTo').value=x.effective_to||'';$('aOpen').value=x.arrival_open;$('aLate').value=x.arrival_late_after;$('aClose').value=x.arrival_close;$('dOpen').value=x.departure_open;$('dNormal').value=x.departure_normal;$('dClose').value=x.departure_close;$('pDeadline').value=x.permission_deadline||'';syncSchedulePeriodBounds(false);focusEditCard('scheduleFormCard');
 }
 async function saveSchedule(){
   try{

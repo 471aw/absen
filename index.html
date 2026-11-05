@@ -2,7 +2,7 @@
 <html lang="id"><head><meta charset="utf-8"><base target="_top"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
 <meta name="af-mobile-policy" content="1.8.8-nis-email-otp">
-<meta name="af-build" content="1.8.8-nis-email-otp">
+<meta name="af-build" content="1.8.9-admin-ui">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -30,7 +30,7 @@
 </main></div>
 <div id="tabs" class="tabs hidden"><div class="tabsInner"><button class="active" onclick="showTab('Home',this)"><span>✓</span>Absensi</button><button onclick="showTab('Permit',this)"><span>📝</span>Perizinan</button><button onclick="showTab('History',this)"><span>🕘</span>Riwayat</button><button onclick="showTab('Profile',this)"><span>⚙️</span>Profil</button></div></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="./api-client.js?v=1881-nis-email-otp"></script>
+<script src="./api-client.js?v=1890-admin-ui"></script>
 <script>
 let TOKEN=localStorage.getItem('af_token')||'',CONFIG=null,BOOT=null,ACT_PREVIEW=null,JOIN_PREVIEW=null,map=null,userMarker=null,accuracyCircle=null,gpsWatchId=null,lastGps=null;
 const $=id=>document.getElementById(id);function gas(name,...args){return window.AbsensiAPI.call(name,...args)}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function msg(t,e=false){const x=$('globalMsg');x.textContent=t;x.className='msg'+(e?' err':'');x.classList.remove('hidden');setTimeout(()=>x.classList.add('hidden'),6500)}function busy(b,on,t){if(!b)return;if(on){b.dataset.old=b.innerHTML;b.disabled=true;b.innerHTML='<span class="spinner"></span> '+(t||'Memproses')}else{b.disabled=false;b.innerHTML=b.dataset.old||'Lanjut'}}function hideAll(){['bootView','browserBlockView','loginView','registerView','pendingView','mainView'].forEach(x=>$(x)?.classList.add('hidden'));$('tabs').classList.add('hidden');$('logoutBtn').classList.add('hidden');$('welcome').classList.add('hidden')}function showHeader(){$('appHeader').classList.remove('hidden')}
