@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="id"><head>
 <meta name="referrer" content="no-referrer">
-<meta name="af-build" content="1.8.9-admin-ui">
+<meta name="af-build" content="1.8.9-master-edit-hotfix">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -75,6 +75,28 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
   .appShell.sidebarCollapsed .sidebar{width:0;min-width:0;padding-left:0;padding-right:0;border:0;opacity:0;overflow:hidden;pointer-events:none}
 }
 .editFocus{outline:3px solid rgba(8,125,221,.18);box-shadow:0 0 0 5px rgba(8,125,221,.08),var(--cp-shadow)!important}
+
+/* HOTFIX: hamburger selalu terlihat di desktop */
+@media(min-width:981px){
+  .top .mobileMenu{
+    display:inline-flex!important;
+    position:fixed!important;
+    top:14px!important;
+    left:274px!important;
+    z-index:2147483600!important;
+    width:42px!important;
+    height:42px!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border-radius:11px!important;
+    background:#0b66a5!important;
+    border:1px solid rgba(255,255,255,.28)!important;
+    color:#fff!important;
+    box-shadow:0 8px 20px rgba(4,42,76,.22)!important;
+    font-size:22px!important;
+  }
+  .appShell.sidebarCollapsed .top .mobileMenu{left:14px!important}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script></head><body>
 <div id="adminProcess" class="adminProcess hidden" aria-live="polite" aria-busy="false">
   <div class="adminProcessCard">
@@ -108,7 +130,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 </aside>
 <main class="contentArea">
 <div class="top no-print">
-  <div class="topLeft"><button class="mobileMenu" onclick="toggleSidebar()">☰</button><div><div class="topAppName"><span id="adminSystemName">Absen Murid</span></div><div class="topAppSub"><span class="schoolNameText">Sekolah</span> • Sistem Absensi</div></div></div>
+  <div class="topLeft"><button class="mobileMenu" onclick="toggleSidebar()" title="Sembunyikan / tampilkan menu">☰</button><div><div class="topAppName"><span id="adminSystemName">Absen Murid</span></div><div class="topAppSub"><span class="schoolNameText">Sekolah</span> • Sistem Absensi</div></div></div>
   <div class="topRight">
     <div class="topClock"><span id="topDate">-</span><b id="topTime">--:--:--</b></div>
     <div class="userAvatar" id="topAvatar">AD</div>
@@ -218,7 +240,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
     <div class="field"><label>Aturan Waktu</label><select id="relTimeMode"><option value="FLEXIBLE">Fleksibel — tanpa batas jam</option><option value="SCHEDULED">Terjadwal — wajib hari & jam</option></select></div>
   </div>
   <div id="relPeriodHelp" class="muted" style="margin:5px 0 10px">Default: bebas lokasi + waktu fleksibel. Jadwal hanya diperlukan jika Aturan Waktu = Terjadwal.</div>
-  <div class="row"><button onclick="saveProgramInstitution()">Simpan ke Program</button><button class="alt" onclick="clearProgramInstitution()">Baru</button></div>
+  <div class="row"><button id="relSaveBtn" onclick="saveProgramInstitution()">Simpan ke Program</button><button id="relCancelBtn" class="alt hidden" onclick="clearProgramInstitution()">Batal Edit</button><button class="alt" onclick="clearProgramInstitution()">Baru</button></div>
 </div>
 
 <div class="card">
@@ -333,7 +355,7 @@ html,body{min-height:100%;background:#eaf3fb;color:var(--cp-ink);font-family:Ari
 </section>
 <section id="settings" class="page hidden"><div class="card"><h3>Pengaturan Sistem</h3><p class="muted">Perubahan penting langsung memengaruhi semua peserta. Play Integrity diaktifkan setelah APK sudah terhubung ke Play Console.</p><div id="settingsOut"></div></div></section>
 </main></div></div></div>
-<script src="../api-client.js?v=1890-admin-ui"></script>
+<script src="../api-client.js?v=1892-master-edit"></script>
 <script>
 let TOKEN=sessionStorage.getItem('af_admin_token')||'', ADMIN_NAME=sessionStorage.getItem('af_admin_name')||'', ADMIN_ROLE=sessionStorage.getItem('af_admin_role')||'', ADMIN_SCHOOL=null, M=null, USERS=[], REPORT_USERS=[], APP_CONFIG=null, SUPER_DATA=null, REPORT_SELECTION_INIT=false, LAST_REPORT=null;
 const $=id=>document.getElementById(id);let ADMIN_BUSY_COUNT=0,ADMIN_DONE_TIMER=null;
@@ -716,8 +738,17 @@ function renderMasters(){
 function clearProgram(){$('progId').value='';$('progName').value='';$('progStart').value='';$('progEnd').value='';$('progJoinCode').value='';document.querySelector('input[name="progJoinMode"][value="CODE"]').checked=true;$('progStudentPlacement').checked=false}
 function clearInstitution(){$('insId').value='';$('insName').value='';$('insAddress').value=''}
 function clearProgramInstitution(){
-  $('relId').value='';$('relProgram').disabled=false;$('relInstitution').disabled=false;
-  $('relProgram').value='';$('relInstitution').value='';$('relStart').value='';$('relEnd').value='';$('relLocationMode').value='ANYWHERE';$('relTimeMode').value='FLEXIBLE';
+  $('relId').value='';
+  $('relProgram').disabled=false;
+  $('relInstitution').disabled=false;
+  $('relProgram').value='';
+  $('relInstitution').value='';
+  $('relStart').value='';
+  $('relEnd').value='';
+  $('relLocationMode').value='ANYWHERE';
+  $('relTimeMode').value='FLEXIBLE';
+  if($('relSaveBtn'))$('relSaveBtn').textContent='Simpan ke Program';
+  if($('relCancelBtn'))$('relCancelBtn').classList.add('hidden');
   syncProgramInstitutionBounds(false);
 }
 function clearLocation(){$('locId').value='';$('locName').value='';$('locLat').value='';$('locLng').value='';$('locRadius').value='100';$('locAccuracy').value='80'}
@@ -735,12 +766,27 @@ function editInstitution(id){
   focusEditCard('institutionFormCard');
 }
 function editProgramInstitution(id){
-  const x=M.programInstitutions.find(v=>v.id===id);if(!x)return;
-  $('relId').value=x.id;$('relProgram').value=x.program_id||'';$('relInstitution').value=x.institution_id||'';
-  $('relProgram').disabled=true;$('relInstitution').disabled=true;
-  $('relStart').value=x.start_date||'';$('relEnd').value=x.end_date||'';$('relLocationMode').value=x.location_mode||'ANYWHERE';$('relTimeMode').value=x.time_mode||'FLEXIBLE';
+  const x=(M.programInstitutions||[]).find(v=>String(v.id)===String(id));
+  if(!x){note('Data Instansi dalam Program tidak ditemukan.',true);return}
+  $('relId').value=x.id||'';
+  $('relProgram').disabled=false;
+  $('relInstitution').disabled=false;
+  $('relProgram').value=x.program_id||'';
+  $('relInstitution').value=x.institution_id||'';
+  $('relStart').value=x.start_date||'';
+  $('relEnd').value=x.end_date||'';
+  $('relLocationMode').value=x.location_mode||'ANYWHERE';
+  $('relTimeMode').value=x.time_mode||'FLEXIBLE';
   syncProgramInstitutionBounds(false);
+
+  // Identitas relasi tidak dipindahkan saat edit.
+  $('relProgram').disabled=true;
+  $('relInstitution').disabled=true;
+
+  if($('relSaveBtn'))$('relSaveBtn').textContent='Simpan Perubahan';
+  if($('relCancelBtn'))$('relCancelBtn').classList.remove('hidden');
   focusEditCard('programInstitutionFormCard');
+  note('Mode Edit aktif. Ubah periode/aturan lalu klik Simpan Perubahan.');
 }
 function editLocation(id){
   const x=M.locations.find(v=>v.id===id);if(!x)return;
@@ -809,15 +855,28 @@ function syncProgramInstitutionBounds(fillDefaults){
 }
 async function saveProgramInstitution(){
   try{
+    const editId=$('relId').value||'';
     const pid=$('relProgram').value,iid=$('relInstitution').value,start=$('relStart').value,end=$('relEnd').value;
     if(!pid)throw new Error('Pilih Program.');
     if(!iid)throw new Error('Pilih Instansi.');
     if(!start||!end)throw new Error('Tanggal mulai dan selesai di instansi wajib diisi.');
     if(start>end)throw new Error('Tanggal selesai tidak boleh sebelum tanggal mulai.');
+    const prog=(M.programs||[]).find(x=>String(x.id)===String(pid));
+    if(prog&&prog.start_date&&start<prog.start_date)throw new Error('Tanggal mulai instansi tidak boleh sebelum Program dimulai.');
+    if(prog&&prog.end_date&&end>prog.end_date)throw new Error('Tanggal selesai instansi tidak boleh melewati akhir Program.');
     await gas('apiAdminUpsertMaster',TOKEN,'PROGRAM_INSTITUTION',{
-      id:$('relId').value||undefined,program_id:pid,institution_id:iid,start_date:start,end_date:end,location_mode:$('relLocationMode').value,time_mode:$('relTimeMode').value,status:'ACTIVE'
+      id:editId||undefined,
+      program_id:pid,
+      institution_id:iid,
+      start_date:start,
+      end_date:end,
+      location_mode:$('relLocationMode').value,
+      time_mode:$('relTimeMode').value,
+      status:'ACTIVE'
     });
-    clearProgramInstitution();note('Instansi berhasil didaftarkan pada Program.');await loadMasters();
+    clearProgramInstitution();
+    note(editId?'Perubahan Instansi dalam Program berhasil disimpan.':'Instansi berhasil didaftarkan pada Program.');
+    await loadMasters();
   }catch(e){note(e.message,true)}
 }
 async function setProgramInstitutionStatus(id,status){
